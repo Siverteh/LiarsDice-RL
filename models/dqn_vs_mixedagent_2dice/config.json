@@ -1,0 +1,23 @@
+{
+    "num_players": 2,
+    "num_dice": 2,
+    "dice_faces": 6,
+    "num_episodes": 50000,
+    "eval_interval": 100,
+    "num_eval_games": 100,
+    "save_interval": 500,
+    "learning_agent_type": "dqn",
+    "opponent_type": "mixed",
+    "learning_rate": 0.001,
+    "gamma": 0.99,
+    "epsilon_start": 0.5,
+    "epsilon_end": 0.05,
+    "epsilon_decay": 0.997,
+    "clip_param": 0.2,
+    "value_coef": 0.5,
+    "entropy_coef": 0.01,
+    "lstm_layers": 1,
+    "output_dir": "models",
+    "experiment_name": "dqn_vs_mixedagent_2dice",
+    "output_path": "models\\dqn_vs_mixedagent_2dice"
+}

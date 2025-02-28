@@ -1,0 +1,32 @@
+2025-02-28 13:44:34,234 [INFO] Training configuration saved to models\dqn_vs_mixedagent_2dice
+2025-02-28 13:48:23,091 [INFO] Training configuration saved to models\dqn_vs_mixedagent_2dice
+2025-02-28 13:48:24,128 [INFO] Model loaded from models/dqn_vs_random_2dice/dqn_agent_best.pt
+2025-02-28 13:48:24,128 [INFO] Starting training...
+2025-02-28 13:48:40,477 [INFO] Episode 100/50000, Win Rate: 0.80, Avg Reward: 3.03, Avg Length: 6.20
+2025-02-28 13:48:40,484 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_best.pt
+2025-02-28 13:48:40,484 [INFO] New best model saved with win rate: 0.80
+2025-02-28 13:48:59,193 [INFO] Episode 200/50000, Win Rate: 0.77, Avg Reward: 3.14, Avg Length: 6.33
+2025-02-28 13:49:19,984 [INFO] Episode 300/50000, Win Rate: 0.75, Avg Reward: 3.61, Avg Length: 6.70
+2025-02-28 13:49:40,449 [INFO] Episode 400/50000, Win Rate: 0.71, Avg Reward: 3.19, Avg Length: 6.51
+2025-02-28 13:50:06,318 [INFO] Episode 500/50000, Win Rate: 0.76, Avg Reward: 3.81, Avg Length: 6.56
+2025-02-28 13:50:06,987 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_500.pt
+2025-02-28 13:50:29,154 [INFO] Episode 600/50000, Win Rate: 0.74, Avg Reward: 3.33, Avg Length: 6.80
+2025-02-28 13:50:50,132 [INFO] Episode 700/50000, Win Rate: 0.76, Avg Reward: 3.28, Avg Length: 6.59
+2025-02-28 13:51:19,027 [INFO] Episode 800/50000, Win Rate: 0.74, Avg Reward: 3.17, Avg Length: 6.37
+2025-02-28 13:51:41,072 [INFO] Episode 900/50000, Win Rate: 0.74, Avg Reward: 3.73, Avg Length: 6.43
+2025-02-28 13:52:06,176 [INFO] Episode 1000/50000, Win Rate: 0.83, Avg Reward: 3.97, Avg Length: 6.77
+2025-02-28 13:52:06,182 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_best.pt
+2025-02-28 13:52:06,182 [INFO] New best model saved with win rate: 0.83
+2025-02-28 13:52:06,714 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_1000.pt
+2025-02-28 13:52:28,829 [INFO] Episode 1100/50000, Win Rate: 0.77, Avg Reward: 3.91, Avg Length: 6.82
+2025-02-28 13:52:51,215 [INFO] Episode 1200/50000, Win Rate: 0.82, Avg Reward: 3.78, Avg Length: 7.15
+2025-02-28 13:53:19,277 [INFO] Episode 1300/50000, Win Rate: 0.84, Avg Reward: 4.09, Avg Length: 6.79
+2025-02-28 13:53:19,283 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_best.pt
+2025-02-28 13:53:19,283 [INFO] New best model saved with win rate: 0.84
+2025-02-28 13:53:41,506 [INFO] Episode 1400/50000, Win Rate: 0.76, Avg Reward: 3.84, Avg Length: 6.70
+2025-02-28 13:54:03,729 [INFO] Episode 1500/50000, Win Rate: 0.86, Avg Reward: 3.92, Avg Length: 6.88
+2025-02-28 13:54:03,735 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_best.pt
+2025-02-28 13:54:03,735 [INFO] New best model saved with win rate: 0.86
+2025-02-28 13:54:04,296 [INFO] Model saved to models\dqn_vs_mixedagent_2dice\dqn_agent_1500.pt
+2025-02-28 13:54:28,447 [INFO] Episode 1600/50000, Win Rate: 0.82, Avg Reward: 3.95, Avg Length: 6.64
+2025-02-28 13:54:53,670 [INFO] Episode 1700/50000, Win Rate: 0.81, Avg Reward: 3.46, Avg Length: 6.51
