@@ -1,19 +1,30 @@
 """
-Training package for Liar's Dice reinforcement learning.
+Training package for Liar's Dice DQN agent.
 
-This package contains modules for training, evaluating, and managing
-RL agents for playing Liar's Dice.
+This package contains training utilities, evaluation functions,
+and environment wrappers for training DQN agents to play Liar's Dice.
 """
 
-from .trainer import Trainer, TrainingConfig
-from .evaluate import evaluate_agents, tournament
-from .utils import plot_training_curves, save_metrics
+from .train import train_dqn_episode, train_dqn
+from .evaluate import evaluate_agent, evaluate_against_curriculum
+from .environment_wrapper import LiarsDiceEnvWrapper
+from .utils import (
+    setup_logger, 
+    plot_training_results, 
+    save_training_data, 
+    load_training_data,
+    get_action_mapping
+)
 
 __all__ = [
-    'Trainer',
-    'TrainingConfig',
-    'evaluate_agents',
-    'tournament',
-    'plot_training_curves',
-    'save_metrics'
+    'train_dqn_episode',
+    'train_dqn',
+    'evaluate_agent',
+    'evaluate_against_curriculum',
+    'LiarsDiceEnvWrapper',
+    'setup_logger',
+    'plot_training_results',
+    'save_training_data',
+    'load_training_data',
+    'get_action_mapping'
 ]

@@ -1,0 +1,217 @@
+2025-03-01 10:58:09,775 - curriculum - INFO - Starting enhanced curriculum learning for Liar's Dice
+2025-03-01 10:58:09,776 - curriculum - INFO - Parameters: players=2, dice=2, faces=6
+2025-03-01 10:58:09,776 - curriculum - INFO - Total curriculum episodes: 30000, distribution: progressive
+2025-03-01 10:58:09,776 - curriculum - INFO - Self-play episodes: 10000, Population size: 5
+2025-03-01 10:58:09,776 - curriculum - INFO - Network size: large, Learning rate: 0.0003
+2025-03-01 10:58:10,590 - curriculum - INFO - Using device: cuda
+2025-03-01 10:58:10,592 - curriculum - INFO - Observation dimension: 29
+2025-03-01 10:58:10,593 - curriculum - INFO - Action dimension: 25
+2025-03-01 10:58:11,462 - curriculum - INFO - Action mapping set with 25 possible actions
+2025-03-01 10:58:11,462 - curriculum - INFO - Curriculum schedule:
+2025-03-01 10:58:11,462 - curriculum - INFO -   Level 0 (random): 1500 episodes
+2025-03-01 10:58:11,462 - curriculum - INFO -   Level 1 (naive): 4500 episodes
+2025-03-01 10:58:11,462 - curriculum - INFO -   Level 2 (conservative): 6000 episodes
+2025-03-01 10:58:11,462 - curriculum - INFO -   Level 3 (aggressive): 6000 episodes
+2025-03-01 10:58:11,462 - curriculum - INFO -   Level 4 (strategic): 6000 episodes
+2025-03-01 10:58:11,463 - curriculum - INFO -   Level 5 (adaptive): 6000 episodes
+2025-03-01 10:58:11,463 - curriculum - INFO - 
+=== Training against random (1500 episodes) ===
+2025-03-01 10:58:11,463 - curriculum - INFO - Training against random for 1500 episodes
+2025-03-01 10:58:15,607 - curriculum - INFO - New best model for random: 0.90 win rate
+2025-03-01 10:58:15,623 - curriculum - INFO - New best overall model: 0.90 win rate
+2025-03-01 10:58:15,623 - curriculum - INFO - Win rate 0.90 above threshold 0.85 (1/3)
+2025-03-01 10:58:19,305 - curriculum - INFO - New best model for random: 0.97 win rate
+2025-03-01 10:58:19,311 - curriculum - INFO - New best overall model: 0.97 win rate
+2025-03-01 10:58:19,311 - curriculum - INFO - Win rate 0.97 above threshold 0.85 (1/3)
+2025-03-01 10:58:20,973 - curriculum - INFO - New best model for random: 1.00 win rate
+2025-03-01 10:58:20,978 - curriculum - INFO - New best overall model: 1.00 win rate
+2025-03-01 10:58:20,979 - curriculum - INFO - Win rate 1.00 above threshold 0.85 (2/3)
+2025-03-01 10:58:23,121 - curriculum - INFO - Loading best model for random (win rate: 1.00)
+2025-03-01 10:58:23,245 - curriculum - INFO - Added random to mastered opponents: ['random']
+2025-03-01 10:58:23,245 - curriculum - INFO - Completed training against random
+2025-03-01 10:58:23,245 - curriculum - INFO - Episodes: 1500, Duration: 11.66 seconds
+2025-03-01 10:58:23,245 - curriculum - INFO - Final evaluation reward: 4.58
+2025-03-01 10:58:23,246 - curriculum - INFO - Best win rate: 1.00
+2025-03-01 10:58:23,252 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_0
+2025-03-01 10:58:25,066 - curriculum - INFO - 
+=== Training against naive (4500 episodes) ===
+2025-03-01 10:58:25,067 - curriculum - INFO - Note: Would mix in previous opponents ['random'], but API only supports one opponent type
+2025-03-01 10:58:25,067 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 10:58:25,067 - curriculum - INFO - Training against naive for 4500 episodes
+2025-03-01 10:58:25,067 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 10:58:25,067 - curriculum - INFO - Using primary opponent: naive
+2025-03-01 10:58:27,027 - curriculum - INFO - New best model for naive: 0.17 win rate
+2025-03-01 10:58:31,637 - curriculum - INFO - New best model for naive: 0.23 win rate
+2025-03-01 10:58:32,878 - curriculum - INFO - New best model for naive: 0.27 win rate
+2025-03-01 10:58:34,070 - curriculum - INFO - New best model for naive: 0.33 win rate
+2025-03-01 10:58:38,880 - curriculum - INFO - New best model for naive: 0.40 win rate
+2025-03-01 10:58:40,095 - curriculum - INFO - New best model for naive: 0.57 win rate
+2025-03-01 10:58:46,144 - curriculum - INFO - New best model for naive: 0.63 win rate
+2025-03-01 10:58:47,390 - curriculum - INFO - New best model for naive: 0.73 win rate
+2025-03-01 10:58:54,961 - curriculum - INFO - New best model for naive: 0.77 win rate
+2025-03-01 10:58:56,234 - curriculum - INFO - New best model for naive: 0.80 win rate
+2025-03-01 10:59:16,729 - curriculum - INFO - New best model for naive: 0.83 win rate
+2025-03-01 10:59:22,557 - curriculum - INFO - Loading best model for naive (win rate: 0.83)
+2025-03-01 10:59:22,590 - curriculum - INFO - Added naive to mastered opponents: ['random', 'naive']
+2025-03-01 10:59:22,590 - curriculum - INFO - Completed training against naive
+2025-03-01 10:59:22,590 - curriculum - INFO - Episodes: 4500, Duration: 57.49 seconds
+2025-03-01 10:59:22,590 - curriculum - INFO - Final evaluation reward: 3.26
+2025-03-01 10:59:22,590 - curriculum - INFO - Best win rate: 0.83
+2025-03-01 10:59:22,596 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_1
+2025-03-01 10:59:22,920 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-01 11:00:23,120 - curriculum - INFO - Starting enhanced curriculum learning for Liar's Dice
+2025-03-01 11:00:23,121 - curriculum - INFO - Parameters: players=2, dice=2, faces=6
+2025-03-01 11:00:23,121 - curriculum - INFO - Total curriculum episodes: 30000, distribution: progressive
+2025-03-01 11:00:23,121 - curriculum - INFO - Self-play episodes: 10000, Population size: 5
+2025-03-01 11:00:23,122 - curriculum - INFO - Network size: large, Learning rate: 0.0003
+2025-03-01 11:00:23,451 - curriculum - INFO - Using device: cuda
+2025-03-01 11:00:23,452 - curriculum - INFO - Observation dimension: 29
+2025-03-01 11:00:23,453 - curriculum - INFO - Action dimension: 25
+2025-03-01 11:00:24,927 - curriculum - INFO - Action mapping set with 25 possible actions
+2025-03-01 11:00:24,927 - curriculum - INFO - Curriculum schedule:
+2025-03-01 11:00:24,927 - curriculum - INFO -   Level 0 (random): 1500 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO -   Level 1 (naive): 4500 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO -   Level 2 (conservative): 6000 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO -   Level 3 (aggressive): 6000 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO -   Level 4 (strategic): 6000 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO -   Level 5 (adaptive): 6000 episodes
+2025-03-01 11:00:24,928 - curriculum - INFO - 
+=== Training against random (1500 episodes) ===
+2025-03-01 11:00:24,928 - curriculum - INFO - Training against random for 1500 episodes
+2025-03-01 11:00:27,323 - curriculum - INFO - New best model for random: 0.73 win rate
+2025-03-01 11:00:27,327 - curriculum - INFO - New best overall model: 0.73 win rate
+2025-03-01 11:00:29,039 - curriculum - INFO - New best model for random: 0.83 win rate
+2025-03-01 11:00:29,044 - curriculum - INFO - New best overall model: 0.83 win rate
+2025-03-01 11:00:30,780 - curriculum - INFO - New best model for random: 1.00 win rate
+2025-03-01 11:00:30,785 - curriculum - INFO - New best overall model: 1.00 win rate
+2025-03-01 11:00:30,785 - curriculum - INFO - Win rate 1.00 above threshold 0.85 (1/3)
+2025-03-01 11:00:35,810 - curriculum - INFO - Win rate 0.93 above threshold 0.85 (1/3)
+2025-03-01 11:00:37,531 - curriculum - INFO - Win rate 0.97 above threshold 0.85 (2/3)
+2025-03-01 11:00:39,727 - curriculum - INFO - Loading best model for random (win rate: 1.00)
+2025-03-01 11:00:39,768 - curriculum - INFO - Added random to mastered opponents: ['random']
+2025-03-01 11:00:39,769 - curriculum - INFO - Completed training against random
+2025-03-01 11:00:39,769 - curriculum - INFO - Episodes: 1500, Duration: 14.80 seconds
+2025-03-01 11:00:39,769 - curriculum - INFO - Final evaluation reward: 4.37
+2025-03-01 11:00:39,769 - curriculum - INFO - Best win rate: 1.00
+2025-03-01 11:00:39,775 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_0
+2025-03-01 11:00:40,379 - curriculum - INFO - 
+=== Training against naive (4500 episodes) ===
+2025-03-01 11:00:40,380 - curriculum - INFO - Note: Would mix in previous opponents ['random'], but API only supports one opponent type
+2025-03-01 11:00:40,380 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 11:00:40,380 - curriculum - INFO - Training against naive for 4500 episodes
+2025-03-01 11:00:40,380 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 11:00:40,380 - curriculum - INFO - Using primary opponent: naive
+2025-03-01 11:00:41,438 - curriculum - INFO - New best model for naive: 0.03 win rate
+2025-03-01 11:00:44,286 - curriculum - INFO - New best model for naive: 0.10 win rate
+2025-03-01 11:00:48,026 - curriculum - INFO - New best model for naive: 0.13 win rate
+2025-03-01 11:00:50,573 - curriculum - INFO - New best model for naive: 0.20 win rate
+2025-03-01 11:00:54,287 - curriculum - INFO - New best model for naive: 0.27 win rate
+2025-03-01 11:00:56,678 - curriculum - INFO - New best model for naive: 0.30 win rate
+2025-03-01 11:00:59,162 - curriculum - INFO - New best model for naive: 0.40 win rate
+2025-03-01 11:01:04,265 - curriculum - INFO - New best model for naive: 0.47 win rate
+2025-03-01 11:01:05,554 - curriculum - INFO - New best model for naive: 0.57 win rate
+2025-03-01 11:01:09,233 - curriculum - INFO - New best model for naive: 0.70 win rate
+2025-03-01 11:01:17,718 - curriculum - INFO - New best model for naive: 0.77 win rate
+2025-03-01 11:01:26,154 - curriculum - INFO - New best model for naive: 0.83 win rate
+2025-03-01 11:01:35,190 - curriculum - INFO - Loading best model for naive (win rate: 0.83)
+2025-03-01 11:01:35,228 - curriculum - INFO - Added naive to mastered opponents: ['random', 'naive']
+2025-03-01 11:01:35,229 - curriculum - INFO - Completed training against naive
+2025-03-01 11:01:35,229 - curriculum - INFO - Episodes: 4500, Duration: 54.81 seconds
+2025-03-01 11:01:35,229 - curriculum - INFO - Final evaluation reward: 2.78
+2025-03-01 11:01:35,229 - curriculum - INFO - Best win rate: 0.83
+2025-03-01 11:01:35,234 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_1
+2025-03-01 11:01:35,537 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-01 11:01:49,943 - curriculum - INFO -   vs random: win rate = 0.92
+2025-03-01 11:02:04,577 - curriculum - INFO -   vs naive: win rate = 0.67
+2025-03-01 11:02:04,577 - curriculum - INFO -   Average win rate across all levels: 0.79
+2025-03-01 11:02:04,577 - curriculum - INFO - 
+=== Training against conservative (6000 episodes) ===
+2025-03-01 11:02:04,577 - curriculum - INFO - Note: Would mix in previous opponents ['random', 'naive'], but API only supports one opponent type
+2025-03-01 11:02:04,577 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 11:02:04,578 - curriculum - INFO - Training against conservative for 6000 episodes
+2025-03-01 11:02:04,578 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 11:02:04,578 - curriculum - INFO - Using primary opponent: conservative
+2025-03-01 11:02:07,138 - curriculum - INFO - New best model for conservative: 0.20 win rate
+2025-03-01 11:02:09,295 - curriculum - INFO - New best model for conservative: 0.37 win rate
+2025-03-01 11:02:11,514 - curriculum - INFO - New best model for conservative: 0.60 win rate
+2025-03-01 11:02:16,459 - curriculum - INFO - New best model for conservative: 0.63 win rate
+2025-03-01 11:02:18,839 - curriculum - INFO - New best model for conservative: 0.67 win rate
+2025-03-01 11:02:21,109 - curriculum - INFO - New best model for conservative: 0.90 win rate
+2025-03-01 11:02:21,109 - curriculum - INFO - Win rate 0.90 above threshold 0.85 (1/3)
+2025-03-01 11:03:14,148 - curriculum - INFO - Win rate 0.90 above threshold 0.85 (1/3)
+2025-03-01 11:04:28,011 - curriculum - INFO - Loading best model for conservative (win rate: 0.90)
+2025-03-01 11:04:28,022 - curriculum - INFO - Added conservative to mastered opponents: ['random', 'naive', 'conservative']
+2025-03-01 11:04:28,022 - curriculum - INFO - Completed training against conservative
+2025-03-01 11:04:28,022 - curriculum - INFO - Episodes: 6000, Duration: 143.43 seconds
+2025-03-01 11:04:28,022 - curriculum - INFO - Final evaluation reward: 2.09
+2025-03-01 11:04:28,022 - curriculum - INFO - Best win rate: 0.90
+2025-03-01 11:04:28,028 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_2
+2025-03-01 11:04:28,443 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-01 11:04:43,177 - curriculum - INFO -   vs random: win rate = 0.98
+2025-03-01 11:04:58,035 - curriculum - INFO -   vs naive: win rate = 0.68
+2025-03-01 11:05:12,791 - curriculum - INFO -   vs conservative: win rate = 0.68
+2025-03-01 11:05:12,791 - curriculum - INFO -   Average win rate across all levels: 0.78
+2025-03-01 11:05:12,792 - curriculum - INFO - 
+=== Training against aggressive (6000 episodes) ===
+2025-03-01 11:05:12,793 - curriculum - INFO - Note: Would mix in previous opponents ['random', 'naive', 'conservative'], but API only supports one opponent type
+2025-03-01 11:05:12,793 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 11:05:12,794 - curriculum - INFO - Training against aggressive for 6000 episodes
+2025-03-01 11:05:12,794 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 11:05:12,794 - curriculum - INFO - Using primary opponent: aggressive
+2025-03-01 11:05:12,794 - curriculum - INFO - Adjusted learning rate to 0.00020999999999999998 for level 3
+2025-03-01 11:05:14,886 - curriculum - INFO - New best model for aggressive: 0.77 win rate
+2025-03-01 11:05:20,662 - curriculum - INFO - New best model for aggressive: 0.87 win rate
+2025-03-01 11:05:20,663 - curriculum - INFO - Win rate 0.87 above threshold 0.85 (1/3)
+2025-03-01 11:05:39,690 - curriculum - INFO - New best model for aggressive: 0.90 win rate
+2025-03-01 11:05:39,690 - curriculum - INFO - Win rate 0.90 above threshold 0.85 (1/3)
+2025-03-01 11:05:49,848 - curriculum - INFO - Win rate 0.90 above threshold 0.85 (1/3)
+2025-03-01 11:05:51,820 - curriculum - INFO - New best model for aggressive: 0.93 win rate
+2025-03-01 11:05:51,820 - curriculum - INFO - Win rate 0.93 above threshold 0.85 (2/3)
+2025-03-01 11:05:54,199 - curriculum - INFO - Loading best model for aggressive (win rate: 0.93)
+2025-03-01 11:05:54,222 - curriculum - INFO - Added aggressive to mastered opponents: ['random', 'naive', 'conservative', 'aggressive']
+2025-03-01 11:05:54,222 - curriculum - INFO - Completed training against aggressive
+2025-03-01 11:05:54,222 - curriculum - INFO - Episodes: 6000, Duration: 41.40 seconds
+2025-03-01 11:05:54,222 - curriculum - INFO - Final evaluation reward: 4.07
+2025-03-01 11:05:54,222 - curriculum - INFO - Best win rate: 0.93
+2025-03-01 11:05:54,230 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_3
+2025-03-01 11:05:54,593 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-01 11:06:08,891 - curriculum - INFO -   vs random: win rate = 0.95
+2025-03-01 11:06:23,494 - curriculum - INFO -   vs naive: win rate = 0.35
+2025-03-01 11:06:37,922 - curriculum - INFO -   vs conservative: win rate = 0.74
+2025-03-01 11:06:52,755 - curriculum - INFO -   vs aggressive: win rate = 0.83
+2025-03-01 11:06:52,755 - curriculum - INFO -   Average win rate across all levels: 0.72
+2025-03-01 11:06:52,755 - curriculum - INFO - 
+=== Training against strategic (6000 episodes) ===
+2025-03-01 11:06:52,755 - curriculum - INFO - Note: Would mix in previous opponents ['random', 'naive', 'conservative', 'aggressive'], but API only supports one opponent type
+2025-03-01 11:06:52,755 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 11:06:52,755 - curriculum - INFO - Training against strategic for 6000 episodes
+2025-03-01 11:06:52,756 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 11:06:52,756 - curriculum - INFO - Using primary opponent: strategic
+2025-03-01 11:06:52,756 - curriculum - INFO - Adjusted learning rate to 0.00014699999999999997 for level 4
+2025-03-01 11:06:55,549 - curriculum - INFO - New best model for strategic: 0.67 win rate
+2025-03-01 11:07:00,725 - curriculum - INFO - New best model for strategic: 0.73 win rate
+2025-03-01 11:07:08,860 - curriculum - INFO - New best model for strategic: 0.83 win rate
+2025-03-01 11:07:21,779 - curriculum - INFO - New best model for strategic: 0.87 win rate
+2025-03-01 11:07:21,779 - curriculum - INFO - Win rate 0.87 above threshold 0.85 (1/3)
+2025-03-01 11:09:27,220 - curriculum - INFO - Loading best model for strategic (win rate: 0.87)
+2025-03-01 11:09:27,259 - curriculum - INFO - Added strategic to mastered opponents: ['random', 'naive', 'conservative', 'aggressive', 'strategic']
+2025-03-01 11:09:27,259 - curriculum - INFO - Completed training against strategic
+2025-03-01 11:09:27,259 - curriculum - INFO - Episodes: 6000, Duration: 154.46 seconds
+2025-03-01 11:09:27,260 - curriculum - INFO - Final evaluation reward: 2.90
+2025-03-01 11:09:27,260 - curriculum - INFO - Best win rate: 0.87
+2025-03-01 11:09:27,271 - curriculum - INFO - Saved checkpoint to results\checkpoints\after_level_4
+2025-03-01 11:09:28,790 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-01 11:09:43,055 - curriculum - INFO -   vs random: win rate = 0.88
+2025-03-01 11:09:57,463 - curriculum - INFO -   vs naive: win rate = 0.27
+2025-03-01 11:10:11,770 - curriculum - INFO -   vs conservative: win rate = 0.69
+2025-03-01 11:10:26,109 - curriculum - INFO -   vs aggressive: win rate = 0.67
+2025-03-01 11:10:40,626 - curriculum - INFO -   vs strategic: win rate = 0.67
+2025-03-01 11:10:40,626 - curriculum - INFO -   Average win rate across all levels: 0.64
+2025-03-01 11:10:40,626 - curriculum - INFO - 
+=== Training against adaptive (6000 episodes) ===
+2025-03-01 11:10:40,627 - curriculum - INFO - Note: Would mix in previous opponents ['random', 'naive', 'conservative', 'aggressive', 'strategic'], but API only supports one opponent type
+2025-03-01 11:10:40,627 - curriculum - INFO - Consider adding support for multiple opponent types in future versions
+2025-03-01 11:10:40,627 - curriculum - INFO - Training against adaptive for 6000 episodes
+2025-03-01 11:10:40,627 - curriculum - INFO - Note: Progressive mixing with previous opponents is limited due to API constraints
+2025-03-01 11:10:40,627 - curriculum - INFO - Using primary opponent: adaptive
+2025-03-01 11:10:40,628 - curriculum - INFO - Adjusted learning rate to 0.00010289999999999997 for level 5

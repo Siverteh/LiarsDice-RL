@@ -1,0 +1,319 @@
+2025-03-01 11:02:04,579 - dqn_train - INFO - Starting DQN training for 6000 episodes
+2025-03-01 11:02:04,579 - dqn_train - INFO - Agent config: {'epsilon': 0.05, 'buffer_size': 16220, 'learning_rate': 0.0003, 'training_steps': 11925}
+2025-03-01 11:02:06,654 - dqn_train - INFO - Episode 100/6000 | Reward: 1.28 | Length: 5.54 | Loss: 1.7258 | Epsilon: 0.0500 | Buffer: 16774
+2025-03-01 11:02:07,132 - dqn_train - INFO - Evaluation at episode 100: 0.86 reward, Win rate: 0.20
+2025-03-01 11:02:08,944 - dqn_train - INFO - Episode 200/6000 | Reward: 0.80 | Length: 5.08 | Loss: 1.7413 | Epsilon: 0.0500 | Buffer: 17282
+2025-03-01 11:02:09,290 - dqn_train - INFO - Evaluation at episode 200: 1.52 reward, Win rate: 0.37
+2025-03-01 11:02:11,143 - dqn_train - INFO - Episode 300/6000 | Reward: 1.22 | Length: 5.34 | Loss: 1.7243 | Epsilon: 0.0500 | Buffer: 17816
+2025-03-01 11:02:11,509 - dqn_train - INFO - Evaluation at episode 300: 2.12 reward, Win rate: 0.60
+2025-03-01 11:02:13,545 - dqn_train - INFO - Episode 400/6000 | Reward: 2.06 | Length: 5.74 | Loss: 1.7325 | Epsilon: 0.0500 | Buffer: 18390
+2025-03-01 11:02:13,914 - dqn_train - INFO - Evaluation at episode 400: 2.06 reward, Win rate: 0.53
+2025-03-01 11:02:16,040 - dqn_train - INFO - Episode 500/6000 | Reward: 2.54 | Length: 5.60 | Loss: 1.7120 | Epsilon: 0.0500 | Buffer: 18950
+2025-03-01 11:02:16,454 - dqn_train - INFO - Evaluation at episode 500: 3.26 reward, Win rate: 0.63
+2025-03-01 11:02:18,458 - dqn_train - INFO - Episode 600/6000 | Reward: 2.42 | Length: 5.40 | Loss: 1.6715 | Epsilon: 0.0500 | Buffer: 19490
+2025-03-01 11:02:18,835 - dqn_train - INFO - Evaluation at episode 600: 3.14 reward, Win rate: 0.67
+2025-03-01 11:02:20,728 - dqn_train - INFO - Episode 700/6000 | Reward: 2.30 | Length: 5.37 | Loss: 1.6523 | Epsilon: 0.0500 | Buffer: 20027
+2025-03-01 11:02:21,104 - dqn_train - INFO - Evaluation at episode 700: 3.26 reward, Win rate: 0.90
+2025-03-01 11:02:21,105 - dqn_train - INFO - Win rate 0.90 is above threshold 0.85 (1/3)
+2025-03-01 11:02:22,994 - dqn_train - INFO - Episode 800/6000 | Reward: 2.90 | Length: 5.33 | Loss: 1.6433 | Epsilon: 0.0500 | Buffer: 20560
+2025-03-01 11:02:23,382 - dqn_train - INFO - Evaluation at episode 800: 3.44 reward, Win rate: 0.60
+2025-03-01 11:02:25,354 - dqn_train - INFO - Episode 900/6000 | Reward: 2.48 | Length: 5.17 | Loss: 1.6168 | Epsilon: 0.0500 | Buffer: 21077
+2025-03-01 11:02:25,717 - dqn_train - INFO - Evaluation at episode 900: 2.42 reward, Win rate: 0.73
+2025-03-01 11:02:27,702 - dqn_train - INFO - Episode 1000/6000 | Reward: 2.84 | Length: 5.43 | Loss: 1.5562 | Epsilon: 0.0500 | Buffer: 21620
+2025-03-01 11:02:27,708 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_1000
+2025-03-01 11:02:28,078 - dqn_train - INFO - Evaluation at episode 1000: 3.38 reward, Win rate: 0.80
+2025-03-01 11:02:30,072 - dqn_train - INFO - Episode 1100/6000 | Reward: 3.08 | Length: 5.48 | Loss: 1.5500 | Epsilon: 0.0500 | Buffer: 22168
+2025-03-01 11:02:30,438 - dqn_train - INFO - Evaluation at episode 1100: 3.56 reward, Win rate: 0.57
+2025-03-01 11:02:32,336 - dqn_train - INFO - Episode 1200/6000 | Reward: 2.42 | Length: 5.06 | Loss: 1.4990 | Epsilon: 0.0500 | Buffer: 22674
+2025-03-01 11:02:32,700 - dqn_train - INFO - Evaluation at episode 1200: 3.50 reward, Win rate: 0.70
+2025-03-01 11:02:34,603 - dqn_train - INFO - Episode 1300/6000 | Reward: 2.84 | Length: 5.21 | Loss: 1.4597 | Epsilon: 0.0500 | Buffer: 23195
+2025-03-01 11:02:34,984 - dqn_train - INFO - Evaluation at episode 1300: 3.26 reward, Win rate: 0.77
+2025-03-01 11:02:37,058 - dqn_train - INFO - Episode 1400/6000 | Reward: 3.02 | Length: 5.45 | Loss: 1.4107 | Epsilon: 0.0500 | Buffer: 23740
+2025-03-01 11:02:37,432 - dqn_train - INFO - Evaluation at episode 1400: 3.44 reward, Win rate: 0.73
+2025-03-01 11:02:39,417 - dqn_train - INFO - Episode 1500/6000 | Reward: 3.44 | Length: 5.35 | Loss: 1.3919 | Epsilon: 0.0500 | Buffer: 24275
+2025-03-01 11:02:39,785 - dqn_train - INFO - Evaluation at episode 1500: 3.68 reward, Win rate: 0.70
+2025-03-01 11:02:41,787 - dqn_train - INFO - Episode 1600/6000 | Reward: 3.02 | Length: 5.42 | Loss: 1.3804 | Epsilon: 0.0500 | Buffer: 24817
+2025-03-01 11:02:42,154 - dqn_train - INFO - Evaluation at episode 1600: 3.50 reward, Win rate: 0.83
+2025-03-01 11:02:44,095 - dqn_train - INFO - Episode 1700/6000 | Reward: 3.32 | Length: 5.32 | Loss: 1.3609 | Epsilon: 0.0500 | Buffer: 25349
+2025-03-01 11:02:44,452 - dqn_train - INFO - Evaluation at episode 1700: 3.26 reward, Win rate: 0.77
+2025-03-01 11:02:46,485 - dqn_train - INFO - Episode 1800/6000 | Reward: 2.96 | Length: 5.30 | Loss: 1.3258 | Epsilon: 0.0500 | Buffer: 25879
+2025-03-01 11:02:46,859 - dqn_train - INFO - Evaluation at episode 1800: 3.14 reward, Win rate: 0.57
+2025-03-01 11:02:48,906 - dqn_train - INFO - Episode 1900/6000 | Reward: 3.14 | Length: 5.22 | Loss: 1.2657 | Epsilon: 0.0500 | Buffer: 26401
+2025-03-01 11:02:49,277 - dqn_train - INFO - Evaluation at episode 1900: 3.44 reward, Win rate: 0.80
+2025-03-01 11:02:51,306 - dqn_train - INFO - Episode 2000/6000 | Reward: 2.84 | Length: 5.32 | Loss: 1.2465 | Epsilon: 0.0500 | Buffer: 26933
+2025-03-01 11:02:51,315 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_2000
+2025-03-01 11:02:51,675 - dqn_train - INFO - Evaluation at episode 2000: 2.96 reward, Win rate: 0.77
+2025-03-01 11:02:53,623 - dqn_train - INFO - Episode 2100/6000 | Reward: 2.48 | Length: 5.11 | Loss: 1.2154 | Epsilon: 0.0500 | Buffer: 27444
+2025-03-01 11:02:53,977 - dqn_train - INFO - Evaluation at episode 2100: 3.26 reward, Win rate: 0.83
+2025-03-01 11:02:55,950 - dqn_train - INFO - Episode 2200/6000 | Reward: 3.20 | Length: 5.27 | Loss: 1.2029 | Epsilon: 0.0500 | Buffer: 27971
+2025-03-01 11:02:56,291 - dqn_train - INFO - Evaluation at episode 2200: 3.32 reward, Win rate: 0.67
+2025-03-01 11:02:58,302 - dqn_train - INFO - Episode 2300/6000 | Reward: 2.66 | Length: 5.21 | Loss: 1.1873 | Epsilon: 0.0500 | Buffer: 28492
+2025-03-01 11:02:58,736 - dqn_train - INFO - Evaluation at episode 2300: 3.50 reward, Win rate: 0.73
+2025-03-01 11:03:01,733 - dqn_train - INFO - Episode 2400/6000 | Reward: 3.08 | Length: 5.45 | Loss: 1.1716 | Epsilon: 0.0500 | Buffer: 29037
+2025-03-01 11:03:02,091 - dqn_train - INFO - Evaluation at episode 2400: 3.86 reward, Win rate: 0.80
+2025-03-01 11:03:04,029 - dqn_train - INFO - Episode 2500/6000 | Reward: 2.36 | Length: 5.05 | Loss: 1.1692 | Epsilon: 0.0500 | Buffer: 29542
+2025-03-01 11:03:04,374 - dqn_train - INFO - Evaluation at episode 2500: 2.96 reward, Win rate: 0.70
+2025-03-01 11:03:06,317 - dqn_train - INFO - Episode 2600/6000 | Reward: 3.14 | Length: 5.16 | Loss: 1.1674 | Epsilon: 0.0500 | Buffer: 30058
+2025-03-01 11:03:06,722 - dqn_train - INFO - Evaluation at episode 2600: 3.20 reward, Win rate: 0.70
+2025-03-01 11:03:08,778 - dqn_train - INFO - Episode 2700/6000 | Reward: 2.90 | Length: 5.24 | Loss: 1.1345 | Epsilon: 0.0500 | Buffer: 30582
+2025-03-01 11:03:09,170 - dqn_train - INFO - Evaluation at episode 2700: 3.26 reward, Win rate: 0.67
+2025-03-01 11:03:11,291 - dqn_train - INFO - Episode 2800/6000 | Reward: 2.72 | Length: 5.22 | Loss: 1.1478 | Epsilon: 0.0500 | Buffer: 31104
+2025-03-01 11:03:11,661 - dqn_train - INFO - Evaluation at episode 2800: 3.44 reward, Win rate: 0.70
+2025-03-01 11:03:13,758 - dqn_train - INFO - Episode 2900/6000 | Reward: 3.26 | Length: 5.39 | Loss: 1.1610 | Epsilon: 0.0500 | Buffer: 31643
+2025-03-01 11:03:14,147 - dqn_train - INFO - Evaluation at episode 2900: 3.62 reward, Win rate: 0.90
+2025-03-01 11:03:14,147 - dqn_train - INFO - Win rate 0.90 is above threshold 0.85 (1/3)
+2025-03-01 11:03:16,187 - dqn_train - INFO - Episode 3000/6000 | Reward: 3.56 | Length: 5.32 | Loss: 1.1475 | Epsilon: 0.0500 | Buffer: 32175
+2025-03-01 11:03:16,197 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_3000
+2025-03-01 11:03:16,564 - dqn_train - INFO - Evaluation at episode 3000: 3.86 reward, Win rate: 0.70
+2025-03-01 11:03:18,532 - dqn_train - INFO - Episode 3100/6000 | Reward: 2.84 | Length: 5.17 | Loss: 1.1146 | Epsilon: 0.0500 | Buffer: 32692
+2025-03-01 11:03:18,896 - dqn_train - INFO - Evaluation at episode 3100: 3.26 reward, Win rate: 0.80
+2025-03-01 11:03:20,921 - dqn_train - INFO - Episode 3200/6000 | Reward: 3.44 | Length: 5.36 | Loss: 1.1126 | Epsilon: 0.0500 | Buffer: 33228
+2025-03-01 11:03:21,263 - dqn_train - INFO - Evaluation at episode 3200: 2.84 reward, Win rate: 0.73
+2025-03-01 11:03:23,341 - dqn_train - INFO - Episode 3300/6000 | Reward: 2.06 | Length: 5.30 | Loss: 1.0714 | Epsilon: 0.0500 | Buffer: 33758
+2025-03-01 11:03:23,695 - dqn_train - INFO - Evaluation at episode 3300: 3.14 reward, Win rate: 0.67
+2025-03-01 11:03:25,764 - dqn_train - INFO - Episode 3400/6000 | Reward: 3.02 | Length: 5.38 | Loss: 1.0883 | Epsilon: 0.0500 | Buffer: 34296
+2025-03-01 11:03:26,127 - dqn_train - INFO - Evaluation at episode 3400: 3.20 reward, Win rate: 0.63
+2025-03-01 11:03:28,207 - dqn_train - INFO - Episode 3500/6000 | Reward: 2.60 | Length: 5.51 | Loss: 1.0801 | Epsilon: 0.0500 | Buffer: 34847
+2025-03-01 11:03:28,577 - dqn_train - INFO - Evaluation at episode 3500: 3.26 reward, Win rate: 0.67
+2025-03-01 11:03:30,651 - dqn_train - INFO - Episode 3600/6000 | Reward: 3.14 | Length: 5.42 | Loss: 1.0596 | Epsilon: 0.0500 | Buffer: 35389
+2025-03-01 11:03:31,014 - dqn_train - INFO - Evaluation at episode 3600: 3.44 reward, Win rate: 0.77
+2025-03-01 11:03:33,064 - dqn_train - INFO - Episode 3700/6000 | Reward: 2.84 | Length: 5.04 | Loss: 1.0631 | Epsilon: 0.0500 | Buffer: 35893
+2025-03-01 11:03:33,425 - dqn_train - INFO - Evaluation at episode 3700: 2.72 reward, Win rate: 0.60
+2025-03-01 11:03:35,760 - dqn_train - INFO - Episode 3800/6000 | Reward: 2.90 | Length: 5.27 | Loss: 1.0814 | Epsilon: 0.0500 | Buffer: 36420
+2025-03-01 11:03:36,113 - dqn_train - INFO - Evaluation at episode 3800: 3.38 reward, Win rate: 0.80
+2025-03-01 11:03:38,451 - dqn_train - INFO - Episode 3900/6000 | Reward: 2.78 | Length: 5.42 | Loss: 1.0711 | Epsilon: 0.0500 | Buffer: 36962
+2025-03-01 11:03:38,817 - dqn_train - INFO - Evaluation at episode 3900: 2.66 reward, Win rate: 0.73
+2025-03-01 11:03:40,897 - dqn_train - INFO - Episode 4000/6000 | Reward: 2.78 | Length: 5.22 | Loss: 1.0705 | Epsilon: 0.0500 | Buffer: 37484
+2025-03-01 11:03:40,909 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_4000
+2025-03-01 11:03:41,284 - dqn_train - INFO - Evaluation at episode 4000: 3.38 reward, Win rate: 0.53
+2025-03-01 11:03:43,445 - dqn_train - INFO - Episode 4100/6000 | Reward: 2.90 | Length: 5.33 | Loss: 1.1016 | Epsilon: 0.0500 | Buffer: 38017
+2025-03-01 11:03:43,804 - dqn_train - INFO - Evaluation at episode 4100: 3.08 reward, Win rate: 0.57
+2025-03-01 11:03:45,975 - dqn_train - INFO - Episode 4200/6000 | Reward: 2.42 | Length: 5.02 | Loss: 1.1411 | Epsilon: 0.0500 | Buffer: 38519
+2025-03-01 11:03:46,353 - dqn_train - INFO - Evaluation at episode 4200: 3.32 reward, Win rate: 0.47
+2025-03-01 11:03:48,511 - dqn_train - INFO - Episode 4300/6000 | Reward: 2.90 | Length: 5.24 | Loss: 1.1487 | Epsilon: 0.0500 | Buffer: 39043
+2025-03-01 11:03:48,854 - dqn_train - INFO - Evaluation at episode 4300: 2.96 reward, Win rate: 0.67
+2025-03-01 11:03:50,835 - dqn_train - INFO - Episode 4400/6000 | Reward: 2.72 | Length: 5.03 | Loss: 1.1296 | Epsilon: 0.0500 | Buffer: 39546
+2025-03-01 11:03:51,213 - dqn_train - INFO - Evaluation at episode 4400: 2.84 reward, Win rate: 0.77
+2025-03-01 11:03:53,285 - dqn_train - INFO - Episode 4500/6000 | Reward: 2.24 | Length: 4.96 | Loss: 1.1412 | Epsilon: 0.0500 | Buffer: 40042
+2025-03-01 11:03:53,625 - dqn_train - INFO - Evaluation at episode 4500: 2.78 reward, Win rate: 0.83
+2025-03-01 11:03:55,650 - dqn_train - INFO - Episode 4600/6000 | Reward: 2.18 | Length: 5.04 | Loss: 1.1920 | Epsilon: 0.0500 | Buffer: 40546
+2025-03-01 11:03:55,998 - dqn_train - INFO - Evaluation at episode 4600: 3.32 reward, Win rate: 0.67
+2025-03-01 11:03:58,073 - dqn_train - INFO - Episode 4700/6000 | Reward: 2.90 | Length: 5.20 | Loss: 1.1913 | Epsilon: 0.0500 | Buffer: 41066
+2025-03-01 11:03:58,411 - dqn_train - INFO - Evaluation at episode 4700: 2.96 reward, Win rate: 0.60
+2025-03-01 11:04:00,340 - dqn_train - INFO - Episode 4800/6000 | Reward: 2.06 | Length: 4.86 | Loss: 1.1886 | Epsilon: 0.0500 | Buffer: 41552
+2025-03-01 11:04:00,692 - dqn_train - INFO - Evaluation at episode 4800: 2.78 reward, Win rate: 0.47
+2025-03-01 11:04:02,572 - dqn_train - INFO - Episode 4900/6000 | Reward: 2.42 | Length: 4.71 | Loss: 1.2528 | Epsilon: 0.0500 | Buffer: 42023
+2025-03-01 11:04:02,890 - dqn_train - INFO - Evaluation at episode 4900: 2.36 reward, Win rate: 0.57
+2025-03-01 11:04:04,862 - dqn_train - INFO - Episode 5000/6000 | Reward: 2.48 | Length: 4.86 | Loss: 1.2442 | Epsilon: 0.0500 | Buffer: 42509
+2025-03-01 11:04:04,874 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_5000
+2025-03-01 11:04:05,204 - dqn_train - INFO - Evaluation at episode 5000: 3.02 reward, Win rate: 0.63
+2025-03-01 11:04:07,208 - dqn_train - INFO - Episode 5100/6000 | Reward: 2.60 | Length: 4.87 | Loss: 1.2925 | Epsilon: 0.0500 | Buffer: 42996
+2025-03-01 11:04:07,522 - dqn_train - INFO - Evaluation at episode 5100: 2.30 reward, Win rate: 0.57
+2025-03-01 11:04:09,517 - dqn_train - INFO - Episode 5200/6000 | Reward: 2.24 | Length: 4.88 | Loss: 1.3022 | Epsilon: 0.0500 | Buffer: 43484
+2025-03-01 11:04:09,852 - dqn_train - INFO - Evaluation at episode 5200: 2.96 reward, Win rate: 0.67
+2025-03-01 11:04:11,716 - dqn_train - INFO - Episode 5300/6000 | Reward: 1.70 | Length: 4.66 | Loss: 1.2981 | Epsilon: 0.0500 | Buffer: 43950
+2025-03-01 11:04:12,055 - dqn_train - INFO - Evaluation at episode 5300: 2.54 reward, Win rate: 0.53
+2025-03-01 11:04:13,983 - dqn_train - INFO - Episode 5400/6000 | Reward: 2.00 | Length: 4.75 | Loss: 1.3540 | Epsilon: 0.0500 | Buffer: 44425
+2025-03-01 11:04:14,326 - dqn_train - INFO - Evaluation at episode 5400: 2.18 reward, Win rate: 0.60
+2025-03-01 11:04:16,238 - dqn_train - INFO - Episode 5500/6000 | Reward: 2.54 | Length: 4.75 | Loss: 1.4113 | Epsilon: 0.0500 | Buffer: 44900
+2025-03-01 11:04:16,563 - dqn_train - INFO - Evaluation at episode 5500: 2.78 reward, Win rate: 0.63
+2025-03-01 11:04:18,455 - dqn_train - INFO - Episode 5600/6000 | Reward: 1.94 | Length: 4.45 | Loss: 1.4405 | Epsilon: 0.0500 | Buffer: 45345
+2025-03-01 11:04:18,791 - dqn_train - INFO - Evaluation at episode 5600: 2.18 reward, Win rate: 0.80
+2025-03-01 11:04:20,708 - dqn_train - INFO - Episode 5700/6000 | Reward: 2.00 | Length: 4.62 | Loss: 1.5462 | Epsilon: 0.0500 | Buffer: 45807
+2025-03-01 11:04:21,030 - dqn_train - INFO - Evaluation at episode 5700: 2.24 reward, Win rate: 0.53
+2025-03-01 11:04:22,881 - dqn_train - INFO - Episode 5800/6000 | Reward: 2.06 | Length: 4.63 | Loss: 1.5445 | Epsilon: 0.0500 | Buffer: 46270
+2025-03-01 11:04:23,187 - dqn_train - INFO - Evaluation at episode 5800: 1.76 reward, Win rate: 0.50
+2025-03-01 11:04:24,948 - dqn_train - INFO - Episode 5900/6000 | Reward: 1.40 | Length: 4.33 | Loss: 1.6041 | Epsilon: 0.0500 | Buffer: 46703
+2025-03-01 11:04:25,299 - dqn_train - INFO - Evaluation at episode 5900: 2.54 reward, Win rate: 0.73
+2025-03-01 11:04:27,272 - dqn_train - INFO - Episode 6000/6000 | Reward: 2.30 | Length: 4.60 | Loss: 1.6268 | Epsilon: 0.0500 | Buffer: 47163
+2025-03-01 11:04:27,285 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_2_conservative\dqn_episode_6000
+2025-03-01 11:04:27,576 - dqn_train - INFO - Evaluation at episode 6000: 2.18 reward, Win rate: 0.47
+2025-03-01 11:04:27,577 - dqn_train - INFO - Training completed!
+2025-03-01 11:04:28,011 - dqn_train - INFO - Final evaluation: 2.09 reward
+2025-03-01 11:05:12,799 - dqn_train - INFO - Starting DQN training for 6000 episodes
+2025-03-01 11:05:12,800 - dqn_train - INFO - Agent config: {'epsilon': 0.05, 'buffer_size': 47163, 'learning_rate': 0.00020999999999999998, 'training_steps': 15732}
+2025-03-01 11:05:14,588 - dqn_train - INFO - Episode 100/6000 | Reward: 3.38 | Length: 4.11 | Loss: 1.7558 | Epsilon: 0.0500 | Buffer: 47574
+2025-03-01 11:05:14,877 - dqn_train - INFO - Evaluation at episode 100: 3.68 reward, Win rate: 0.77
+2025-03-01 11:05:16,557 - dqn_train - INFO - Episode 200/6000 | Reward: 3.02 | Length: 4.08 | Loss: 1.4733 | Epsilon: 0.0500 | Buffer: 47982
+2025-03-01 11:05:16,832 - dqn_train - INFO - Evaluation at episode 200: 3.80 reward, Win rate: 0.53
+2025-03-01 11:05:18,463 - dqn_train - INFO - Episode 300/6000 | Reward: 2.84 | Length: 4.01 | Loss: 1.3911 | Epsilon: 0.0500 | Buffer: 48383
+2025-03-01 11:05:18,743 - dqn_train - INFO - Evaluation at episode 300: 3.50 reward, Win rate: 0.77
+2025-03-01 11:05:20,388 - dqn_train - INFO - Episode 400/6000 | Reward: 3.14 | Length: 4.02 | Loss: 1.2823 | Epsilon: 0.0500 | Buffer: 48785
+2025-03-01 11:05:20,656 - dqn_train - INFO - Evaluation at episode 400: 3.56 reward, Win rate: 0.87
+2025-03-01 11:05:20,657 - dqn_train - INFO - Win rate 0.87 is above threshold 0.85 (1/3)
+2025-03-01 11:05:22,295 - dqn_train - INFO - Episode 500/6000 | Reward: 2.66 | Length: 3.95 | Loss: 1.1416 | Epsilon: 0.0500 | Buffer: 49180
+2025-03-01 11:05:22,550 - dqn_train - INFO - Evaluation at episode 500: 3.38 reward, Win rate: 0.70
+2025-03-01 11:05:24,150 - dqn_train - INFO - Episode 600/6000 | Reward: 2.30 | Length: 3.84 | Loss: 1.0594 | Epsilon: 0.0500 | Buffer: 49564
+2025-03-01 11:05:24,418 - dqn_train - INFO - Evaluation at episode 600: 2.90 reward, Win rate: 0.67
+2025-03-01 11:05:26,048 - dqn_train - INFO - Episode 700/6000 | Reward: 2.78 | Length: 3.93 | Loss: 1.0164 | Epsilon: 0.0500 | Buffer: 49957
+2025-03-01 11:05:26,318 - dqn_train - INFO - Evaluation at episode 700: 3.02 reward, Win rate: 0.77
+2025-03-01 11:05:27,934 - dqn_train - INFO - Episode 800/6000 | Reward: 2.72 | Length: 3.92 | Loss: 0.9859 | Epsilon: 0.0500 | Buffer: 50349
+2025-03-01 11:05:28,196 - dqn_train - INFO - Evaluation at episode 800: 3.20 reward, Win rate: 0.70
+2025-03-01 11:05:29,761 - dqn_train - INFO - Episode 900/6000 | Reward: 2.54 | Length: 3.84 | Loss: 0.9862 | Epsilon: 0.0500 | Buffer: 50733
+2025-03-01 11:05:30,028 - dqn_train - INFO - Evaluation at episode 900: 2.78 reward, Win rate: 0.63
+2025-03-01 11:05:31,599 - dqn_train - INFO - Episode 1000/6000 | Reward: 2.42 | Length: 3.85 | Loss: 0.9695 | Epsilon: 0.0500 | Buffer: 51118
+2025-03-01 11:05:31,607 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_3_aggressive\dqn_episode_1000
+2025-03-01 11:05:31,891 - dqn_train - INFO - Evaluation at episode 1000: 3.50 reward, Win rate: 0.67
+2025-03-01 11:05:33,525 - dqn_train - INFO - Episode 1100/6000 | Reward: 2.90 | Length: 3.90 | Loss: 0.9608 | Epsilon: 0.0500 | Buffer: 51508
+2025-03-01 11:05:33,801 - dqn_train - INFO - Evaluation at episode 1100: 3.14 reward, Win rate: 0.83
+2025-03-01 11:05:35,483 - dqn_train - INFO - Episode 1200/6000 | Reward: 3.14 | Length: 3.97 | Loss: 0.9504 | Epsilon: 0.0500 | Buffer: 51905
+2025-03-01 11:05:35,756 - dqn_train - INFO - Evaluation at episode 1200: 3.44 reward, Win rate: 0.80
+2025-03-01 11:05:37,431 - dqn_train - INFO - Episode 1300/6000 | Reward: 3.44 | Length: 3.92 | Loss: 0.9662 | Epsilon: 0.0500 | Buffer: 52297
+2025-03-01 11:05:37,710 - dqn_train - INFO - Evaluation at episode 1300: 3.86 reward, Win rate: 0.80
+2025-03-01 11:05:39,417 - dqn_train - INFO - Episode 1400/6000 | Reward: 3.32 | Length: 4.06 | Loss: 0.9663 | Epsilon: 0.0500 | Buffer: 52703
+2025-03-01 11:05:39,684 - dqn_train - INFO - Evaluation at episode 1400: 3.98 reward, Win rate: 0.90
+2025-03-01 11:05:39,685 - dqn_train - INFO - Win rate 0.90 is above threshold 0.85 (1/3)
+2025-03-01 11:05:41,454 - dqn_train - INFO - Episode 1500/6000 | Reward: 3.38 | Length: 3.99 | Loss: 0.9688 | Epsilon: 0.0500 | Buffer: 53102
+2025-03-01 11:05:41,744 - dqn_train - INFO - Evaluation at episode 1500: 3.98 reward, Win rate: 0.73
+2025-03-01 11:05:43,439 - dqn_train - INFO - Episode 1600/6000 | Reward: 3.26 | Length: 3.84 | Loss: 0.9682 | Epsilon: 0.0500 | Buffer: 53486
+2025-03-01 11:05:43,715 - dqn_train - INFO - Evaluation at episode 1600: 3.62 reward, Win rate: 0.77
+2025-03-01 11:05:45,477 - dqn_train - INFO - Episode 1700/6000 | Reward: 3.26 | Length: 3.98 | Loss: 0.9668 | Epsilon: 0.0500 | Buffer: 53884
+2025-03-01 11:05:45,756 - dqn_train - INFO - Evaluation at episode 1700: 3.26 reward, Win rate: 0.80
+2025-03-01 11:05:47,622 - dqn_train - INFO - Episode 1800/6000 | Reward: 3.56 | Length: 4.03 | Loss: 0.9695 | Epsilon: 0.0500 | Buffer: 54287
+2025-03-01 11:05:47,900 - dqn_train - INFO - Evaluation at episode 1800: 3.86 reward, Win rate: 0.57
+2025-03-01 11:05:49,582 - dqn_train - INFO - Episode 1900/6000 | Reward: 3.26 | Length: 3.95 | Loss: 0.9793 | Epsilon: 0.0500 | Buffer: 54682
+2025-03-01 11:05:49,847 - dqn_train - INFO - Evaluation at episode 1900: 3.50 reward, Win rate: 0.90
+2025-03-01 11:05:49,847 - dqn_train - INFO - Win rate 0.90 is above threshold 0.85 (1/3)
+2025-03-01 11:05:51,531 - dqn_train - INFO - Episode 2000/6000 | Reward: 3.74 | Length: 3.95 | Loss: 0.9828 | Epsilon: 0.0500 | Buffer: 55077
+2025-03-01 11:05:51,538 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_3_aggressive\dqn_episode_2000
+2025-03-01 11:05:51,814 - dqn_train - INFO - Evaluation at episode 2000: 4.40 reward, Win rate: 0.93
+2025-03-01 11:05:51,815 - dqn_train - INFO - Win rate 0.93 is above threshold 0.85 (2/3)
+2025-03-01 11:05:53,504 - dqn_train - INFO - Episode 2100/6000 | Reward: 3.68 | Length: 4.02 | Loss: 0.9959 | Epsilon: 0.0500 | Buffer: 55479
+2025-03-01 11:05:53,770 - dqn_train - INFO - Evaluation at episode 2100: 3.98 reward, Win rate: 0.90
+2025-03-01 11:05:53,771 - dqn_train - INFO - Win rate 0.90 is above threshold 0.85 (3/3)
+2025-03-01 11:05:53,771 - dqn_train - INFO - Early stopping triggered at episode 2100 with win rate 0.90
+2025-03-01 11:05:53,778 - dqn_train - INFO - Training completed!
+2025-03-01 11:05:54,199 - dqn_train - INFO - Final evaluation: 4.07 reward
+2025-03-01 11:06:52,757 - dqn_train - INFO - Starting DQN training for 6000 episodes
+2025-03-01 11:06:52,758 - dqn_train - INFO - Agent config: {'epsilon': 0.05, 'buffer_size': 55479, 'learning_rate': 0.00014699999999999997, 'training_steps': 23646}
+2025-03-01 11:06:55,194 - dqn_train - INFO - Episode 100/6000 | Reward: 3.02 | Length: 5.13 | Loss: 0.9836 | Epsilon: 0.0500 | Buffer: 55992
+2025-03-01 11:06:55,541 - dqn_train - INFO - Evaluation at episode 100: 3.32 reward, Win rate: 0.67
+2025-03-01 11:06:57,818 - dqn_train - INFO - Episode 200/6000 | Reward: 3.08 | Length: 5.10 | Loss: 0.9912 | Epsilon: 0.0500 | Buffer: 56502
+2025-03-01 11:06:58,178 - dqn_train - INFO - Evaluation at episode 200: 3.50 reward, Win rate: 0.67
+2025-03-01 11:07:00,328 - dqn_train - INFO - Episode 300/6000 | Reward: 2.72 | Length: 4.95 | Loss: 0.9911 | Epsilon: 0.0500 | Buffer: 56997
+2025-03-01 11:07:00,719 - dqn_train - INFO - Evaluation at episode 300: 3.50 reward, Win rate: 0.73
+2025-03-01 11:07:03,116 - dqn_train - INFO - Episode 400/6000 | Reward: 3.20 | Length: 5.15 | Loss: 0.9879 | Epsilon: 0.0500 | Buffer: 57512
+2025-03-01 11:07:03,463 - dqn_train - INFO - Evaluation at episode 400: 3.50 reward, Win rate: 0.60
+2025-03-01 11:07:05,666 - dqn_train - INFO - Episode 500/6000 | Reward: 3.14 | Length: 5.03 | Loss: 1.0196 | Epsilon: 0.0500 | Buffer: 58015
+2025-03-01 11:07:06,005 - dqn_train - INFO - Evaluation at episode 500: 3.56 reward, Win rate: 0.57
+2025-03-01 11:07:08,097 - dqn_train - INFO - Episode 600/6000 | Reward: 2.36 | Length: 4.93 | Loss: 1.0319 | Epsilon: 0.0500 | Buffer: 58508
+2025-03-01 11:07:08,452 - dqn_train - INFO - Evaluation at episode 600: 3.08 reward, Win rate: 0.83
+2025-03-01 11:07:11,004 - dqn_train - INFO - Episode 700/6000 | Reward: 2.42 | Length: 4.69 | Loss: 1.0348 | Epsilon: 0.0500 | Buffer: 58977
+2025-03-01 11:07:11,382 - dqn_train - INFO - Evaluation at episode 700: 3.14 reward, Win rate: 0.70
+2025-03-01 11:07:13,607 - dqn_train - INFO - Episode 800/6000 | Reward: 3.02 | Length: 4.99 | Loss: 1.0228 | Epsilon: 0.0500 | Buffer: 59476
+2025-03-01 11:07:13,956 - dqn_train - INFO - Evaluation at episode 800: 3.26 reward, Win rate: 0.77
+2025-03-01 11:07:16,245 - dqn_train - INFO - Episode 900/6000 | Reward: 3.20 | Length: 5.11 | Loss: 1.0600 | Epsilon: 0.0500 | Buffer: 59987
+2025-03-01 11:07:16,599 - dqn_train - INFO - Evaluation at episode 900: 3.32 reward, Win rate: 0.73
+2025-03-01 11:07:18,719 - dqn_train - INFO - Episode 1000/6000 | Reward: 2.36 | Length: 4.95 | Loss: 1.0605 | Epsilon: 0.0500 | Buffer: 60482
+2025-03-01 11:07:18,726 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_1000
+2025-03-01 11:07:19,072 - dqn_train - INFO - Evaluation at episode 1000: 3.08 reward, Win rate: 0.67
+2025-03-01 11:07:21,435 - dqn_train - INFO - Episode 1100/6000 | Reward: 3.08 | Length: 5.21 | Loss: 1.0749 | Epsilon: 0.0500 | Buffer: 61003
+2025-03-01 11:07:21,774 - dqn_train - INFO - Evaluation at episode 1100: 3.02 reward, Win rate: 0.87
+2025-03-01 11:07:21,774 - dqn_train - INFO - Win rate 0.87 is above threshold 0.85 (1/3)
+2025-03-01 11:07:24,195 - dqn_train - INFO - Episode 1200/6000 | Reward: 2.78 | Length: 4.99 | Loss: 1.0727 | Epsilon: 0.0500 | Buffer: 61502
+2025-03-01 11:07:24,529 - dqn_train - INFO - Evaluation at episode 1200: 2.60 reward, Win rate: 0.60
+2025-03-01 11:07:26,752 - dqn_train - INFO - Episode 1300/6000 | Reward: 2.84 | Length: 5.11 | Loss: 1.0964 | Epsilon: 0.0500 | Buffer: 62013
+2025-03-01 11:07:27,110 - dqn_train - INFO - Evaluation at episode 1300: 2.66 reward, Win rate: 0.60
+2025-03-01 11:07:29,249 - dqn_train - INFO - Episode 1400/6000 | Reward: 2.96 | Length: 4.97 | Loss: 1.0976 | Epsilon: 0.0500 | Buffer: 62510
+2025-03-01 11:07:29,567 - dqn_train - INFO - Evaluation at episode 1400: 2.30 reward, Win rate: 0.67
+2025-03-01 11:07:31,746 - dqn_train - INFO - Episode 1500/6000 | Reward: 2.48 | Length: 4.90 | Loss: 1.0982 | Epsilon: 0.0500 | Buffer: 63000
+2025-03-01 11:07:32,094 - dqn_train - INFO - Evaluation at episode 1500: 2.78 reward, Win rate: 0.63
+2025-03-01 11:07:34,249 - dqn_train - INFO - Episode 1600/6000 | Reward: 2.78 | Length: 4.81 | Loss: 1.1097 | Epsilon: 0.0500 | Buffer: 63481
+2025-03-01 11:07:34,598 - dqn_train - INFO - Evaluation at episode 1600: 3.26 reward, Win rate: 0.67
+2025-03-01 11:07:37,034 - dqn_train - INFO - Episode 1700/6000 | Reward: 2.96 | Length: 5.20 | Loss: 1.1325 | Epsilon: 0.0500 | Buffer: 64001
+2025-03-01 11:07:37,371 - dqn_train - INFO - Evaluation at episode 1700: 3.02 reward, Win rate: 0.70
+2025-03-01 11:07:39,544 - dqn_train - INFO - Episode 1800/6000 | Reward: 2.24 | Length: 4.64 | Loss: 1.1574 | Epsilon: 0.0500 | Buffer: 64465
+2025-03-01 11:07:39,884 - dqn_train - INFO - Evaluation at episode 1800: 2.84 reward, Win rate: 0.63
+2025-03-01 11:07:42,034 - dqn_train - INFO - Episode 1900/6000 | Reward: 2.30 | Length: 4.76 | Loss: 1.1785 | Epsilon: 0.0500 | Buffer: 64941
+2025-03-01 11:07:42,379 - dqn_train - INFO - Evaluation at episode 1900: 2.66 reward, Win rate: 0.67
+2025-03-01 11:07:44,508 - dqn_train - INFO - Episode 2000/6000 | Reward: 2.24 | Length: 4.71 | Loss: 1.1783 | Epsilon: 0.0500 | Buffer: 65412
+2025-03-01 11:07:44,517 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_2000
+2025-03-01 11:07:44,852 - dqn_train - INFO - Evaluation at episode 2000: 2.72 reward, Win rate: 0.67
+2025-03-01 11:07:47,154 - dqn_train - INFO - Episode 2100/6000 | Reward: 2.60 | Length: 4.70 | Loss: 1.1996 | Epsilon: 0.0500 | Buffer: 65882
+2025-03-01 11:07:47,483 - dqn_train - INFO - Evaluation at episode 2100: 2.60 reward, Win rate: 0.57
+2025-03-01 11:07:49,541 - dqn_train - INFO - Episode 2200/6000 | Reward: 1.76 | Length: 4.47 | Loss: 1.1929 | Epsilon: 0.0500 | Buffer: 66329
+2025-03-01 11:07:49,868 - dqn_train - INFO - Evaluation at episode 2200: 2.90 reward, Win rate: 0.63
+2025-03-01 11:07:51,827 - dqn_train - INFO - Episode 2300/6000 | Reward: 1.70 | Length: 4.45 | Loss: 1.2093 | Epsilon: 0.0500 | Buffer: 66774
+2025-03-01 11:07:52,165 - dqn_train - INFO - Evaluation at episode 2300: 2.72 reward, Win rate: 0.53
+2025-03-01 11:07:54,263 - dqn_train - INFO - Episode 2400/6000 | Reward: 2.54 | Length: 4.71 | Loss: 1.2312 | Epsilon: 0.0500 | Buffer: 67245
+2025-03-01 11:07:54,589 - dqn_train - INFO - Evaluation at episode 2400: 2.60 reward, Win rate: 0.67
+2025-03-01 11:07:56,676 - dqn_train - INFO - Episode 2500/6000 | Reward: 1.94 | Length: 4.61 | Loss: 1.2766 | Epsilon: 0.0500 | Buffer: 67706
+2025-03-01 11:07:56,994 - dqn_train - INFO - Evaluation at episode 2500: 2.84 reward, Win rate: 0.70
+2025-03-01 11:07:59,166 - dqn_train - INFO - Episode 2600/6000 | Reward: 2.12 | Length: 4.67 | Loss: 1.2650 | Epsilon: 0.0500 | Buffer: 68173
+2025-03-01 11:07:59,492 - dqn_train - INFO - Evaluation at episode 2600: 2.90 reward, Win rate: 0.57
+2025-03-01 11:08:01,836 - dqn_train - INFO - Episode 2700/6000 | Reward: 2.96 | Length: 5.08 | Loss: 1.2809 | Epsilon: 0.0500 | Buffer: 68681
+2025-03-01 11:08:02,157 - dqn_train - INFO - Evaluation at episode 2700: 3.02 reward, Win rate: 0.47
+2025-03-01 11:08:04,248 - dqn_train - INFO - Episode 2800/6000 | Reward: 2.12 | Length: 4.52 | Loss: 1.2854 | Epsilon: 0.0500 | Buffer: 69133
+2025-03-01 11:08:04,545 - dqn_train - INFO - Evaluation at episode 2800: 2.48 reward, Win rate: 0.57
+2025-03-01 11:08:06,764 - dqn_train - INFO - Episode 2900/6000 | Reward: 2.48 | Length: 4.64 | Loss: 1.3047 | Epsilon: 0.0500 | Buffer: 69597
+2025-03-01 11:08:07,121 - dqn_train - INFO - Evaluation at episode 2900: 2.72 reward, Win rate: 0.60
+2025-03-01 11:08:09,483 - dqn_train - INFO - Episode 3000/6000 | Reward: 2.54 | Length: 4.95 | Loss: 1.3261 | Epsilon: 0.0500 | Buffer: 70092
+2025-03-01 11:08:09,494 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_3000
+2025-03-01 11:08:09,829 - dqn_train - INFO - Evaluation at episode 3000: 3.08 reward, Win rate: 0.70
+2025-03-01 11:08:12,193 - dqn_train - INFO - Episode 3100/6000 | Reward: 2.30 | Length: 4.89 | Loss: 1.3447 | Epsilon: 0.0500 | Buffer: 70581
+2025-03-01 11:08:12,530 - dqn_train - INFO - Evaluation at episode 3100: 2.48 reward, Win rate: 0.67
+2025-03-01 11:08:14,708 - dqn_train - INFO - Episode 3200/6000 | Reward: 2.18 | Length: 4.63 | Loss: 1.3735 | Epsilon: 0.0500 | Buffer: 71044
+2025-03-01 11:08:15,045 - dqn_train - INFO - Evaluation at episode 3200: 2.54 reward, Win rate: 0.60
+2025-03-01 11:08:17,424 - dqn_train - INFO - Episode 3300/6000 | Reward: 2.48 | Length: 4.79 | Loss: 1.3908 | Epsilon: 0.0500 | Buffer: 71523
+2025-03-01 11:08:17,737 - dqn_train - INFO - Evaluation at episode 3300: 1.82 reward, Win rate: 0.63
+2025-03-01 11:08:19,849 - dqn_train - INFO - Episode 3400/6000 | Reward: 1.70 | Length: 4.47 | Loss: 1.3908 | Epsilon: 0.0500 | Buffer: 71970
+2025-03-01 11:08:20,165 - dqn_train - INFO - Evaluation at episode 3400: 2.12 reward, Win rate: 0.57
+2025-03-01 11:08:22,168 - dqn_train - INFO - Episode 3500/6000 | Reward: 1.70 | Length: 4.43 | Loss: 1.4090 | Epsilon: 0.0500 | Buffer: 72413
+2025-03-01 11:08:22,481 - dqn_train - INFO - Evaluation at episode 3500: 2.60 reward, Win rate: 0.67
+2025-03-01 11:08:24,643 - dqn_train - INFO - Episode 3600/6000 | Reward: 2.42 | Length: 4.64 | Loss: 1.4030 | Epsilon: 0.0500 | Buffer: 72877
+2025-03-01 11:08:24,984 - dqn_train - INFO - Evaluation at episode 3600: 2.90 reward, Win rate: 0.50
+2025-03-01 11:08:27,263 - dqn_train - INFO - Episode 3700/6000 | Reward: 2.18 | Length: 4.51 | Loss: 1.4278 | Epsilon: 0.0500 | Buffer: 73328
+2025-03-01 11:08:27,610 - dqn_train - INFO - Evaluation at episode 3700: 2.18 reward, Win rate: 0.60
+2025-03-01 11:08:29,772 - dqn_train - INFO - Episode 3800/6000 | Reward: 2.42 | Length: 4.55 | Loss: 1.4457 | Epsilon: 0.0500 | Buffer: 73783
+2025-03-01 11:08:30,100 - dqn_train - INFO - Evaluation at episode 3800: 2.12 reward, Win rate: 0.57
+2025-03-01 11:08:32,284 - dqn_train - INFO - Episode 3900/6000 | Reward: 2.12 | Length: 4.55 | Loss: 1.4761 | Epsilon: 0.0500 | Buffer: 74238
+2025-03-01 11:08:32,597 - dqn_train - INFO - Evaluation at episode 3900: 2.18 reward, Win rate: 0.53
+2025-03-01 11:08:34,970 - dqn_train - INFO - Episode 4000/6000 | Reward: 2.42 | Length: 4.93 | Loss: 1.4853 | Epsilon: 0.0500 | Buffer: 74731
+2025-03-01 11:08:34,980 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_4000
+2025-03-01 11:08:35,341 - dqn_train - INFO - Evaluation at episode 4000: 2.48 reward, Win rate: 0.63
+2025-03-01 11:08:37,559 - dqn_train - INFO - Episode 4100/6000 | Reward: 1.88 | Length: 4.46 | Loss: 1.5487 | Epsilon: 0.0500 | Buffer: 75177
+2025-03-01 11:08:37,926 - dqn_train - INFO - Evaluation at episode 4100: 3.08 reward, Win rate: 0.53
+2025-03-01 11:08:40,260 - dqn_train - INFO - Episode 4200/6000 | Reward: 2.72 | Length: 4.74 | Loss: 1.5504 | Epsilon: 0.0500 | Buffer: 75651
+2025-03-01 11:08:40,568 - dqn_train - INFO - Evaluation at episode 4200: 1.94 reward, Win rate: 0.47
+2025-03-01 11:08:42,792 - dqn_train - INFO - Episode 4300/6000 | Reward: 2.42 | Length: 4.64 | Loss: 1.5676 | Epsilon: 0.0500 | Buffer: 76115
+2025-03-01 11:08:43,120 - dqn_train - INFO - Evaluation at episode 4300: 2.66 reward, Win rate: 0.63
+2025-03-01 11:08:45,262 - dqn_train - INFO - Episode 4400/6000 | Reward: 2.54 | Length: 4.49 | Loss: 1.5448 | Epsilon: 0.0500 | Buffer: 76564
+2025-03-01 11:08:45,561 - dqn_train - INFO - Evaluation at episode 4400: 2.42 reward, Win rate: 0.53
+2025-03-01 11:08:47,751 - dqn_train - INFO - Episode 4500/6000 | Reward: 2.18 | Length: 4.40 | Loss: 1.5693 | Epsilon: 0.0500 | Buffer: 77004
+2025-03-01 11:08:48,052 - dqn_train - INFO - Evaluation at episode 4500: 2.30 reward, Win rate: 0.47
+2025-03-01 11:08:50,110 - dqn_train - INFO - Episode 4600/6000 | Reward: 1.82 | Length: 4.16 | Loss: 1.5784 | Epsilon: 0.0500 | Buffer: 77420
+2025-03-01 11:08:50,444 - dqn_train - INFO - Evaluation at episode 4600: 2.48 reward, Win rate: 0.67
+2025-03-01 11:08:52,751 - dqn_train - INFO - Episode 4700/6000 | Reward: 2.12 | Length: 4.66 | Loss: 1.5612 | Epsilon: 0.0500 | Buffer: 77886
+2025-03-01 11:08:53,073 - dqn_train - INFO - Evaluation at episode 4700: 2.90 reward, Win rate: 0.63
+2025-03-01 11:08:55,408 - dqn_train - INFO - Episode 4800/6000 | Reward: 2.30 | Length: 4.76 | Loss: 1.6011 | Epsilon: 0.0500 | Buffer: 78362
+2025-03-01 11:08:55,734 - dqn_train - INFO - Evaluation at episode 4800: 3.14 reward, Win rate: 0.67
+2025-03-01 11:08:58,061 - dqn_train - INFO - Episode 4900/6000 | Reward: 2.06 | Length: 4.42 | Loss: 1.6489 | Epsilon: 0.0500 | Buffer: 78804
+2025-03-01 11:08:58,387 - dqn_train - INFO - Evaluation at episode 4900: 2.96 reward, Win rate: 0.63
+2025-03-01 11:09:00,691 - dqn_train - INFO - Episode 5000/6000 | Reward: 2.12 | Length: 4.31 | Loss: 1.6491 | Epsilon: 0.0500 | Buffer: 79235
+2025-03-01 11:09:00,703 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_5000
+2025-03-01 11:09:01,015 - dqn_train - INFO - Evaluation at episode 5000: 2.72 reward, Win rate: 0.57
+2025-03-01 11:09:03,154 - dqn_train - INFO - Episode 5100/6000 | Reward: 1.88 | Length: 4.29 | Loss: 1.6805 | Epsilon: 0.0500 | Buffer: 79664
+2025-03-01 11:09:03,447 - dqn_train - INFO - Evaluation at episode 5100: 2.84 reward, Win rate: 0.67
+2025-03-01 11:09:05,815 - dqn_train - INFO - Episode 5200/6000 | Reward: 2.66 | Length: 4.63 | Loss: 1.7033 | Epsilon: 0.0500 | Buffer: 80127
+2025-03-01 11:09:06,141 - dqn_train - INFO - Evaluation at episode 5200: 3.26 reward, Win rate: 0.67
+2025-03-01 11:09:08,377 - dqn_train - INFO - Episode 5300/6000 | Reward: 2.24 | Length: 4.45 | Loss: 1.7011 | Epsilon: 0.0500 | Buffer: 80572
+2025-03-01 11:09:08,695 - dqn_train - INFO - Evaluation at episode 5300: 2.60 reward, Win rate: 0.60
+2025-03-01 11:09:10,988 - dqn_train - INFO - Episode 5400/6000 | Reward: 2.42 | Length: 4.59 | Loss: 1.6917 | Epsilon: 0.0500 | Buffer: 81031
+2025-03-01 11:09:11,316 - dqn_train - INFO - Evaluation at episode 5400: 2.78 reward, Win rate: 0.57
+2025-03-01 11:09:13,395 - dqn_train - INFO - Episode 5500/6000 | Reward: 1.82 | Length: 4.30 | Loss: 1.6841 | Epsilon: 0.0500 | Buffer: 81461
+2025-03-01 11:09:13,703 - dqn_train - INFO - Evaluation at episode 5500: 2.90 reward, Win rate: 0.60
+2025-03-01 11:09:15,789 - dqn_train - INFO - Episode 5600/6000 | Reward: 2.12 | Length: 4.33 | Loss: 1.6495 | Epsilon: 0.0500 | Buffer: 81894
+2025-03-01 11:09:16,097 - dqn_train - INFO - Evaluation at episode 5600: 2.84 reward, Win rate: 0.60
+2025-03-01 11:09:18,434 - dqn_train - INFO - Episode 5700/6000 | Reward: 2.96 | Length: 4.80 | Loss: 1.7122 | Epsilon: 0.0500 | Buffer: 82374
+2025-03-01 11:09:18,765 - dqn_train - INFO - Evaluation at episode 5700: 2.90 reward, Win rate: 0.60
+2025-03-01 11:09:21,031 - dqn_train - INFO - Episode 5800/6000 | Reward: 1.88 | Length: 4.46 | Loss: 1.7154 | Epsilon: 0.0500 | Buffer: 82820
+2025-03-01 11:09:21,375 - dqn_train - INFO - Evaluation at episode 5800: 2.78 reward, Win rate: 0.57
+2025-03-01 11:09:23,697 - dqn_train - INFO - Episode 5900/6000 | Reward: 2.42 | Length: 4.63 | Loss: 1.6951 | Epsilon: 0.0500 | Buffer: 83283
+2025-03-01 11:09:24,024 - dqn_train - INFO - Evaluation at episode 5900: 2.90 reward, Win rate: 0.50
+2025-03-01 11:09:26,410 - dqn_train - INFO - Episode 6000/6000 | Reward: 2.66 | Length: 4.80 | Loss: 1.7623 | Epsilon: 0.0500 | Buffer: 83763
+2025-03-01 11:09:26,422 - dqn_train - INFO - Saved checkpoint to results\checkpoints\level_4_strategic\dqn_episode_6000
+2025-03-01 11:09:26,751 - dqn_train - INFO - Evaluation at episode 6000: 2.66 reward, Win rate: 0.67
+2025-03-01 11:09:26,752 - dqn_train - INFO - Training completed!
+2025-03-01 11:09:27,219 - dqn_train - INFO - Final evaluation: 2.90 reward
+2025-03-01 11:10:40,631 - dqn_train - INFO - Starting DQN training for 6000 episodes
+2025-03-01 11:10:40,631 - dqn_train - INFO - Agent config: {'epsilon': 0.05, 'buffer_size': 83763, 'learning_rate': 0.00010289999999999997, 'training_steps': 29170}

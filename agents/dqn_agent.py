@@ -1,91 +1,88 @@
 """
-Deep Q-Network (DQN) agent for Liar's Dice.
+DQN Agent implementation for Liar's Dice.
 
-This module implements a DQN agent with various enhancements for playing Liar's Dice.
-Features include experience replay, target networks, and dueling architectures.
+This module implements a Deep Q-Network (DQN) agent for learning
+to play Liar's Dice through reinforcement learning.
 """
 
+import os
+import random
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import random
 from collections import deque
-from typing import List, Dict, Any, Optional, Tuple
-
-from .base_agent import BaseAgent
-from environment.state import ObservationEncoder
+from typing import List, Dict, Tuple, Any, Optional
 
 
-class DuelingDQN(nn.Module):
+class QNetwork(nn.Module):
     """
-    Dueling DQN architecture.
+    Neural network architecture for approximating the Q-function.
     
-    This network architecture separates state value and action advantage,
-    which can improve learning stability and performance.
+    The network takes an observation as input and outputs Q-values
+    for each possible action.
     """
     
-    def __init__(self, input_dim: int, output_dim: int, hidden_dim: int = 128):
+    def __init__(self, input_dim: int, output_dim: int, hidden_dims: List[int] = [256, 128, 64]):
         """
-        Initialize the Dueling DQN network.
+        Initialize the Q-Network.
         
         Args:
-            input_dim: Dimension of the input (observation)
-            output_dim: Dimension of the output (action space)
-            hidden_dim: Dimension of hidden layers
+            input_dim: Dimension of the input observation
+            output_dim: Dimension of the output (number of actions)
+            hidden_dims: List of hidden layer dimensions
         """
-        super().__init__()
+        super(QNetwork, self).__init__()
         
-        # Shared feature layers
-        self.feature_layer = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU()
-        )
+        # Build the network layers
+        layers = []
+        prev_dim = input_dim
         
-        # Value stream
-        self.value_stream = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2),
-            nn.ReLU(),
-            nn.Linear(hidden_dim // 2, 1)
-        )
+        for hidden_dim in hidden_dims:
+            layers.append(nn.Linear(prev_dim, hidden_dim))
+            layers.append(nn.ReLU())
+            # Add dropout for regularization
+            layers.append(nn.Dropout(0.2))
+            prev_dim = hidden_dim
         
-        # Advantage stream
-        self.advantage_stream = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2),
-            nn.ReLU(),
-            nn.Linear(hidden_dim // 2, output_dim)
-        )
+        # Output layer
+        layers.append(nn.Linear(prev_dim, output_dim))
+        
+        self.network = nn.Sequential(*layers)
+        
+        # Initialize weights using Xavier initialization
+        self._initialize_weights()
+    
+    def _initialize_weights(self):
+        """Initialize network weights for better training dynamics."""
+        for module in self.modules():
+            if isinstance(module, nn.Linear):
+                nn.init.xavier_uniform_(module.weight)
+                nn.init.constant_(module.bias, 0.0)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass through the network.
         
         Args:
-            x: Input tensor
+            x: Input tensor of shape (batch_size, input_dim)
             
         Returns:
-            Q-values for each action
+            Tensor of shape (batch_size, output_dim) with Q-values
         """
-        features = self.feature_layer(x)
-        value = self.value_stream(features)
-        advantages = self.advantage_stream(features)
-        
-        # Combine value and advantages using the dueling architecture formula
-        # Q(s,a) = V(s) + (A(s,a) - mean(A(s,a')))
-        return value + (advantages - advantages.mean(dim=1, keepdim=True))
+        return self.network(x)
 
 
 class ReplayBuffer:
     """
-    Experience replay buffer for DQN.
+    Experience replay buffer for DQN training.
     
-    Stores transitions and samples them randomly for training.
+    Stores transitions (observation, action, reward, next_observation, done)
+    and provides random sampling for training.
     """
     
-    def __init__(self, capacity: int = 10000):
+    def __init__(self, capacity: int = 50000):
         """
         Initialize the replay buffer.
         
@@ -94,270 +91,372 @@ class ReplayBuffer:
         """
         self.buffer = deque(maxlen=capacity)
     
-    def add(self, experience: Tuple) -> None:
+    def add(self, obs: np.ndarray, action: int, reward: float, next_obs: np.ndarray, done: bool):
         """
         Add a transition to the buffer.
         
         Args:
-            experience: Tuple of (state, action, reward, next_state, done, valid_actions)
+            obs: Current observation
+            action: Action taken
+            reward: Reward received
+            next_obs: Next observation
+            done: Whether the episode is done
         """
-        self.buffer.append(experience)
+        self.buffer.append((obs, action, reward, next_obs, done))
     
-    def sample(self, batch_size: int) -> List[Tuple]:
+    def sample(self, batch_size: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
-        Sample a batch of transitions.
+        Sample a batch of transitions from the buffer.
         
         Args:
             batch_size: Number of transitions to sample
             
         Returns:
-            List of sampled transitions
+            Tuple of (observations, actions, rewards, next_observations, dones)
+            as PyTorch tensors
         """
-        return random.sample(self.buffer, min(batch_size, len(self.buffer)))
+        indices = np.random.choice(len(self.buffer), min(batch_size, len(self.buffer)), replace=False)
+        obs, actions, rewards, next_obs, dones = zip(*[self.buffer[i] for i in indices])
+        
+        # Convert to PyTorch tensors
+        obs = torch.FloatTensor(np.array(obs))
+        actions = torch.LongTensor(np.array(actions))
+        rewards = torch.FloatTensor(np.array(rewards))
+        next_obs = torch.FloatTensor(np.array(next_obs))
+        dones = torch.FloatTensor(np.array(dones))
+        
+        return obs, actions, rewards, next_obs, dones
     
     def __len__(self) -> int:
-        """Return the current size of the buffer."""
+        """
+        Get the current size of the buffer.
+        
+        Returns:
+            Number of transitions in the buffer
+        """
         return len(self.buffer)
 
 
-class DQNAgent(BaseAgent):
+class DQNAgent:
     """
     Deep Q-Network agent for Liar's Dice.
     
-    This agent uses a dueling DQN architecture with experience replay
-    for learning to play Liar's Dice.
+    This agent uses DQN to learn a policy for playing Liar's Dice,
+    with experience replay and a target network for stable learning.
     
     Attributes:
-        player_id (int): ID of the player this agent controls
-        observation_encoder (ObservationEncoder): Encoder for observations
-        action_dim (int): Dimension of the action space
-        device (torch.device): Device to run the model on
-        policy_net (DuelingDQN): Policy network
-        target_net (DuelingDQN): Target network
-        memory (ReplayBuffer): Experience replay buffer
-        optimizer (torch.optim.Optimizer): Optimizer for the policy network
-        epsilon (float): Current exploration rate
-        epsilon_end (float): Final exploration rate
-        epsilon_decay (float): Decay rate for exploration
-        gamma (float): Discount factor for future rewards
-        batch_size (int): Batch size for training
-        target_update (int): Frequency of target network updates
-        training_steps (int): Number of training steps performed
+        obs_dim: Dimension of the observation space
+        action_dim: Dimension of the action space
+        device: Device to run the model on (CPU or GPU)
+        q_network: Main Q-network for action selection
+        target_network: Target Q-network for stable learning
+        optimizer: Optimizer for updating the Q-network
+        epsilon: Exploration rate for epsilon-greedy policy
+        gamma: Discount factor for future rewards
+        target_update_freq: Frequency of target network updates
+        replay_buffer: Buffer for experience replay
     """
     
     def __init__(
         self,
-        player_id: int,
-        observation_encoder: ObservationEncoder,
+        obs_dim: int,
         action_dim: int,
-        input_dim: int = None,
-        learning_rate: float = 0.001,
+        learning_rate: float = 0.0005,
         gamma: float = 0.99,
         epsilon_start: float = 1.0,
         epsilon_end: float = 0.05,
         epsilon_decay: float = 0.995,
-        memory_size: int = 100000,
+        target_update_freq: int = 100,
+        buffer_size: int = 50000,
         batch_size: int = 64,
-        target_update: int = 100,
-        hidden_dim: int = 128,
-        device: str = None
+        hidden_dims: List[int] = [256, 128, 64],
+        device: str = 'auto'
     ):
-        """Initialize the DQN agent."""
-        super().__init__(player_id, name=f"DQN-{player_id}")
+        """
+        Initialize the DQN agent.
         
-        self.observation_encoder = observation_encoder
+        Args:
+            obs_dim: Dimension of the observation space
+            action_dim: Dimension of the action space
+            learning_rate: Learning rate for the optimizer
+            gamma: Discount factor for future rewards
+            epsilon_start: Initial exploration rate
+            epsilon_end: Final exploration rate
+            epsilon_decay: Rate of exploration decay
+            target_update_freq: Frequency of target network updates (in steps)
+            buffer_size: Size of the replay buffer
+            batch_size: Batch size for training
+            hidden_dims: Hidden dimensions of the Q-network
+            device: Device to run the model on ('cpu', 'cuda', or 'auto')
+        """
+        # IMPORTANT: Print the observation dimension to verify it matches what the environment produces
+        print(f"Initializing DQN agent with obs_dim={obs_dim}, action_dim={action_dim}")
+        self.obs_dim = obs_dim
         self.action_dim = action_dim
         self.gamma = gamma
         self.epsilon = epsilon_start
         self.epsilon_end = epsilon_end
         self.epsilon_decay = epsilon_decay
+        self.target_update_freq = target_update_freq
         self.batch_size = batch_size
-        self.target_update = target_update
         
-        # Set device
-        if device is not None:
-            self.device = torch.device(device)
+        # Determine device (CPU or GPU)
+        if device == 'auto':
+            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         else:
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            self.device = torch.device(device)
         
-        # Determine input dimension
-        if input_dim is None:
-            input_dim = observation_encoder.get_observation_shape()[0]
+        print(f"Using device: {self.device}")
         
-        # Create networks (only once with the correct dimension)
-        self.policy_net = DuelingDQN(input_dim, action_dim, hidden_dim).to(self.device)
-        self.target_net = DuelingDQN(input_dim, action_dim, hidden_dim).to(self.device)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
-        self.target_net.eval()  # Target network is only used for inference
+        # Initialize Q-networks
+        self.q_network = QNetwork(obs_dim, action_dim, hidden_dims).to(self.device)
+        self.target_network = QNetwork(obs_dim, action_dim, hidden_dims).to(self.device)
+        self.target_network.load_state_dict(self.q_network.state_dict())
+        self.target_network.eval()
         
-        # Create optimizer
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
+        # Initialize optimizer with learning rate scheduler
+        self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
+        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=1000, gamma=0.9)
         
-        # Create replay buffer
-        self.memory = ReplayBuffer(memory_size)
+        # Initialize replay buffer
+        self.replay_buffer = ReplayBuffer(capacity=buffer_size)
         
-        # Tracking variables
+        # Training step counter
         self.training_steps = 0
+        
+        # Action mapping for Liar's Dice
+        self.action_to_game_action = None
     
-    def act(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def set_action_mapping(self, action_mapping: List[Dict[str, Any]]):
+        """
+        Set the mapping from action indices to game actions.
+        
+        Args:
+            action_mapping: List of valid game actions where the index
+                corresponds to the action index in the Q-network output
+        """
+        self.action_to_game_action = action_mapping
+    
+    def select_action(self, observation: np.ndarray, valid_actions: List[Dict[str, Any]], training: bool = True) -> Dict[str, Any]:
         """
         Select an action using epsilon-greedy policy.
         
         Args:
             observation: Current observation
-            valid_actions: List of valid actions
+            valid_actions: List of valid actions in the current state
+            training: Whether the agent is in training mode
             
         Returns:
-            Selected action
+            Selected action as a dictionary compatible with the environment
         """
-        if not valid_actions:
+        # Map valid actions to indices
+        valid_indices = []
+        for action in valid_actions:
+            if self.action_to_game_action is not None:
+                # Find the index of the action in the action mapping
+                for i, mapped_action in enumerate(self.action_to_game_action):
+                    if self._actions_equal(action, mapped_action):
+                        valid_indices.append(i)
+                        break
+            else:
+                # Without a mapping, we can't properly select actions
+                raise ValueError("Action mapping not set. Call set_action_mapping first.")
+        
+        # If there are no valid actions, return None
+        if not valid_indices:
             return None
         
-        # Use epsilon-greedy policy
-        if random.random() < self.epsilon:
-            # Random action
-            return random.choice(valid_actions)
+        if training and random.random() < self.epsilon:
+            # Exploration: pick a random valid action
+            action_idx = random.choice(valid_indices)
+        else:
+            # Exploitation: pick the best valid action according to the Q-network
+            obs_tensor = torch.FloatTensor(observation).unsqueeze(0).to(self.device)
+            with torch.no_grad():
+                q_values = self.q_network(obs_tensor).squeeze(0).cpu().numpy()
+            
+            # Filter q_values to only include valid actions
+            valid_q_values = [(idx, q_values[idx]) for idx in valid_indices]
+            action_idx = max(valid_q_values, key=lambda x: x[1])[0]
         
-        # Get observation tensor
-        obs_encoded = self.observation_encoder.encode(observation)
-        obs_tensor = torch.FloatTensor(obs_encoded).unsqueeze(0).to(self.device)
-        
-        # Get Q-values
-        with torch.no_grad():
-            q_values = self.policy_net(obs_tensor)
-        
-        # Create a mapping from action index to action
-        action_map = {i: action for i, action in enumerate(valid_actions)}
-        
-        # Select best valid action
-        valid_indices = list(action_map.keys())
-        q_valid = q_values[0, valid_indices]
-        best_valid_idx = valid_indices[q_valid.argmax().item()]
-        
-        return action_map[best_valid_idx]
+        # Convert action index to game action
+        return self.action_to_game_action[action_idx].copy()
     
-    def update(self, 
-             observation: Dict[str, Any], 
-             action: Dict[str, Any], 
-             reward: float, 
-             next_observation: Dict[str, Any], 
-             done: bool, 
-             valid_actions: List[Dict[str, Any]]) -> None:
+    def update(self) -> float:
         """
-        Store experience in replay buffer.
-        
-        Args:
-            observation: Current observation
-            action: Action taken
-            reward: Reward received
-            next_observation: Next observation
-            done: Whether the episode is done
-            valid_actions: Valid actions for the current state
-        """
-        # Encode observations
-        obs_encoded = self.observation_encoder.encode(observation)
-        next_obs_encoded = self.observation_encoder.encode(next_observation)
-        
-        # Get action index and valid action indices
-        action_idx = valid_actions.index(action)
-        valid_indices = [i for i in range(len(valid_actions))]
-        
-        # Store in memory
-        self.memory.add((
-            obs_encoded,
-            action_idx,
-            reward,
-            next_obs_encoded,
-            done,
-            valid_indices
-        ))
-    
-    def train(self) -> Optional[float]:
-        """
-        Train the agent using experience replay.
+        Update the Q-network using a batch of experiences.
         
         Returns:
-            Loss value if training occurred, None otherwise
+            Loss value from the update
         """
-        # Check if we have enough samples
-        if len(self.memory) < self.batch_size:
-            return None
+        if len(self.replay_buffer) < self.batch_size:
+            return 0.0
         
-        # Sample a batch
-        batch = self.memory.sample(self.batch_size)
-        states, action_indices, rewards, next_states, dones, valid_action_indices = zip(*batch)
+        # Sample a batch of transitions
+        obs, actions, rewards, next_obs, dones = self.replay_buffer.sample(self.batch_size)
+        obs, actions, rewards, next_obs, dones = (
+            obs.to(self.device),
+            actions.to(self.device),
+            rewards.to(self.device),
+            next_obs.to(self.device),
+            dones.to(self.device)
+        )
         
-        # Convert to tensors
-        states = torch.FloatTensor(np.array(states)).to(self.device)
-        action_indices = torch.LongTensor(action_indices).unsqueeze(1).to(self.device)
-        rewards = torch.FloatTensor(rewards).to(self.device)
-        next_states = torch.FloatTensor(np.array(next_states)).to(self.device)
-        dones = torch.FloatTensor(dones).to(self.device)
+        # Compute current Q-values
+        q_values = self.q_network(obs).gather(1, actions.unsqueeze(1)).squeeze(1)
         
-        # Compute current Q values
-        current_q_values = self.policy_net(states).gather(1, action_indices).squeeze(1)
+        # Compute next Q-values using Double DQN approach
+        with torch.no_grad():
+            # Get actions from the main network
+            next_actions = self.q_network(next_obs).max(1)[1].unsqueeze(1)
+            # Get Q-values from target network for those actions
+            next_q_values = self.target_network(next_obs).gather(1, next_actions).squeeze(1)
+            # Compute target
+            targets = rewards + self.gamma * next_q_values * (1 - dones)
         
-        # Compute next Q values (using target network)
-        next_q_values = torch.zeros(self.batch_size, device=self.device)
-        for i in range(self.batch_size):
-            if not dones[i]:
-                # Get Q-values for next state
-                next_q = self.target_net(next_states[i].unsqueeze(0)).squeeze(0)
-                
-                # Only consider valid actions
-                valid_indices = valid_action_indices[i]
-                if valid_indices:  # Check if there are valid actions
-                    valid_q = next_q[valid_indices]
-                    next_q_values[i] = valid_q.max()
+        # Compute loss (Huber loss for stability)
+        loss = F.smooth_l1_loss(q_values, targets)
         
-        # Compute target Q values
-        target_q_values = rewards + (self.gamma * next_q_values * (1 - dones))
-        
-        # Compute loss
-        loss = F.smooth_l1_loss(current_q_values, target_q_values)
-        
-        # Optimize the model
+        # Update the network
         self.optimizer.zero_grad()
         loss.backward()
-        # Gradient clipping for stability
-        torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0)
+        # Clip gradients to prevent exploding gradients
+        torch.nn.utils.clip_grad_norm_(self.q_network.parameters(), max_norm=10.0)
         self.optimizer.step()
         
-        # Update target network
+        # Update target network if needed
         self.training_steps += 1
-        if self.training_steps % self.target_update == 0:
-            self.target_net.load_state_dict(self.policy_net.state_dict())
+        if self.training_steps % self.target_update_freq == 0:
+            self.target_network.load_state_dict(self.q_network.state_dict())
         
         # Decay epsilon
         self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
         
+        # Step the learning rate scheduler
+        if self.training_steps % 1000 == 0:
+            self.scheduler.step()
+        
         return loss.item()
     
-    def save(self, path: str) -> None:
+    def _actions_equal(self, action1: Dict[str, Any], action2: Dict[str, Any]) -> bool:
         """
-        Save the agent's policy network.
+        Check if two actions are equal (used for action mapping).
         
         Args:
-            path: Path to save the model to
+            action1: First action dictionary
+            action2: Second action dictionary
+            
+        Returns:
+            True if the actions are equal, False otherwise
         """
-        torch.save({
-            'policy_net': self.policy_net.state_dict(),
-            'target_net': self.target_net.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-            'epsilon': self.epsilon,
-            'training_steps': self.training_steps
-        }, path)
+        if action1['type'] != action2['type']:
+            return False
+        
+        if action1['type'] == 'challenge':
+            return True  # Challenges are always equal
+        
+        # For bids, compare quantity and value
+        return (action1['quantity'] == action2['quantity'] and 
+                action1['value'] == action2['value'])
     
-    def load(self, path: str) -> None:
+    def add_experience(self, obs: np.ndarray, action: Dict[str, Any], reward: float, next_obs: np.ndarray, done: bool):
         """
-        Load the agent's policy network.
+        Add an experience to the replay buffer.
         
         Args:
-            path: Path to load the model from
+            obs: Current observation
+            action: Action taken
+            reward: Reward received
+            next_obs: Next observation
+            done: Whether the episode is done
         """
-        checkpoint = torch.load(path, map_location=self.device)
-        self.policy_net.load_state_dict(checkpoint['policy_net'])
-        self.target_net.load_state_dict(checkpoint['target_net'])
-        self.optimizer.load_state_dict(checkpoint['optimizer'])
-        self.epsilon = checkpoint['epsilon']
-        self.training_steps = checkpoint['training_steps']
+        # Convert action to index
+        action_idx = None
+        for i, mapped_action in enumerate(self.action_to_game_action):
+            if self._actions_equal(action, mapped_action):
+                action_idx = i
+                break
+        
+        if action_idx is None:
+            raise ValueError(f"Action {action} not found in action mapping")
+        
+        # Add to buffer
+        self.replay_buffer.add(obs, action_idx, reward, next_obs, done)
+    
+    def save(self, path: str):
+        """
+        Save the agent's models and parameters.
+        
+        Args:
+            path: Directory path to save the agent
+        """
+        os.makedirs(path, exist_ok=True)
+        
+        # Save models
+        torch.save(self.q_network.state_dict(), os.path.join(path, 'q_network.pth'))
+        torch.save(self.target_network.state_dict(), os.path.join(path, 'target_network.pth'))
+        
+        # Save parameters
+        params = {
+            'obs_dim': self.obs_dim,
+            'action_dim': self.action_dim,
+            'gamma': self.gamma,
+            'epsilon': self.epsilon,
+            'epsilon_end': self.epsilon_end,
+            'epsilon_decay': self.epsilon_decay,
+            'target_update_freq': self.target_update_freq,
+            'batch_size': self.batch_size,
+            'training_steps': self.training_steps,
+            'learning_rate': self.optimizer.param_groups[0]['lr']
+        }
+        torch.save(params, os.path.join(path, 'params.pth'))
+        
+        # Save action mapping if available
+        if self.action_to_game_action is not None:
+            np.save(os.path.join(path, 'action_mapping.npy'), self.action_to_game_action)
+    
+    def load(self, path: str):
+        """
+        Load the agent's models and parameters.
+        
+        Args:
+            path: Directory path to load the agent from
+        """
+        # Load models
+        self.q_network.load_state_dict(torch.load(os.path.join(path, 'q_network.pth'), map_location=self.device))
+        self.target_network.load_state_dict(torch.load(os.path.join(path, 'target_network.pth'), map_location=self.device))
+        
+        # Load parameters
+        params = torch.load(os.path.join(path, 'params.pth'), map_location=self.device)
+        self.obs_dim = params['obs_dim']
+        self.action_dim = params['action_dim']
+        self.gamma = params['gamma']
+        self.epsilon = params['epsilon']
+        self.epsilon_end = params['epsilon_end']
+        self.epsilon_decay = params['epsilon_decay']
+        self.target_update_freq = params['target_update_freq']
+        self.batch_size = params['batch_size']
+        self.training_steps = params['training_steps']
+        
+        # Update optimizer learning rate
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = params['learning_rate']
+        
+        # Load action mapping if available
+        action_mapping_path = os.path.join(path, 'action_mapping.npy')
+        if os.path.exists(action_mapping_path):
+            self.action_to_game_action = np.load(action_mapping_path, allow_pickle=True).tolist()
+    
+    def get_statistics(self) -> Dict[str, Any]:
+        """
+        Get agent statistics for monitoring training progress.
+        
+        Returns:
+            Dictionary of statistics
+        """
+        return {
+            'epsilon': self.epsilon,
+            'buffer_size': len(self.replay_buffer),
+            'learning_rate': self.optimizer.param_groups[0]['lr'],
+            'training_steps': self.training_steps
+        }

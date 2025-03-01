@@ -1,136 +1,246 @@
 """
-Utility functions for training Liar's Dice agents.
+Utility functions for training and evaluation.
 
-This module provides utility functions for plotting, saving metrics,
-and other helpers for the training process.
+This module provides various helper functions for managing training,
+visualizing results, and handling data.
 """
 
 import os
-import json
+import pickle
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Dict, List, Any, Optional
+from typing import List, Dict, Tuple, Any, Optional
 
 
-def smooth_data(data: List[float], window_size: int = 10) -> np.ndarray:
+def setup_logger(name: str, log_file: str, level: int = logging.INFO) -> logging.Logger:
     """
-    Apply moving average smoothing to data.
+    Set up a logger with file and console handlers.
     
     Args:
-        data: Data to smooth
-        window_size: Size of the smoothing window
+        name: Name of the logger
+        log_file: Path to the log file
+        level: Logging level
         
     Returns:
-        Smoothed data
+        Configured logger
     """
-    if len(data) < window_size:
-        return np.array(data)
+    # Create logger
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
     
-    return np.convolve(data, np.ones(window_size)/window_size, mode='valid')
+    # Create file handler
+    file_handler = logging.FileHandler(log_file)
+    file_handler.setLevel(level)
+    
+    # Create console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(level)
+    
+    # Create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+    
+    # Add handlers to logger
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    
+    return logger
 
 
-def plot_training_curves(metrics: Dict[str, List[float]], save_path: str) -> None:
+def save_training_data(data: Dict[str, Any], filepath: str):
     """
-    Plot training curves and save the figure.
+    Save training data to a file.
     
     Args:
-        metrics: Dictionary of training metrics
-        save_path: Path to save the figure
+        data: Dictionary containing training data
+        filepath: Path to save the data
     """
-    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
+    with open(filepath, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def load_training_data(filepath: str) -> Dict[str, Any]:
+    """
+    Load training data from a file.
+    
+    Args:
+        filepath: Path to the data file
+        
+    Returns:
+        Dictionary containing the training data
+    """
+    with open(filepath, 'rb') as f:
+        data = pickle.load(f)
+    return data
+
+
+def plot_training_results(
+    data: Dict[str, Any],
+    window_size: int = 20,
+    save_path: Optional[str] = None,
+    show_plot: bool = True
+):
+    """
+    Plot training results with smoothing.
+    
+    Args:
+        data: Dictionary containing training data
+        window_size: Window size for smoothing
+        save_path: Path to save the plot (if None, don't save)
+        show_plot: Whether to display the plot
+    """
+    rewards = data.get('rewards', [])
+    episode_lengths = data.get('episode_lengths', [])
+    losses = data.get('losses', [])
+    eval_rewards = data.get('eval_rewards', [])
+    
+    # Apply smoothing
+    def smooth(y, window_size):
+        if len(y) < window_size:
+            return y
+        box = np.ones(window_size) / window_size
+        y_smooth = np.convolve(y, box, mode='valid')
+        return y_smooth
+    
+    rewards_smooth = smooth(rewards, window_size)
+    episode_lengths_smooth = smooth(episode_lengths, window_size)
+    losses_smooth = smooth(losses, window_size) if losses else []
+    
+    # Create x-axes
+    x_rewards = np.arange(len(rewards_smooth)) + window_size - 1
+    x_lengths = np.arange(len(episode_lengths_smooth)) + window_size - 1
+    x_losses = np.arange(len(losses_smooth)) + window_size - 1
+    
+    # Number of subplots
+    num_plots = 3 if len(losses) > 0 else 2
+    if len(eval_rewards) > 0:
+        num_plots += 1
+    
+    fig, axes = plt.subplots(num_plots, 1, figsize=(12, 3*num_plots), sharex=True)
     
     # Plot rewards
-    axs[0].plot(metrics['episode_rewards'], alpha=0.3, label='Raw')
-    if len(metrics['episode_rewards']) > 10:
-        smoothed = smooth_data(metrics['episode_rewards'], 100)
-        axs[0].plot(range(len(metrics['episode_rewards']) - len(smoothed), 
-                          len(metrics['episode_rewards'])), 
-                   smoothed, label='Smoothed')
-    axs[0].set_title('Episode Rewards')
-    axs[0].set_xlabel('Episode')
-    axs[0].set_ylabel('Reward')
-    axs[0].legend()
+    axes[0].plot(x_rewards, rewards_smooth, 'b-')
+    axes[0].set_ylabel('Reward')
+    axes[0].set_title('Training Rewards (Smoothed)')
+    axes[0].grid(True, alpha=0.3)
     
     # Plot episode lengths
-    axs[1].plot(metrics['episode_lengths'], alpha=0.3, label='Raw')
-    if len(metrics['episode_lengths']) > 10:
-        smoothed = smooth_data(metrics['episode_lengths'], 100)
-        axs[1].plot(range(len(metrics['episode_lengths']) - len(smoothed), 
-                         len(metrics['episode_lengths'])), 
-                  smoothed, label='Smoothed')
-    axs[1].set_title('Episode Lengths')
-    axs[1].set_xlabel('Episode')
-    axs[1].set_ylabel('Steps')
-    axs[1].legend()
+    axes[1].plot(x_lengths, episode_lengths_smooth, 'g-')
+    axes[1].set_ylabel('Episode Length')
+    axes[1].set_title('Episode Lengths (Smoothed)')
+    axes[1].grid(True, alpha=0.3)
     
-    # Plot win rates
-    if 'win_rates' in metrics and metrics['win_rates']:
-        eval_interval = len(metrics['episode_rewards']) // len(metrics['win_rates'])
-        episodes = np.arange(eval_interval, len(metrics['episode_rewards']) + 1, eval_interval)
-        axs[2].plot(episodes, metrics['win_rates'], marker='o')
-        axs[2].set_title('Evaluation Win Rate')
-        axs[2].set_xlabel('Episode')
-        axs[2].set_ylabel('Win Rate')
-        axs[2].set_ylim([0, 1])
+    plot_idx = 2
+    
+    # Plot losses if available
+    if len(losses) > 0:
+        axes[plot_idx].plot(x_losses, losses_smooth, 'r-')
+        axes[plot_idx].set_ylabel('Loss')
+        axes[plot_idx].set_title('Training Loss (Smoothed)')
+        axes[plot_idx].grid(True, alpha=0.3)
+        plot_idx += 1
+    
+    # Plot evaluation rewards if available
+    if len(eval_rewards) > 0:
+        eval_episodes = [i * (len(rewards) // len(eval_rewards)) for i in range(len(eval_rewards))]
+        axes[plot_idx].plot(eval_episodes, eval_rewards, 'm-', marker='o')
+        axes[plot_idx].set_ylabel('Eval Reward')
+        axes[plot_idx].set_title('Evaluation Rewards')
+        axes[plot_idx].grid(True, alpha=0.3)
+    
+    # Set x-label for bottom subplot
+    axes[-1].set_xlabel('Episode')
     
     plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close(fig)
+    
+    if save_path:
+        plt.savefig(save_path)
+    
+    if show_plot:
+        plt.show()
+    else:
+        plt.close(fig)
 
 
-def save_metrics(metrics: Dict[str, List[float]], save_path: str) -> None:
+def get_action_mapping(
+    num_players: int,
+    num_dice: int,
+    dice_faces: int
+) -> List[Dict[str, Any]]:
     """
-    Save training metrics to a JSON file.
+    Generate a complete action mapping for Liar's Dice.
     
     Args:
-        metrics: Dictionary of training metrics
-        save_path: Path to save the metrics
-    """
-    # Convert numpy arrays to lists for JSON serialization
-    serializable_metrics = {}
-    for key, value in metrics.items():
-        if isinstance(value, np.ndarray):
-            serializable_metrics[key] = value.tolist()
-        else:
-            serializable_metrics[key] = value
-    
-    with open(save_path, 'w') as f:
-        json.dump(serializable_metrics, f, indent=4)
-
-
-def load_metrics(load_path: str) -> Dict[str, List[float]]:
-    """
-    Load training metrics from a JSON file.
-    
-    Args:
-        load_path: Path to load the metrics from
+        num_players: Number of players in the game
+        num_dice: Number of dice per player
+        dice_faces: Number of faces on each die
         
     Returns:
-        Dictionary of training metrics
+        List of all possible game actions
     """
-    with open(load_path, 'r') as f:
-        metrics = json.load(f)
+    action_mapping = []
     
-    return metrics
+    # Add challenge action
+    action_mapping.append({'type': 'challenge'})
+    
+    # Add all possible bid actions
+    max_quantity = num_players * num_dice
+    for quantity in range(1, max_quantity + 1):
+        for value in range(1, dice_faces + 1):
+            action_mapping.append({
+                'type': 'bid',
+                'quantity': quantity,
+                'value': value
+            })
+    
+    return action_mapping
 
 
-def create_agent_mapping(agents: List[Any], names: Optional[List[str]] = None) -> Dict[int, Any]:
+def generate_curriculum_schedule(
+    total_episodes: int,
+    num_levels: int,
+    distribution: str = 'linear'
+) -> List[int]:
     """
-    Create a mapping from player IDs to agents.
+    Generate a schedule for curriculum learning.
     
     Args:
-        agents: List of agent objects
-        names: Optional list of agent names
+        total_episodes: Total number of training episodes
+        num_levels: Number of difficulty levels
+        distribution: How to distribute episodes ('linear', 'exp', or 'front_loaded')
         
     Returns:
-        Dictionary mapping player IDs to agents
+        List where index i contains the number of episodes for level i
     """
-    agent_mapping = {}
+    if distribution == 'linear':
+        # Equal distribution
+        base = total_episodes // num_levels
+        remainder = total_episodes % num_levels
+        schedule = [base] * num_levels
+        for i in range(remainder):
+            schedule[i] += 1
     
-    for i, agent in enumerate(agents):
-        agent.player_id = i
-        if names and i < len(names):
-            agent.name = names[i]
-        agent_mapping[i] = agent
+    elif distribution == 'exp':
+        # Exponential distribution (more episodes for harder levels)
+        weights = [2 ** i for i in range(num_levels)]
+        total_weight = sum(weights)
+        schedule = [int(total_episodes * w / total_weight) for w in weights]
+        # Adjust for rounding errors
+        diff = total_episodes - sum(schedule)
+        schedule[-1] += diff
     
-    return agent_mapping
+    elif distribution == 'front_loaded':
+        # Front-loaded distribution (more episodes for easier levels)
+        weights = [2 ** (num_levels - i) for i in range(num_levels)]
+        total_weight = sum(weights)
+        schedule = [int(total_episodes * w / total_weight) for w in weights]
+        # Adjust for rounding errors
+        diff = total_episodes - sum(schedule)
+        schedule[0] += diff
+    
+    else:
+        raise ValueError(f"Unknown distribution: {distribution}")
+    
+    return schedule

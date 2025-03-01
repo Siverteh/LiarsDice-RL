@@ -1,383 +1,396 @@
 """
-Evaluation utilities for Liar's Dice agents.
+Evaluation module for DQN agent in Liar's Dice.
 
-This module provides functions for evaluating and comparing
-different agents through direct matchups and tournaments.
+This module provides functions for evaluating trained agents
+against rule-based agents of different difficulty levels.
 """
 
 import os
+import time
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from typing import List, Dict, Any, Tuple, Optional
 import torch
+from typing import List, Dict, Tuple, Any, Optional, Union
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 
+from agents.dqn_agent import DQNAgent
+from agents.rule_agent import create_agent, CURRICULUM_LEVELS
 from environment.game import LiarsDiceGame
-from agents.base_agent import BaseAgent
-from .utils import create_agent_mapping
+from .environment_wrapper import LiarsDiceEnvWrapper
+from .utils import setup_logger
 
 
-def evaluate_agents(
-    agent1: BaseAgent,
-    agent2: BaseAgent,
-    num_games: int = 100,
-    num_dice: int = 5,
-    seed: Optional[int] = None
-) -> Tuple[float, float, float]:
+def evaluate_agent(
+    agent: DQNAgent,
+    opponent_type: str,
+    num_episodes: int = 100,
+    num_players: int = 2,
+    num_dice: int = 2,
+    dice_faces: int = 6,
+    epsilon: float = 0.05,
+    seed: Optional[int] = None,
+    verbose: bool = False,
+    render_every: Optional[int] = None
+) -> Dict[str, Any]:
     """
-    Evaluate two agents against each other.
+    Evaluate a DQN agent against a specific opponent type.
     
     Args:
-        agent1: First agent
-        agent2: Second agent
-        num_games: Number of games to play
+        agent: DQN agent to evaluate
+        opponent_type: Type of rule-based opponent
+        num_episodes: Number of episodes to evaluate
+        num_players: Number of players in the game
         num_dice: Number of dice per player
+        dice_faces: Number of faces on each die
+        epsilon: Exploration rate during evaluation
         seed: Random seed for reproducibility
+        verbose: Whether to print detailed evaluation information
+        render_every: Render every N episodes (None for no rendering)
         
     Returns:
-        Tuple of (agent1 win rate, agent2 win rate, average game length)
+        Dictionary with evaluation results
     """
-    # Set player IDs
-    agent1.player_id = 0
-    agent2.player_id = 1
+    # Set up environment
+    env = LiarsDiceEnvWrapper(
+        num_players=num_players,
+        num_dice=num_dice,
+        dice_faces=dice_faces,
+        seed=seed,
+        rule_agent_types=[opponent_type]
+    )
     
-    # Create environment
-    game = LiarsDiceGame(num_players=2, num_dice=num_dice, seed=seed)
+    # Set exploration rate
+    original_epsilon = agent.epsilon
+    agent.epsilon = epsilon
     
-    # Initialize metrics
-    wins = [0, 0]
-    total_steps = 0
+    # Set up action mapping if not already set
+    if agent.action_to_game_action is None:
+        agent.set_action_mapping(env.action_mapping)
     
-    # Play games
-    for game_num in range(num_games):
-        # Reset game
-        observations = game.reset(seed=seed + game_num if seed is not None else None)
+    # Track results
+    wins = 0
+    rewards = []
+    episode_lengths = []
+    
+    try:
+        # Evaluation loop
+        for i in tqdm(range(num_episodes), desc=f"Evaluating vs {opponent_type}", disable=not verbose):
+            obs = env.reset()
+            done = False
+            total_reward = 0
+            steps = 0
+            
+            # Render the first state if requested
+            if render_every is not None and i % render_every == 0:
+                env.render()
+                time.sleep(0.5)
+            
+            while not done:
+                # Get valid actions
+                valid_action_indices = env.get_valid_actions()
+                valid_actions = [env.action_mapping[idx] for idx in valid_action_indices]
+                
+                # Select action
+                action = agent.select_action(obs, valid_actions, training=False)
+                
+                # Find the index of the selected action
+                action_idx = None
+                for idx, valid_action in enumerate(valid_actions):
+                    if agent._actions_equal(action, valid_action):
+                        action_idx = valid_action_indices[idx]
+                        break
+                
+                if action_idx is None:
+                    raise ValueError(f"Selected action {action} not found in valid actions")
+                
+                # Take step in environment
+                obs, reward, done, info = env.step(action_idx)
+                total_reward += reward
+                steps += 1
+                
+                # Render if requested
+                if render_every is not None and i % render_every == 0:
+                    env.render()
+                    time.sleep(0.5)
+            
+            # Check if agent won
+            dice_counts = info['dice_counts']
+            if dice_counts[0] > 0 and all(dice_counts[j] == 0 for j in range(1, len(dice_counts))):
+                wins += 1
+            
+            rewards.append(total_reward)
+            episode_lengths.append(steps)
+    finally:
+        # Restore original epsilon
+        agent.epsilon = original_epsilon
+    
+    # Calculate results
+    win_rate = wins / num_episodes
+    mean_reward = np.mean(rewards)
+    mean_length = np.mean(episode_lengths)
+    
+    if verbose:
+        print(f"Evaluation vs {opponent_type}:")
+        print(f"  Win rate: {win_rate:.2f}")
+        print(f"  Mean reward: {mean_reward:.2f}")
+        print(f"  Mean episode length: {mean_length:.2f}")
+    
+    return {
+        'win_rate': win_rate,
+        'mean_reward': mean_reward,
+        'mean_episode_length': mean_length,
+        'rewards': rewards,
+        'episode_lengths': episode_lengths,
+        'opponent_type': opponent_type,
+        'num_episodes': num_episodes
+    }
+
+
+def evaluate_against_curriculum(
+    agent: DQNAgent,
+    num_episodes_per_level: int = 50,
+    num_players: int = 2,
+    num_dice: int = 2,
+    dice_faces: int = 6,
+    epsilon: float = 0.05,
+    seed: Optional[int] = None,
+    verbose: bool = True,
+    render_every: Optional[int] = None
+) -> Dict[str, Any]:
+    """
+    Evaluate a DQN agent against all levels of the curriculum.
+    
+    Args:
+        agent: DQN agent to evaluate
+        num_episodes_per_level: Number of episodes per curriculum level
+        num_players: Number of players in the game
+        num_dice: Number of dice per player
+        dice_faces: Number of faces on each die
+        epsilon: Exploration rate during evaluation
+        seed: Random seed for reproducibility
+        verbose: Whether to print detailed evaluation information
+        render_every: Render every N episodes (None for no rendering)
         
-        # Reset agents if they have reset method
-        if hasattr(agent1, 'reset'):
-            agent1.reset()
-        if hasattr(agent2, 'reset'):
-            agent2.reset()
+    Returns:
+        Dictionary with evaluation results for all levels
+    """
+    results = {}
+    
+    for opponent_type in CURRICULUM_LEVELS:
+        result = evaluate_agent(
+            agent=agent,
+            opponent_type=opponent_type,
+            num_episodes=num_episodes_per_level,
+            num_players=num_players,
+            num_dice=num_dice,
+            dice_faces=dice_faces,
+            epsilon=epsilon,
+            seed=seed,
+            verbose=verbose,
+            render_every=render_every
+        )
+        results[opponent_type] = result
+    
+    # Calculate overall performance
+    overall_win_rate = np.mean([r['win_rate'] for r in results.values()])
+    overall_reward = np.mean([r['mean_reward'] for r in results.values()])
+    
+    if verbose:
+        print("\nOverall Performance:")
+        print(f"  Average win rate: {overall_win_rate:.2f}")
+        print(f"  Average reward: {overall_reward:.2f}")
         
+        print("\nWin rates by opponent:")
+        for opponent, result in results.items():
+            print(f"  vs {opponent}: {result['win_rate']:.2f}")
+    
+    results['overall'] = {
+        'win_rate': overall_win_rate,
+        'mean_reward': overall_reward
+    }
+    
+    return results
+
+
+def visualize_evaluation_results(
+    results: Dict[str, Any],
+    save_path: Optional[str] = None
+):
+    """
+    Visualize evaluation results.
+    
+    Args:
+        results: Evaluation results from evaluate_against_curriculum
+        save_path: Path to save the visualization (if None, show the plot)
+    """
+    # Extract opponent types and win rates
+    opponents = [opp for opp in results.keys() if opp != 'overall']
+    win_rates = [results[opp]['win_rate'] for opp in opponents]
+    rewards = [results[opp]['mean_reward'] for opp in opponents]
+    
+    # Set up figure
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
+    
+    # Plot win rates
+    bars1 = ax1.bar(opponents, win_rates, color='skyblue')
+    ax1.set_ylabel('Win Rate')
+    ax1.set_title('DQN Agent Performance Against Different Opponents')
+    ax1.set_ylim(0, 1.0)
+    
+    # Add win rate values on top of bars
+    for bar, win_rate in zip(bars1, win_rates):
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width()/2., height + 0.05,
+                f'{win_rate:.2f}', ha='center', va='bottom')
+    
+    # Plot mean rewards
+    bars2 = ax2.bar(opponents, rewards, color='lightgreen')
+    ax2.set_ylabel('Mean Reward')
+    ax2.set_xlabel('Opponent Type')
+    
+    # Add reward values on top of bars
+    for bar, reward in zip(bars2, rewards):
+        height = bar.get_height()
+        y_pos = height + 0.05 if height >= 0 else height - 0.5
+        ax2.text(bar.get_x() + bar.get_width()/2., y_pos,
+                f'{reward:.2f}', ha='center', va='bottom')
+    
+    plt.tight_layout()
+    
+    if save_path:
+        plt.savefig(save_path)
+        plt.close(fig)
+    else:
+        plt.show()
+
+
+def evaluate_self_play(
+    agent: DQNAgent,
+    num_episodes: int = 50,
+    num_dice: int = 2,
+    dice_faces: int = 6,
+    epsilon: float = 0.05,
+    seed: Optional[int] = None,
+    verbose: bool = True
+) -> Dict[str, Any]:
+    """
+    Evaluate the agent in self-play (against a copy of itself).
+    
+    Args:
+        agent: DQN agent to evaluate
+        num_episodes: Number of episodes for evaluation
+        num_dice: Number of dice per player
+        dice_faces: Number of faces on each die
+        epsilon: Exploration rate during evaluation
+        seed: Random seed for reproducibility
+        verbose: Whether to print detailed results
+        
+    Returns:
+        Dictionary with evaluation results
+    """
+    # Create a copy of the agent for the opponent
+    device = agent.device
+    opponent_agent = DQNAgent(agent.obs_dim, agent.action_dim, device=device)
+    opponent_agent.q_network.load_state_dict(agent.q_network.state_dict())
+    opponent_agent.target_network.load_state_dict(agent.target_network.state_dict())
+    opponent_agent.epsilon = epsilon
+    
+    # Set up the game
+    game = LiarsDiceGame(
+        num_players=2,
+        num_dice=num_dice,
+        dice_faces=dice_faces,
+        seed=seed
+    )
+    
+    observation_encoder = ObservationEncoder(
+        num_players=2,
+        num_dice=num_dice,
+        dice_faces=dice_faces
+    )
+    
+    # Set action mappings
+    all_actions = []
+    # Challenge action
+    all_actions.append({'type': 'challenge'})
+    # Bid actions
+    max_quantity = 2 * num_dice
+    for quantity in range(1, max_quantity + 1):
+        for value in range(1, dice_faces + 1):
+            all_actions.append({
+                'type': 'bid',
+                'quantity': quantity,
+                'value': value
+            })
+    
+    agent.set_action_mapping(all_actions)
+    opponent_agent.set_action_mapping(all_actions)
+    
+    # Track results
+    agent1_wins = 0
+    agent2_wins = 0
+    draws = 0
+    episode_lengths = []
+    
+    for episode in tqdm(range(num_episodes), desc="Evaluating self-play", disable=not verbose):
+        # Reset the game
+        observations = game.reset(seed=seed + episode if seed else None)
         done = False
         steps = 0
         
-        # Play until game is done
         while not done:
-            # Get current player
             current_player = game.current_player
+            obs = observation_encoder.encode(observations[current_player])
             
-            # Get valid actions
             valid_actions = game.get_valid_actions(current_player)
             
-            # Get agent for current player
-            agent = agent1 if current_player == 0 else agent2
+            # Select action based on which player's turn it is
+            if current_player == 0:
+                action = agent.select_action(obs, valid_actions, training=False)
+            else:
+                action = opponent_agent.select_action(obs, valid_actions, training=False)
             
-            # Select action
-            with torch.no_grad():  # Disable gradient computation for evaluation
-                action = agent.act(observations[current_player], valid_actions)
-            
-            # Take action
+            # Take step in environment
             observations, rewards, done, info = game.step(action)
             steps += 1
+            
+            # Prevent infinite games
+            if steps > 100:
+                break
         
-        # Record winner
-        winner = np.argmax(game.dice_counts)
-        wins[winner] += 1
-        total_steps += steps
-    
-    # Calculate metrics
-    win_rate1 = wins[0] / num_games
-    win_rate2 = wins[1] / num_games
-    avg_steps = total_steps / num_games
-    
-    return win_rate1, win_rate2, avg_steps
-
-
-def tournament(
-    agents: List[BaseAgent],
-    agent_names: List[str],
-    num_games: int = 50,
-    num_dice: int = 5,
-    seed: Optional[int] = None,
-    output_dir: Optional[str] = None
-) -> pd.DataFrame:
-    """
-    Run a round-robin tournament between agents.
-    
-    Args:
-        agents: List of agents to compete
-        agent_names: Names of the agents
-        num_games: Number of games for each matchup
-        num_dice: Number of dice per player
-        seed: Random seed for reproducibility
-        output_dir: Directory to save results
-        
-    Returns:
-        DataFrame with tournament results
-    """
-    n_agents = len(agents)
-    
-    # Initialize results matrix
-    results = np.zeros((n_agents, n_agents))
-    steps = np.zeros((n_agents, n_agents))
-    
-    # Run all matchups
-    for i in range(n_agents):
-        for j in range(i + 1, n_agents):
-            print(f"Matchup: {agent_names[i]} vs {agent_names[j]}")
-            
-            win_rate_i, win_rate_j, avg_steps = evaluate_agents(
-                agents[i], agents[j], num_games, num_dice, seed
-            )
-            
-            results[i, j] = win_rate_i
-            results[j, i] = win_rate_j
-            steps[i, j] = steps[j, i] = avg_steps
-            
-            print(f"  {agent_names[i]} win rate: {win_rate_i:.2f}")
-            print(f"  {agent_names[j]} win rate: {win_rate_j:.2f}")
-            print(f"  Average game length: {avg_steps:.1f} steps")
-    
-    # Create DataFrames
-    results_df = pd.DataFrame(
-        results, 
-        index=agent_names, 
-        columns=agent_names
-    )
-    
-    steps_df = pd.DataFrame(
-        steps, 
-        index=agent_names, 
-        columns=agent_names
-    )
-    
-    # Calculate Elo ratings
-    elo_ratings = calculate_elo(results_df, agent_names)
-    
-    # Save results if output directory is specified
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Save DataFrames
-        results_df.to_csv(os.path.join(output_dir, 'win_rates.csv'))
-        steps_df.to_csv(os.path.join(output_dir, 'avg_steps.csv'))
-        
-        # Create a heatmap for win rates
-        plt.figure(figsize=(10, 8))
-        plt.imshow(results, cmap='RdYlGn', vmin=0, vmax=1)
-        
-        # Add text annotations
-        for i in range(n_agents):
-            for j in range(n_agents):
-                if i != j:
-                    plt.text(j, i, f"{results[i, j]:.2f}", 
-                            ha="center", va="center", 
-                            color="black" if 0.3 <= results[i, j] <= 0.7 else "white")
-        
-        plt.colorbar(label='Win Rate')
-        plt.title('Tournament Results (Row vs Column)')
-        plt.xticks(range(n_agents), agent_names, rotation=45)
-        plt.yticks(range(n_agents), agent_names)
-        plt.tight_layout()
-        plt.savefig(os.path.join(output_dir, 'tournament_results.png'))
-        plt.close()
-        
-        # Plot Elo ratings
-        plt.figure(figsize=(10, 6))
-        bars = plt.bar(agent_names, [elo_ratings[name] for name in agent_names])
-        for i, bar in enumerate(bars):
-            plt.text(bar.get_x() + bar.get_width()/2., bar.get_height() + 20,
-                    f"{elo_ratings[agent_names[i]]:.0f}",
-                    ha='center', va='bottom')
-        plt.title('Elo Ratings')
-        plt.ylabel('Elo Rating')
-        plt.ylim(top=max(elo_ratings.values()) + 100)
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.savefig(os.path.join(output_dir, 'elo_ratings.png'))
-        plt.close()
-    
-    # Return results DataFrame
-    return results_df
-
-
-def calculate_elo(results_df: pd.DataFrame, agent_names: List[str], K: int = 32) -> Dict[str, float]:
-    """
-    Calculate Elo ratings based on tournament results.
-    
-    Args:
-        results_df: DataFrame with win rates
-        agent_names: Names of the agents
-        K: Elo K-factor
-        
-    Returns:
-        Dictionary mapping agent names to Elo ratings
-    """
-    n_agents = len(agent_names)
-    elo_ratings = {name: 1000 for name in agent_names}
-    
-    # Simulate a series of games between each pair of agents
-    for i in range(n_agents):
-        for j in range(i + 1, n_agents):
-            name_i = agent_names[i]
-            name_j = agent_names[j]
-            
-            win_rate_i = results_df.loc[name_i, name_j]
-            win_rate_j = results_df.loc[name_j, name_i]
-            
-            # Skip if no games were played
-            if win_rate_i == 0 and win_rate_j == 0:
-                continue
-            
-            # Calculate expected win probabilities based on current Elo
-            r_i = 10 ** (elo_ratings[name_i] / 400)
-            r_j = 10 ** (elo_ratings[name_j] / 400)
-            
-            e_i = r_i / (r_i + r_j)
-            e_j = r_j / (r_i + r_j)
-            
-            # Update Elo ratings
-            elo_ratings[name_i] += K * (win_rate_i - e_i)
-            elo_ratings[name_j] += K * (win_rate_j - e_j)
-    
-    return elo_ratings
-
-
-def analyze_agent_behavior(
-    agent: BaseAgent,
-    opponent: BaseAgent,
-    num_games: int = 20,
-    num_dice: int = 5,
-    seed: Optional[int] = None,
-    output_dir: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Analyze an agent's behavior in terms of bidding and challenging patterns.
-    
-    Args:
-        agent: Agent to analyze
-        opponent: Opponent agent
-        num_games: Number of games to play
-        num_dice: Number of dice per player
-        seed: Random seed for reproducibility
-        output_dir: Directory to save results
-        
-    Returns:
-        Dictionary with behavior statistics
-    """
-    # Set player IDs
-    agent.player_id = 0
-    opponent.player_id = 1
-    
-    # Create environment
-    game = LiarsDiceGame(num_players=2, num_dice=num_dice, seed=seed)
-    
-    # Tracking metrics
-    bid_values = []  # Bid values chosen
-    bid_quantities = []  # Bid quantities chosen
-    challenge_frequencies = []  # Frequency of challenges
-    bluff_frequencies = []  # Frequency of bluffing
-    
-    # Play games
-    for game_num in range(num_games):
-        # Reset game
-        observations = game.reset(seed=seed + game_num if seed is not None else None)
-        
-        # Reset agents if they have reset method
-        if hasattr(agent, 'reset'):
-            agent.reset()
-        if hasattr(opponent, 'reset'):
-            opponent.reset()
-        
-        done = False
-        game_history = []
-        
-        # Play until game is done
-        while not done:
-            # Get current player
-            current_player = game.current_player
-            
-            # Get valid actions
-            valid_actions = game.get_valid_actions(current_player)
-            
-            # Get agent for current player
-            current_agent = agent if current_player == 0 else opponent
-            
-            # Select action
-            with torch.no_grad():  # Disable gradient computation for evaluation
-                action = current_agent.act(observations[current_player], valid_actions)
-            
-            # Record action if it's the agent we're analyzing
-            if current_player == agent.player_id:
-                game_history.append({
-                    'state': observations[current_player],
-                    'action': action,
-                    'dice': game.dice[current_player, :game.dice_counts[current_player]].copy()
-                })
-            
-            # Take action
-            observations, rewards, done, info = game.step(action)
-        
-        # Analyze game history
-        for i, entry in enumerate(game_history):
-            if entry['action']['type'] == 'bid':
-                bid_values.append(entry['action']['value'])
-                bid_quantities.append(entry['action']['quantity'])
-                
-                # Check if this was a bluff
-                dice = entry['dice']
-                bid_value = entry['action']['value']
-                bid_quantity = entry['action']['quantity']
-                
-                # Count dice matching the bid value
-                matching_dice = np.sum(dice == bid_value)
-                
-                # If the bid quantity exceeds what the agent has, it's a bluff
-                if bid_quantity > matching_dice + (len(dice) * 0.16):  # 0.16 = 1/6 probability
-                    bluff_frequencies.append(1)
-                else:
-                    bluff_frequencies.append(0)
-            
-            elif entry['action']['type'] == 'challenge':
-                challenge_frequencies.append(1)
+        # Determine winner
+        if done:
+            dice_counts = info['dice_counts']
+            if dice_counts[0] > 0 and dice_counts[1] == 0:
+                agent1_wins += 1
+            elif dice_counts[1] > 0 and dice_counts[0] == 0:
+                agent2_wins += 1
             else:
-                challenge_frequencies.append(0)
+                draws += 1
+        else:
+            # If game hit step limit, count as a draw
+            draws += 1
+        
+        episode_lengths.append(steps)
     
     # Calculate statistics
-    stats = {
-        'avg_bid_value': np.mean(bid_values) if bid_values else 0,
-        'avg_bid_quantity': np.mean(bid_quantities) if bid_quantities else 0,
-        'challenge_rate': np.mean(challenge_frequencies) if challenge_frequencies else 0,
-        'bluff_rate': np.mean(bluff_frequencies) if bluff_frequencies else 0,
-        'bid_value_distribution': np.bincount(bid_values, minlength=7)[1:] / len(bid_values) if bid_values else np.zeros(6),
+    agent1_win_rate = agent1_wins / num_episodes
+    agent2_win_rate = agent2_wins / num_episodes
+    draw_rate = draws / num_episodes
+    mean_length = np.mean(episode_lengths)
+    
+    if verbose:
+        print(f"Self-play Evaluation ({num_episodes} episodes):")
+        print(f"  Agent 1 win rate: {agent1_win_rate:.2f}")
+        print(f"  Agent 2 win rate: {agent2_win_rate:.2f}")
+        print(f"  Draw rate: {draw_rate:.2f}")
+        print(f"  Mean episode length: {mean_length:.2f}")
+    
+    return {
+        'agent1_win_rate': agent1_win_rate,
+        'agent2_win_rate': agent2_win_rate,
+        'draw_rate': draw_rate,
+        'mean_episode_length': mean_length,
+        'episode_lengths': episode_lengths,
+        'num_episodes': num_episodes
     }
-    
-    # Plot statistics if output directory is specified
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Plot bid value distribution
-        plt.figure(figsize=(10, 6))
-        plt.bar(range(1, 7), stats['bid_value_distribution'])
-        plt.title('Bid Value Distribution')
-        plt.xlabel('Dice Value')
-        plt.ylabel('Frequency')
-        plt.xticks(range(1, 7))
-        plt.savefig(os.path.join(output_dir, 'bid_value_distribution.png'))
-        plt.close()
-        
-        # Plot other statistics
-        plt.figure(figsize=(10, 6))
-        metrics = ['challenge_rate', 'bluff_rate']
-        values = [stats[m] for m in metrics]
-        plt.bar(metrics, values)
-        plt.title('Agent Behavior Metrics')
-        plt.ylabel('Rate')
-        for i, v in enumerate(values):
-            plt.text(i, v + 0.02, f"{v:.2f}", ha='center')
-        plt.ylim(0, 1)
-        plt.savefig(os.path.join(output_dir, 'behavior_metrics.png'))
-        plt.close()
-    
-    return stats    

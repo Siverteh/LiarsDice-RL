@@ -199,6 +199,9 @@ class LiarsDiceGame:
         Returns:
             Dict of rewards for each player
         """
+        challenger = self.current_player
+        bidder = self.previous_player
+        
         # Count the total number of dice matching the bid
         quantity, value = self.current_bid
         total_matching = 0
@@ -209,17 +212,18 @@ class LiarsDiceGame:
             total_matching += matching_dice
         
         # Determine if the challenge was successful
-        bid_successful = total_matching >= quantity
+        # A challenge is successful if the actual count is LESS THAN the bid
+        bid_valid = total_matching >= quantity
         
         # Set loser: either the challenger or the previous bidder
-        if bid_successful:
-            # Challenger loses
-            loser = self.current_player
+        if bid_valid:
+            # Bid was valid, so challenger loses
+            loser = challenger
         else:
-            # Previous bidder loses
-            loser = self.previous_player
+            # Bid was invalid, so bidder loses
+            loser = bidder
         
-        # Implement consequences
+        # Implement consequences - loser loses a die
         self.dice_counts[loser] -= 1
         
         # Prepare rewards
@@ -241,11 +245,16 @@ class LiarsDiceGame:
             self.current_bid = None
             self._roll_all_dice()
             
-            # Find the starting player for the next round (player after the loser)
+            # Find the starting player for the next round
+            # According to standard rules, it should be the player AFTER the loser
             start_player = (loser + 1) % self.num_players
+            
+            # Skip players who have no dice
             while self.dice_counts[start_player] == 0:
                 start_player = (start_player + 1) % self.num_players
+                
             self.current_player = start_player
+            self.previous_player = None
             self.game_state = GameState.ONGOING
         
         return rewards

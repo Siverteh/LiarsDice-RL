@@ -1,0 +1,2 @@
+2025-03-01 11:10:40,631 - dqn_train - INFO - Starting DQN training for 6000 episodes
+2025-03-01 11:10:40,631 - dqn_train - INFO - Agent config: {'epsilon': 0.05, 'buffer_size': 83763, 'learning_rate': 0.00010289999999999997, 'training_steps': 29170}
