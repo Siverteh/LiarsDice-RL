@@ -196,7 +196,7 @@ def create_enhanced_agent(
             gamma=0.99,
             epsilon_start=1.0,
             epsilon_end=0.05,
-            epsilon_decay=0.998,
+            epsilon_decay=0.9995,
             target_update_freq=500,
             buffer_size=150000,
             batch_size=128,
@@ -215,7 +215,7 @@ def create_enhanced_agent(
                 gamma=0.99,
                 epsilon_start=1.0,
                 epsilon_end=0.05,
-                epsilon_decay=0.998,
+                epsilon_decay=0.9999,
                 target_update_freq=500,
                 buffer_size=150000,
                 batch_size=128,
@@ -834,23 +834,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Enhanced curriculum learning for Liar's Dice")
     parser.add_argument('--path', type=str, default='results', help='Base path for results')
     parser.add_argument('--players', type=int, default=2, help='Number of players')
-    parser.add_argument('--dice', type=int, default=2, help='Number of dice per player')
+    parser.add_argument('--dice', type=int, default=3, help='Number of dice per player')
     parser.add_argument('--faces', type=int, default=6, help='Number of faces per die')
-    parser.add_argument('--curriculum_episodes', type=int, default=30000, help='Total number of curriculum episodes')
+    parser.add_argument('--curriculum_episodes', type=int, default=50000, help='Total number of curriculum episodes')
     parser.add_argument('--distribution', type=str, default='progressive', 
                        choices=['linear', 'exp', 'front_loaded', 'progressive'],
                        help='How to distribute episodes among levels')
     parser.add_argument('--eval_interval', type=int, default=100, help='Evaluation interval')
-    parser.add_argument('--lr', type=float, default=0.0003, help='Learning rate')
+    parser.add_argument('--lr', type=float, default=0.0005, help='Learning rate')
     parser.add_argument('--seed', type=int, default=None, help='Random seed')
     parser.add_argument('--render', type=int, default=None, help='Render every N episodes')
     parser.add_argument('--device', type=str, default='auto', choices=['cpu', 'cuda', 'auto'],
                         help='Device to run on')
     parser.add_argument('--early_stopping', action='store_true', 
                         help='Enable early stopping based on win rate')
-    parser.add_argument('--win_threshold', type=float, default=0.85,
+    parser.add_argument('--win_threshold', type=float, default=0.75,
                         help='Win rate threshold for early stopping (0-1)')
-    parser.add_argument('--patience', type=int, default=3,
+    parser.add_argument('--patience', type=int, default=1,
                         help='Number of evaluations above threshold to trigger early stopping')
     parser.add_argument('--self_play', action='store_true', help='Enable self-play phase')
     parser.add_argument('--self_play_episodes', type=int, default=10000, 

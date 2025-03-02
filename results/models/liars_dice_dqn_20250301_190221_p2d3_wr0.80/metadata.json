@@ -1,0 +1,50 @@
+{
+  "timestamp": "20250301_190221",
+  "num_players": 2,
+  "num_dice": 3,
+  "dice_faces": 6,
+  "win_rates": {
+    "random": 0.991,
+    "naive": 0.961,
+    "conservative": 0.433,
+    "aggressive": 0.985,
+    "strategic": 0.791,
+    "adaptive": 0.635
+  },
+  "overall_win_rate": 0.7993333333333332,
+  "action_mapping_available": true,
+  "network_size": "large",
+  "best_models": {
+    "random": {
+      "path": null,
+      "win_rate": 0.0
+    },
+    "naive": {
+      "path": null,
+      "win_rate": 0.0
+    },
+    "conservative": {
+      "path": "results\\checkpoints\\best_conservative",
+      "win_rate": 0.7333333333333333
+    },
+    "aggressive": {
+      "path": null,
+      "win_rate": 0.0
+    },
+    "strategic": {
+      "path": "results\\checkpoints\\best_strategic",
+      "win_rate": 0.7
+    },
+    "adaptive": {
+      "path": "results\\checkpoints\\best_adaptive",
+      "win_rate": 0.7
+    }
+  },
+  "training_parameters": {
+    "total_episodes": 50000,
+    "self_play_episodes": 10000,
+    "distribution": "progressive",
+    "use_prioritized_replay": false,
+    "population_size": 5
+  }
+}

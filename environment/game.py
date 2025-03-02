@@ -150,8 +150,14 @@ class LiarsDiceGame:
             'round_num': self.round_num,
             'dice_counts': self.dice_counts.copy(),
             'history': self.history.copy(),
-            'state': self.game_state.name
+            'state': self.game_state.name,
+            'last_bid': self.current_bid,  # Include current bid for reward shaping
         }
+        
+        # Add dice values for debugging and reward shaping
+        for player in range(self.num_players):
+            player_dice = [int(d) for d in self.dice[player, :self.dice_counts[player]]]
+            info[f'player_{player}_dice'] = player_dice
         
         return observations, rewards, done, info
     
@@ -202,6 +208,9 @@ class LiarsDiceGame:
         challenger = self.current_player
         bidder = self.previous_player
         
+        # Store the current bid before it gets cleared
+        last_bid = self.current_bid
+        
         # Count the total number of dice matching the bid
         quantity, value = self.current_bid
         total_matching = 0
@@ -209,7 +218,7 @@ class LiarsDiceGame:
         for player in range(self.num_players):
             player_dice = self.dice[player, :self.dice_counts[player]]
             matching_dice = np.sum(player_dice == value)
-            total_matching += matching_dice
+            total_matching += int(matching_dice)  # Convert to standard int
         
         # Determine if the challenge was successful
         # A challenge is successful if the actual count is LESS THAN the bid
@@ -246,8 +255,8 @@ class LiarsDiceGame:
             self._roll_all_dice()
             
             # Find the starting player for the next round
-            # According to standard rules, it should be the player AFTER the loser
-            start_player = (loser + 1) % self.num_players
+            # According to standard rules, the player who lost a die starts the next round
+            start_player = loser
             
             # Skip players who have no dice
             while self.dice_counts[start_player] == 0:
@@ -286,7 +295,7 @@ class LiarsDiceGame:
         
         return observations
     
-    def get_valid_actions(self, player_idx: int) -> List[Dict[str, Any]]:
+    def get_valid_actions(self, player_idx: int = None) -> List[Dict[str, Any]]:
         """
         Get list of valid actions for the specified player.
         
@@ -296,6 +305,9 @@ class LiarsDiceGame:
         Returns:
             List of valid action dictionaries
         """
+        if player_idx is None:
+            player_idx = self.current_player
+            
         if player_idx != self.current_player:
             return []
         

@@ -311,17 +311,23 @@ def play_against_model(
         obs_dim = encoded_test.shape[0]
         action_dim = len(action_mapping)
         
-        # Create and load the agent
+        # Get network size from metadata if available
+        network_size = 'large'  # Default to medium if not specified
+        
+        # Create and load the agent with the correct network size
         agent = DQNAgent(
             obs_dim=obs_dim,
             action_dim=action_dim,
+            hidden_dims=[512, 256, 128, 64] if network_size == 'large' else 
+                    [256, 128, 64] if network_size == 'medium' else 
+                    [128, 64],
             device=device
         )
         agent.load(model_path)
         agent.set_action_mapping(action_mapping)
         agent.epsilon = 0.0  # Use greedy policy for playing
         
-        print(f"Successfully loaded model from {model_path}")
+        print(f"Successfully loaded model from {model_path} (network size: {network_size})")
         print(f"Playing with {num_dice} dice per player, {dice_faces} faces per die")
         print(f"You are {'going first' if human_goes_first else 'going second'}")
         input("Press Enter to start the game...")
@@ -507,7 +513,7 @@ if __name__ == "__main__":
                         help='Path to the trained model. If not specified, will use the most recent model.')
     parser.add_argument('--models_dir', type=str, default='results/models',
                         help='Directory containing trained models')
-    parser.add_argument('--dice', type=int, default=2, help='Number of dice per player')
+    parser.add_argument('--dice', type=int, default=3, help='Number of dice per player')
     parser.add_argument('--faces', type=int, default=6, help='Number of faces per die')
     parser.add_argument('--ai_first', action='store_true', help='Let the AI go first')
     parser.add_argument('--show_ai_dice', action='store_true', help='Show the AI\'s dice (debug mode)')
