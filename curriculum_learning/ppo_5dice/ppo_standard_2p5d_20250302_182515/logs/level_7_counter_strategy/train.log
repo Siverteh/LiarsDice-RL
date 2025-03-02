@@ -1,0 +1,56 @@
+2025-03-02 19:49:58,825 - train - INFO - Starting training for 28000 episodes with agent type: PPOAgent
+2025-03-02 19:49:58,826 - train - INFO - Agent config: {'obs_dim': 47, 'action_dim': 61, 'hidden_dims': [1024, 512, 256, 128, 64], 'learning_rate': 0.0003, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.002, 'batch_size': 64, 'update_frequency': 4096, 'max_grad_norm': 0.5, 'update_counter': 83, 'step_counter': 2508, 'total_training_steps': 1000000, 'current_lr': 0.00022997581036240746, 'device': 'cuda', 'memory_size': 4096, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 10.2255}
+2025-03-02 19:50:01,624 - train - INFO - Episode 100/28000 | Reward: 1.29 | Length: 13.34 | Loss: 0.0000
+2025-03-02 19:50:16,424 - train - INFO - Evaluation at episode 100: 3.00 reward, Win rate: 0.73
+2025-03-02 19:50:21,137 - train - INFO - Episode 200/28000 | Reward: 0.39 | Length: 13.59 | Loss: 0.0000
+2025-03-02 19:50:38,818 - train - INFO - Evaluation at episode 200: 3.00 reward, Win rate: 0.77
+2025-03-02 19:50:38,818 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:50:42,660 - train - INFO - Episode 300/28000 | Reward: 0.73 | Length: 13.82 | Loss: 0.0000
+2025-03-02 19:51:02,536 - train - INFO - Evaluation at episode 300: 3.00 reward, Win rate: 0.70
+2025-03-02 19:51:06,901 - train - INFO - Episode 400/28000 | Reward: 0.66 | Length: 13.66 | Loss: 0.0000
+2025-03-02 19:51:28,914 - train - INFO - Evaluation at episode 400: 3.00 reward, Win rate: 0.63
+2025-03-02 19:51:35,025 - train - INFO - Episode 500/28000 | Reward: 0.51 | Length: 13.55 | Loss: 0.0000
+2025-03-02 19:51:59,457 - train - INFO - Evaluation at episode 500: 3.00 reward, Win rate: 0.60
+2025-03-02 19:52:04,599 - train - INFO - Episode 600/28000 | Reward: 0.93 | Length: 13.36 | Loss: 0.0000
+2025-03-02 19:52:31,608 - train - INFO - Evaluation at episode 600: 1.00 reward, Win rate: 0.73
+2025-03-02 19:52:37,197 - train - INFO - Episode 700/28000 | Reward: 0.17 | Length: 13.54 | Loss: 0.0000
+2025-03-02 19:53:05,559 - train - INFO - Evaluation at episode 700: 2.00 reward, Win rate: 0.70
+2025-03-02 19:53:12,281 - train - INFO - Episode 800/28000 | Reward: 1.05 | Length: 13.37 | Loss: 0.0000
+2025-03-02 19:53:41,768 - train - INFO - Evaluation at episode 800: 4.00 reward, Win rate: 0.83
+2025-03-02 19:53:41,768 - train - INFO - Win rate 0.83 is above threshold 0.75 (1/3)
+2025-03-02 19:53:48,158 - train - INFO - Episode 900/28000 | Reward: 0.68 | Length: 13.49 | Loss: 0.0000
+2025-03-02 19:54:21,336 - train - INFO - Evaluation at episode 900: -5.00 reward, Win rate: 0.83
+2025-03-02 19:54:21,336 - train - INFO - Win rate 0.83 is above threshold 0.75 (2/3)
+2025-03-02 19:54:28,263 - train - INFO - Episode 1000/28000 | Reward: 0.68 | Length: 13.48 | Loss: 0.0000
+2025-03-02 19:54:28,280 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_7_counter_strategy\agent_episode_1000
+2025-03-02 19:55:03,229 - train - INFO - Evaluation at episode 1000: -5.00 reward, Win rate: 0.63
+2025-03-02 19:55:11,518 - train - INFO - Episode 1100/28000 | Reward: 0.78 | Length: 13.80 | Loss: 0.0000
+2025-03-02 19:55:48,902 - train - INFO - Evaluation at episode 1100: 4.00 reward, Win rate: 0.80
+2025-03-02 19:55:48,902 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:55:56,313 - train - INFO - Episode 1200/28000 | Reward: 0.77 | Length: 13.27 | Loss: 0.0000
+2025-03-02 19:56:36,108 - train - INFO - Evaluation at episode 1200: 2.00 reward, Win rate: 0.63
+2025-03-02 19:56:44,106 - train - INFO - Episode 1300/28000 | Reward: 0.62 | Length: 13.33 | Loss: 0.0000
+2025-03-02 19:57:25,252 - train - INFO - Evaluation at episode 1300: 5.00 reward, Win rate: 0.80
+2025-03-02 19:57:25,252 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:57:34,815 - train - INFO - Episode 1400/28000 | Reward: 1.25 | Length: 12.97 | Loss: 0.0000
+2025-03-02 19:58:18,955 - train - INFO - Evaluation at episode 1400: 2.00 reward, Win rate: 0.83
+2025-03-02 19:58:18,956 - train - INFO - Win rate 0.83 is above threshold 0.75 (2/3)
+2025-03-02 19:58:28,047 - train - INFO - Episode 1500/28000 | Reward: 0.94 | Length: 13.67 | Loss: 0.0000
+2025-03-02 19:59:13,091 - train - INFO - Evaluation at episode 1500: -5.00 reward, Win rate: 0.73
+2025-03-02 19:59:22,729 - train - INFO - Episode 1600/28000 | Reward: 1.42 | Length: 13.27 | Loss: 0.0000
+2025-03-02 20:00:09,686 - train - INFO - Evaluation at episode 1600: 4.00 reward, Win rate: 0.70
+2025-03-02 20:00:20,910 - train - INFO - Episode 1700/28000 | Reward: 1.60 | Length: 13.25 | Loss: 0.0000
+2025-03-02 20:01:12,108 - train - INFO - Evaluation at episode 1700: 2.00 reward, Win rate: 0.73
+2025-03-02 20:01:21,248 - train - INFO - Episode 1800/28000 | Reward: 1.14 | Length: 12.99 | Loss: 0.0000
+2025-03-02 20:02:12,101 - train - INFO - Evaluation at episode 1800: 4.00 reward, Win rate: 0.77
+2025-03-02 20:02:12,101 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 20:02:22,335 - train - INFO - Episode 1900/28000 | Reward: 1.47 | Length: 13.39 | Loss: 0.0000
+2025-03-02 20:03:14,996 - train - INFO - Evaluation at episode 1900: -5.00 reward, Win rate: 0.87
+2025-03-02 20:03:14,996 - train - INFO - Win rate 0.87 is above threshold 0.75 (2/3)
+2025-03-02 20:03:25,925 - train - INFO - Episode 2000/28000 | Reward: 1.13 | Length: 13.32 | Loss: 0.0000
+2025-03-02 20:03:25,942 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_7_counter_strategy\agent_episode_2000
+2025-03-02 20:04:18,832 - train - INFO - Evaluation at episode 2000: -5.00 reward, Win rate: 0.80
+2025-03-02 20:04:18,833 - train - INFO - Win rate 0.80 is above threshold 0.75 (3/3)
+2025-03-02 20:04:18,833 - train - INFO - Early stopping triggered at episode 2000 with win rate 0.80
+2025-03-02 20:04:18,852 - train - INFO - Training completed!
+2025-03-02 20:06:17,369 - train - INFO - Final evaluation: 1.47 reward

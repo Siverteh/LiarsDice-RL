@@ -1,0 +1,506 @@
+2025-03-02 18:39:06,057 - train - INFO - Starting training for 40000 episodes with agent type: PPOAgent
+2025-03-02 18:39:06,058 - train - INFO - Agent config: {'obs_dim': 47, 'action_dim': 61, 'hidden_dims': [1024, 512, 256, 128, 64], 'learning_rate': 0.0003, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.012621527777777773, 'batch_size': 64, 'update_frequency': 4096, 'max_grad_norm': 0.5, 'update_counter': 15, 'step_counter': 1632, 'total_training_steps': 1000000, 'current_lr': 0.00029749010212348596, 'device': 'cuda', 'memory_size': 3124, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 9.446500000000002}
+2025-03-02 18:39:07,731 - train - INFO - Episode 100/40000 | Reward: -5.00 | Length: 7.97 | Loss: 0.0000
+2025-03-02 18:39:15,734 - train - INFO - Evaluation at episode 100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:39:17,538 - train - INFO - Episode 200/40000 | Reward: -5.00 | Length: 8.42 | Loss: 0.0000
+2025-03-02 18:39:25,516 - train - INFO - Evaluation at episode 200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:39:27,201 - train - INFO - Episode 300/40000 | Reward: -5.00 | Length: 7.89 | Loss: 0.0000
+2025-03-02 18:39:35,073 - train - INFO - Evaluation at episode 300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:39:38,281 - train - INFO - Episode 400/40000 | Reward: -5.00 | Length: 7.96 | Loss: 0.0000
+2025-03-02 18:39:46,176 - train - INFO - Evaluation at episode 400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:39:47,931 - train - INFO - Episode 500/40000 | Reward: -5.00 | Length: 7.82 | Loss: 0.0000
+2025-03-02 18:39:55,691 - train - INFO - Evaluation at episode 500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:39:57,392 - train - INFO - Episode 600/40000 | Reward: -5.00 | Length: 7.99 | Loss: 0.0000
+2025-03-02 18:40:05,348 - train - INFO - Evaluation at episode 600: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:07,054 - train - INFO - Episode 700/40000 | Reward: -5.00 | Length: 7.99 | Loss: 0.0000
+2025-03-02 18:40:15,053 - train - INFO - Evaluation at episode 700: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:16,781 - train - INFO - Episode 800/40000 | Reward: -5.00 | Length: 7.73 | Loss: 0.0000
+2025-03-02 18:40:24,718 - train - INFO - Evaluation at episode 800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:27,551 - train - INFO - Episode 900/40000 | Reward: -4.94 | Length: 7.98 | Loss: 0.0000
+2025-03-02 18:40:35,436 - train - INFO - Evaluation at episode 900: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:37,155 - train - INFO - Episode 1000/40000 | Reward: -4.94 | Length: 7.82 | Loss: 0.0000
+2025-03-02 18:40:37,176 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_1000
+2025-03-02 18:40:45,744 - train - INFO - Evaluation at episode 1000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:47,640 - train - INFO - Episode 1100/40000 | Reward: -4.92 | Length: 8.16 | Loss: 0.0000
+2025-03-02 18:40:55,084 - train - INFO - Evaluation at episode 1100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:40:56,827 - train - INFO - Episode 1200/40000 | Reward: -5.00 | Length: 7.95 | Loss: 0.0000
+2025-03-02 18:41:04,805 - train - INFO - Evaluation at episode 1200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:06,559 - train - INFO - Episode 1300/40000 | Reward: -4.93 | Length: 8.00 | Loss: 0.0000
+2025-03-02 18:41:14,523 - train - INFO - Evaluation at episode 1300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:17,338 - train - INFO - Episode 1400/40000 | Reward: -5.00 | Length: 7.81 | Loss: 0.0000
+2025-03-02 18:41:25,344 - train - INFO - Evaluation at episode 1400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:27,097 - train - INFO - Episode 1500/40000 | Reward: -5.00 | Length: 8.13 | Loss: 0.0000
+2025-03-02 18:41:35,288 - train - INFO - Evaluation at episode 1500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:36,840 - train - INFO - Episode 1600/40000 | Reward: -5.00 | Length: 8.05 | Loss: 0.0000
+2025-03-02 18:41:44,989 - train - INFO - Evaluation at episode 1600: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:46,697 - train - INFO - Episode 1700/40000 | Reward: -5.00 | Length: 8.12 | Loss: 0.0000
+2025-03-02 18:41:54,950 - train - INFO - Evaluation at episode 1700: -5.00 reward, Win rate: 0.00
+2025-03-02 18:41:56,659 - train - INFO - Episode 1800/40000 | Reward: -5.00 | Length: 8.32 | Loss: 0.0000
+2025-03-02 18:42:04,771 - train - INFO - Evaluation at episode 1800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:42:07,561 - train - INFO - Episode 1900/40000 | Reward: -5.00 | Length: 8.26 | Loss: 0.0000
+2025-03-02 18:42:15,961 - train - INFO - Evaluation at episode 1900: -5.00 reward, Win rate: 0.00
+2025-03-02 18:42:17,796 - train - INFO - Episode 2000/40000 | Reward: -5.00 | Length: 8.62 | Loss: 0.0000
+2025-03-02 18:42:17,818 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_2000
+2025-03-02 18:42:26,637 - train - INFO - Evaluation at episode 2000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:42:28,542 - train - INFO - Episode 2100/40000 | Reward: -5.00 | Length: 8.93 | Loss: 0.0000
+2025-03-02 18:42:37,148 - train - INFO - Evaluation at episode 2100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:42:39,050 - train - INFO - Episode 2200/40000 | Reward: -5.00 | Length: 8.83 | Loss: 0.0000
+2025-03-02 18:42:47,654 - train - INFO - Evaluation at episode 2200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:42:49,449 - train - INFO - Episode 2300/40000 | Reward: -5.00 | Length: 8.40 | Loss: 0.0000
+2025-03-02 18:42:58,101 - train - INFO - Evaluation at episode 2300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:43:00,898 - train - INFO - Episode 2400/40000 | Reward: -5.00 | Length: 8.37 | Loss: 0.0000
+2025-03-02 18:43:09,734 - train - INFO - Evaluation at episode 2400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:43:11,641 - train - INFO - Episode 2500/40000 | Reward: -5.00 | Length: 9.10 | Loss: 0.0000
+2025-03-02 18:43:20,705 - train - INFO - Evaluation at episode 2500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:43:22,580 - train - INFO - Episode 2600/40000 | Reward: -5.00 | Length: 8.85 | Loss: 0.0000
+2025-03-02 18:43:31,992 - train - INFO - Evaluation at episode 2600: -5.00 reward, Win rate: 0.03
+2025-03-02 18:43:33,838 - train - INFO - Episode 2700/40000 | Reward: -5.00 | Length: 9.13 | Loss: 0.0000
+2025-03-02 18:43:42,710 - train - INFO - Evaluation at episode 2700: -5.00 reward, Win rate: 0.03
+2025-03-02 18:43:45,797 - train - INFO - Episode 2800/40000 | Reward: -5.00 | Length: 9.30 | Loss: 0.0000
+2025-03-02 18:43:55,072 - train - INFO - Evaluation at episode 2800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:43:56,884 - train - INFO - Episode 2900/40000 | Reward: -5.00 | Length: 9.12 | Loss: 0.0000
+2025-03-02 18:44:06,423 - train - INFO - Evaluation at episode 2900: -5.00 reward, Win rate: 0.00
+2025-03-02 18:44:08,250 - train - INFO - Episode 3000/40000 | Reward: -5.00 | Length: 9.05 | Loss: 0.0000
+2025-03-02 18:44:08,269 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_3000
+2025-03-02 18:44:17,665 - train - INFO - Evaluation at episode 3000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:44:19,712 - train - INFO - Episode 3100/40000 | Reward: -5.00 | Length: 9.54 | Loss: 0.0000
+2025-03-02 18:44:29,318 - train - INFO - Evaluation at episode 3100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:44:31,308 - train - INFO - Episode 3200/40000 | Reward: -5.00 | Length: 9.29 | Loss: 0.0000
+2025-03-02 18:44:40,759 - train - INFO - Evaluation at episode 3200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:44:43,804 - train - INFO - Episode 3300/40000 | Reward: -4.92 | Length: 9.80 | Loss: 0.0000
+2025-03-02 18:44:53,774 - train - INFO - Evaluation at episode 3300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:44:55,812 - train - INFO - Episode 3400/40000 | Reward: -5.00 | Length: 9.78 | Loss: 0.0000
+2025-03-02 18:45:05,567 - train - INFO - Evaluation at episode 3400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:45:07,682 - train - INFO - Episode 3500/40000 | Reward: -5.00 | Length: 9.77 | Loss: 0.0000
+2025-03-02 18:45:17,527 - train - INFO - Evaluation at episode 3500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:45:19,517 - train - INFO - Episode 3600/40000 | Reward: -5.00 | Length: 9.60 | Loss: 0.0000
+2025-03-02 18:45:29,414 - train - INFO - Evaluation at episode 3600: -5.00 reward, Win rate: 0.00
+2025-03-02 18:45:32,688 - train - INFO - Episode 3700/40000 | Reward: -5.00 | Length: 9.89 | Loss: 0.0000
+2025-03-02 18:45:42,874 - train - INFO - Evaluation at episode 3700: -5.00 reward, Win rate: 0.00
+2025-03-02 18:45:45,035 - train - INFO - Episode 3800/40000 | Reward: -4.93 | Length: 10.37 | Loss: 0.0000
+2025-03-02 18:45:55,273 - train - INFO - Evaluation at episode 3800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:45:57,365 - train - INFO - Episode 3900/40000 | Reward: -5.00 | Length: 10.03 | Loss: 0.0000
+2025-03-02 18:46:07,683 - train - INFO - Evaluation at episode 3900: -5.00 reward, Win rate: 0.03
+2025-03-02 18:46:09,831 - train - INFO - Episode 4000/40000 | Reward: -5.00 | Length: 10.14 | Loss: 0.0000
+2025-03-02 18:46:09,851 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_4000
+2025-03-02 18:46:20,063 - train - INFO - Evaluation at episode 4000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:46:23,412 - train - INFO - Episode 4100/40000 | Reward: -5.00 | Length: 10.37 | Loss: 0.0000
+2025-03-02 18:46:34,065 - train - INFO - Evaluation at episode 4100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:46:36,207 - train - INFO - Episode 4200/40000 | Reward: -5.00 | Length: 10.31 | Loss: 0.0000
+2025-03-02 18:46:46,830 - train - INFO - Evaluation at episode 4200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:46:49,069 - train - INFO - Episode 4300/40000 | Reward: -4.94 | Length: 10.41 | Loss: 0.0000
+2025-03-02 18:46:59,787 - train - INFO - Evaluation at episode 4300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:47:02,021 - train - INFO - Episode 4400/40000 | Reward: -5.00 | Length: 10.90 | Loss: 0.0000
+2025-03-02 18:47:12,652 - train - INFO - Evaluation at episode 4400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:47:16,096 - train - INFO - Episode 4500/40000 | Reward: -5.00 | Length: 11.15 | Loss: 0.0000
+2025-03-02 18:47:26,911 - train - INFO - Evaluation at episode 4500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:47:29,205 - train - INFO - Episode 4600/40000 | Reward: -5.00 | Length: 11.17 | Loss: 0.0000
+2025-03-02 18:47:40,240 - train - INFO - Evaluation at episode 4600: -5.00 reward, Win rate: 0.00
+2025-03-02 18:47:42,534 - train - INFO - Episode 4700/40000 | Reward: -4.94 | Length: 11.00 | Loss: 0.0000
+2025-03-02 18:47:53,894 - train - INFO - Evaluation at episode 4700: -5.00 reward, Win rate: 0.00
+2025-03-02 18:47:57,329 - train - INFO - Episode 4800/40000 | Reward: -5.00 | Length: 11.11 | Loss: 0.0000
+2025-03-02 18:48:08,511 - train - INFO - Evaluation at episode 4800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:48:10,961 - train - INFO - Episode 4900/40000 | Reward: -4.93 | Length: 11.71 | Loss: 0.0000
+2025-03-02 18:48:22,705 - train - INFO - Evaluation at episode 4900: -5.00 reward, Win rate: 0.03
+2025-03-02 18:48:25,091 - train - INFO - Episode 5000/40000 | Reward: -4.94 | Length: 11.63 | Loss: 0.0000
+2025-03-02 18:48:25,110 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_5000
+2025-03-02 18:48:36,748 - train - INFO - Evaluation at episode 5000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:48:39,160 - train - INFO - Episode 5100/40000 | Reward: -5.00 | Length: 11.43 | Loss: 0.0000
+2025-03-02 18:48:50,637 - train - INFO - Evaluation at episode 5100: -5.00 reward, Win rate: 0.00
+2025-03-02 18:48:54,171 - train - INFO - Episode 5200/40000 | Reward: -5.00 | Length: 11.98 | Loss: 0.0000
+2025-03-02 18:49:06,216 - train - INFO - Evaluation at episode 5200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:49:09,140 - train - INFO - Episode 5300/40000 | Reward: -4.94 | Length: 11.95 | Loss: 0.0000
+2025-03-02 18:49:21,225 - train - INFO - Evaluation at episode 5300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:49:23,753 - train - INFO - Episode 5400/40000 | Reward: -4.93 | Length: 12.23 | Loss: 0.0000
+2025-03-02 18:49:35,996 - train - INFO - Evaluation at episode 5400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:49:39,659 - train - INFO - Episode 5500/40000 | Reward: -5.00 | Length: 12.20 | Loss: 0.0000
+2025-03-02 18:49:51,975 - train - INFO - Evaluation at episode 5500: -5.00 reward, Win rate: 0.03
+2025-03-02 18:49:54,606 - train - INFO - Episode 5600/40000 | Reward: -4.90 | Length: 12.45 | Loss: 0.0000
+2025-03-02 18:50:06,962 - train - INFO - Evaluation at episode 5600: -5.00 reward, Win rate: 0.03
+2025-03-02 18:50:09,616 - train - INFO - Episode 5700/40000 | Reward: -4.87 | Length: 12.74 | Loss: 0.0000
+2025-03-02 18:50:22,147 - train - INFO - Evaluation at episode 5700: -5.00 reward, Win rate: 0.00
+2025-03-02 18:50:24,691 - train - INFO - Episode 5800/40000 | Reward: -5.00 | Length: 12.30 | Loss: 0.0000
+2025-03-02 18:50:37,240 - train - INFO - Evaluation at episode 5800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:50:41,005 - train - INFO - Episode 5900/40000 | Reward: -4.84 | Length: 13.05 | Loss: 0.0000
+2025-03-02 18:50:53,796 - train - INFO - Evaluation at episode 5900: -5.00 reward, Win rate: 0.03
+2025-03-02 18:50:56,511 - train - INFO - Episode 6000/40000 | Reward: -5.00 | Length: 12.85 | Loss: 0.0000
+2025-03-02 18:50:56,530 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_6000
+2025-03-02 18:51:09,509 - train - INFO - Evaluation at episode 6000: -5.00 reward, Win rate: 0.00
+2025-03-02 18:51:12,246 - train - INFO - Episode 6100/40000 | Reward: -4.58 | Length: 13.23 | Loss: 0.0000
+2025-03-02 18:51:25,407 - train - INFO - Evaluation at episode 6100: -5.00 reward, Win rate: 0.10
+2025-03-02 18:51:29,179 - train - INFO - Episode 6200/40000 | Reward: -4.85 | Length: 13.27 | Loss: 0.0000
+2025-03-02 18:51:42,545 - train - INFO - Evaluation at episode 6200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:51:45,341 - train - INFO - Episode 6300/40000 | Reward: -4.87 | Length: 13.29 | Loss: 0.0000
+2025-03-02 18:51:58,663 - train - INFO - Evaluation at episode 6300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:52:01,442 - train - INFO - Episode 6400/40000 | Reward: -4.85 | Length: 13.01 | Loss: 0.0000
+2025-03-02 18:52:14,801 - train - INFO - Evaluation at episode 6400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:52:18,627 - train - INFO - Episode 6500/40000 | Reward: -4.58 | Length: 13.81 | Loss: 0.0000
+2025-03-02 18:52:32,172 - train - INFO - Evaluation at episode 6500: -5.00 reward, Win rate: 0.07
+2025-03-02 18:52:35,039 - train - INFO - Episode 6600/40000 | Reward: -4.85 | Length: 13.97 | Loss: 0.0000
+2025-03-02 18:52:48,860 - train - INFO - Evaluation at episode 6600: -5.00 reward, Win rate: 0.00
+2025-03-02 18:52:51,670 - train - INFO - Episode 6700/40000 | Reward: -4.60 | Length: 13.55 | Loss: 0.0000
+2025-03-02 18:53:05,215 - train - INFO - Evaluation at episode 6700: -5.00 reward, Win rate: 0.03
+2025-03-02 18:53:09,216 - train - INFO - Episode 6800/40000 | Reward: -4.71 | Length: 14.04 | Loss: 0.0000
+2025-03-02 18:53:22,784 - train - INFO - Evaluation at episode 6800: -5.00 reward, Win rate: 0.00
+2025-03-02 18:53:25,594 - train - INFO - Episode 6900/40000 | Reward: -4.59 | Length: 13.39 | Loss: 0.0000
+2025-03-02 18:53:39,560 - train - INFO - Evaluation at episode 6900: -5.00 reward, Win rate: 0.00
+2025-03-02 18:53:42,543 - train - INFO - Episode 7000/40000 | Reward: -4.77 | Length: 14.13 | Loss: 0.0000
+2025-03-02 18:53:42,561 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_7000
+2025-03-02 18:53:56,356 - train - INFO - Evaluation at episode 7000: -5.00 reward, Win rate: 0.03
+2025-03-02 18:54:00,272 - train - INFO - Episode 7100/40000 | Reward: -4.78 | Length: 13.95 | Loss: 0.0000
+2025-03-02 18:54:14,133 - train - INFO - Evaluation at episode 7100: -5.00 reward, Win rate: 0.07
+2025-03-02 18:54:17,067 - train - INFO - Episode 7200/40000 | Reward: -4.55 | Length: 14.35 | Loss: 0.0000
+2025-03-02 18:54:31,317 - train - INFO - Evaluation at episode 7200: -5.00 reward, Win rate: 0.00
+2025-03-02 18:54:34,164 - train - INFO - Episode 7300/40000 | Reward: -4.63 | Length: 13.65 | Loss: 0.0000
+2025-03-02 18:54:48,409 - train - INFO - Evaluation at episode 7300: -5.00 reward, Win rate: 0.00
+2025-03-02 18:54:52,334 - train - INFO - Episode 7400/40000 | Reward: -4.62 | Length: 14.61 | Loss: 0.0000
+2025-03-02 18:55:06,203 - train - INFO - Evaluation at episode 7400: -5.00 reward, Win rate: 0.00
+2025-03-02 18:55:09,086 - train - INFO - Episode 7500/40000 | Reward: -4.50 | Length: 14.03 | Loss: 0.0000
+2025-03-02 18:55:23,272 - train - INFO - Evaluation at episode 7500: -5.00 reward, Win rate: 0.00
+2025-03-02 18:55:26,279 - train - INFO - Episode 7600/40000 | Reward: -4.44 | Length: 14.11 | Loss: 0.0000
+2025-03-02 18:55:40,410 - train - INFO - Evaluation at episode 7600: -5.00 reward, Win rate: 0.13
+2025-03-02 18:55:44,532 - train - INFO - Episode 7700/40000 | Reward: -4.70 | Length: 14.76 | Loss: 0.0000
+2025-03-02 18:55:58,620 - train - INFO - Evaluation at episode 7700: -5.00 reward, Win rate: 0.03
+2025-03-02 18:56:01,600 - train - INFO - Episode 7800/40000 | Reward: -4.45 | Length: 14.46 | Loss: 0.0000
+2025-03-02 18:56:15,947 - train - INFO - Evaluation at episode 7800: -5.00 reward, Win rate: 0.13
+2025-03-02 18:56:20,089 - train - INFO - Episode 7900/40000 | Reward: -4.44 | Length: 14.32 | Loss: 0.0000
+2025-03-02 18:56:34,077 - train - INFO - Evaluation at episode 7900: -5.00 reward, Win rate: 0.03
+2025-03-02 18:56:37,100 - train - INFO - Episode 8000/40000 | Reward: -4.55 | Length: 14.66 | Loss: 0.0000
+2025-03-02 18:56:37,119 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_8000
+2025-03-02 18:56:51,499 - train - INFO - Evaluation at episode 8000: -5.00 reward, Win rate: 0.07
+2025-03-02 18:56:54,515 - train - INFO - Episode 8100/40000 | Reward: -4.09 | Length: 14.63 | Loss: 0.0000
+2025-03-02 18:57:09,038 - train - INFO - Evaluation at episode 8100: 2.00 reward, Win rate: 0.10
+2025-03-02 18:57:13,154 - train - INFO - Episode 8200/40000 | Reward: -3.69 | Length: 14.23 | Loss: 0.0000
+2025-03-02 18:57:27,401 - train - INFO - Evaluation at episode 8200: -5.00 reward, Win rate: 0.13
+2025-03-02 18:57:30,473 - train - INFO - Episode 8300/40000 | Reward: -3.90 | Length: 14.68 | Loss: 0.0000
+2025-03-02 18:57:45,013 - train - INFO - Evaluation at episode 8300: -5.00 reward, Win rate: 0.13
+2025-03-02 18:57:48,059 - train - INFO - Episode 8400/40000 | Reward: -4.10 | Length: 14.91 | Loss: 0.0000
+2025-03-02 18:58:02,487 - train - INFO - Evaluation at episode 8400: -5.00 reward, Win rate: 0.13
+2025-03-02 18:58:06,653 - train - INFO - Episode 8500/40000 | Reward: -3.98 | Length: 14.98 | Loss: 0.0000
+2025-03-02 18:58:21,520 - train - INFO - Evaluation at episode 8500: -5.00 reward, Win rate: 0.17
+2025-03-02 18:58:24,997 - train - INFO - Episode 8600/40000 | Reward: -3.93 | Length: 14.78 | Loss: 0.0000
+2025-03-02 18:58:39,580 - train - INFO - Evaluation at episode 8600: -5.00 reward, Win rate: 0.10
+2025-03-02 18:58:42,604 - train - INFO - Episode 8700/40000 | Reward: -4.16 | Length: 15.03 | Loss: 0.0000
+2025-03-02 18:58:57,260 - train - INFO - Evaluation at episode 8700: -5.00 reward, Win rate: 0.10
+2025-03-02 18:59:01,323 - train - INFO - Episode 8800/40000 | Reward: -3.73 | Length: 15.04 | Loss: 0.0000
+2025-03-02 18:59:16,036 - train - INFO - Evaluation at episode 8800: -5.00 reward, Win rate: 0.17
+2025-03-02 18:59:19,110 - train - INFO - Episode 8900/40000 | Reward: -3.59 | Length: 15.09 | Loss: 0.0000
+2025-03-02 18:59:34,055 - train - INFO - Evaluation at episode 8900: -5.00 reward, Win rate: 0.07
+2025-03-02 18:59:38,243 - train - INFO - Episode 9000/40000 | Reward: -4.15 | Length: 14.77 | Loss: 0.0000
+2025-03-02 18:59:38,261 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_9000
+2025-03-02 18:59:52,620 - train - INFO - Evaluation at episode 9000: -5.00 reward, Win rate: 0.23
+2025-03-02 18:59:55,674 - train - INFO - Episode 9100/40000 | Reward: -2.83 | Length: 14.84 | Loss: 0.0000
+2025-03-02 19:00:10,496 - train - INFO - Evaluation at episode 9100: -5.00 reward, Win rate: 0.13
+2025-03-02 19:00:13,553 - train - INFO - Episode 9200/40000 | Reward: -3.94 | Length: 14.79 | Loss: 0.0000
+2025-03-02 19:00:28,504 - train - INFO - Evaluation at episode 9200: 3.00 reward, Win rate: 0.13
+2025-03-02 19:00:32,737 - train - INFO - Episode 9300/40000 | Reward: -3.43 | Length: 15.20 | Loss: 0.0000
+2025-03-02 19:00:47,627 - train - INFO - Evaluation at episode 9300: -5.00 reward, Win rate: 0.10
+2025-03-02 19:00:50,775 - train - INFO - Episode 9400/40000 | Reward: -3.08 | Length: 15.82 | Loss: 0.0000
+2025-03-02 19:01:05,878 - train - INFO - Evaluation at episode 9400: -5.00 reward, Win rate: 0.37
+2025-03-02 19:01:08,970 - train - INFO - Episode 9500/40000 | Reward: -3.83 | Length: 14.97 | Loss: 0.0000
+2025-03-02 19:01:24,148 - train - INFO - Evaluation at episode 9500: -5.00 reward, Win rate: 0.20
+2025-03-02 19:01:28,306 - train - INFO - Episode 9600/40000 | Reward: -2.61 | Length: 15.48 | Loss: 0.0000
+2025-03-02 19:01:43,365 - train - INFO - Evaluation at episode 9600: -5.00 reward, Win rate: 0.30
+2025-03-02 19:01:46,568 - train - INFO - Episode 9700/40000 | Reward: -2.96 | Length: 15.77 | Loss: 0.0000
+2025-03-02 19:02:01,962 - train - INFO - Evaluation at episode 9700: 2.00 reward, Win rate: 0.23
+2025-03-02 19:02:05,105 - train - INFO - Episode 9800/40000 | Reward: -3.46 | Length: 15.49 | Loss: 0.0000
+2025-03-02 19:02:20,433 - train - INFO - Evaluation at episode 9800: -5.00 reward, Win rate: 0.23
+2025-03-02 19:02:24,666 - train - INFO - Episode 9900/40000 | Reward: -2.98 | Length: 16.06 | Loss: 0.0000
+2025-03-02 19:02:39,579 - train - INFO - Evaluation at episode 9900: -5.00 reward, Win rate: 0.13
+2025-03-02 19:02:42,813 - train - INFO - Episode 10000/40000 | Reward: -3.10 | Length: 15.63 | Loss: 0.0000
+2025-03-02 19:02:42,832 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_10000
+2025-03-02 19:02:58,023 - train - INFO - Evaluation at episode 10000: 1.00 reward, Win rate: 0.23
+2025-03-02 19:03:02,275 - train - INFO - Episode 10100/40000 | Reward: -2.57 | Length: 15.63 | Loss: 0.0000
+2025-03-02 19:03:17,206 - train - INFO - Evaluation at episode 10100: -5.00 reward, Win rate: 0.23
+2025-03-02 19:03:20,376 - train - INFO - Episode 10200/40000 | Reward: -2.49 | Length: 15.88 | Loss: 0.0000
+2025-03-02 19:03:35,793 - train - INFO - Evaluation at episode 10200: 3.00 reward, Win rate: 0.33
+2025-03-02 19:03:38,992 - train - INFO - Episode 10300/40000 | Reward: -3.11 | Length: 15.97 | Loss: 0.0000
+2025-03-02 19:03:54,146 - train - INFO - Evaluation at episode 10300: -5.00 reward, Win rate: 0.33
+2025-03-02 19:03:58,371 - train - INFO - Episode 10400/40000 | Reward: -2.49 | Length: 15.75 | Loss: 0.0000
+2025-03-02 19:04:13,480 - train - INFO - Evaluation at episode 10400: 4.00 reward, Win rate: 0.37
+2025-03-02 19:04:16,644 - train - INFO - Episode 10500/40000 | Reward: -2.48 | Length: 15.96 | Loss: 0.0000
+2025-03-02 19:04:31,905 - train - INFO - Evaluation at episode 10500: -5.00 reward, Win rate: 0.37
+2025-03-02 19:04:36,185 - train - INFO - Episode 10600/40000 | Reward: -2.14 | Length: 16.00 | Loss: 0.0000
+2025-03-02 19:04:51,126 - train - INFO - Evaluation at episode 10600: -5.00 reward, Win rate: 0.30
+2025-03-02 19:04:54,247 - train - INFO - Episode 10700/40000 | Reward: -2.38 | Length: 15.58 | Loss: 0.0000
+2025-03-02 19:05:09,341 - train - INFO - Evaluation at episode 10700: -5.00 reward, Win rate: 0.63
+2025-03-02 19:05:12,549 - train - INFO - Episode 10800/40000 | Reward: -1.91 | Length: 15.73 | Loss: 0.0000
+2025-03-02 19:05:27,845 - train - INFO - Evaluation at episode 10800: -5.00 reward, Win rate: 0.33
+2025-03-02 19:05:32,106 - train - INFO - Episode 10900/40000 | Reward: -2.13 | Length: 16.16 | Loss: 0.0000
+2025-03-02 19:05:47,281 - train - INFO - Evaluation at episode 10900: -5.00 reward, Win rate: 0.37
+2025-03-02 19:05:50,433 - train - INFO - Episode 11000/40000 | Reward: -1.67 | Length: 15.76 | Loss: 0.0000
+2025-03-02 19:05:50,452 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_11000
+2025-03-02 19:06:05,711 - train - INFO - Evaluation at episode 11000: -5.00 reward, Win rate: 0.30
+2025-03-02 19:06:10,031 - train - INFO - Episode 11100/40000 | Reward: -2.28 | Length: 15.46 | Loss: 0.0000
+2025-03-02 19:06:25,010 - train - INFO - Evaluation at episode 11100: -5.00 reward, Win rate: 0.37
+2025-03-02 19:06:28,139 - train - INFO - Episode 11200/40000 | Reward: -1.42 | Length: 15.63 | Loss: 0.0000
+2025-03-02 19:06:43,251 - train - INFO - Evaluation at episode 11200: 1.00 reward, Win rate: 0.40
+2025-03-02 19:06:46,354 - train - INFO - Episode 11300/40000 | Reward: -1.45 | Length: 15.42 | Loss: 0.0000
+2025-03-02 19:07:01,792 - train - INFO - Evaluation at episode 11300: 3.00 reward, Win rate: 0.50
+2025-03-02 19:07:06,127 - train - INFO - Episode 11400/40000 | Reward: -1.56 | Length: 16.09 | Loss: 0.0000
+2025-03-02 19:07:21,132 - train - INFO - Evaluation at episode 11400: -5.00 reward, Win rate: 0.23
+2025-03-02 19:07:24,360 - train - INFO - Episode 11500/40000 | Reward: -1.89 | Length: 16.06 | Loss: 0.0000
+2025-03-02 19:07:39,745 - train - INFO - Evaluation at episode 11500: 3.00 reward, Win rate: 0.43
+2025-03-02 19:07:43,038 - train - INFO - Episode 11600/40000 | Reward: -2.42 | Length: 16.22 | Loss: 0.0000
+2025-03-02 19:07:58,433 - train - INFO - Evaluation at episode 11600: -5.00 reward, Win rate: 0.37
+2025-03-02 19:08:02,634 - train - INFO - Episode 11700/40000 | Reward: -2.61 | Length: 15.68 | Loss: 0.0000
+2025-03-02 19:08:18,071 - train - INFO - Evaluation at episode 11700: 1.00 reward, Win rate: 0.27
+2025-03-02 19:08:21,213 - train - INFO - Episode 11800/40000 | Reward: -1.64 | Length: 15.61 | Loss: 0.0000
+2025-03-02 19:08:36,773 - train - INFO - Evaluation at episode 11800: -5.00 reward, Win rate: 0.30
+2025-03-02 19:08:41,063 - train - INFO - Episode 11900/40000 | Reward: -1.75 | Length: 15.83 | Loss: 0.0000
+2025-03-02 19:08:56,285 - train - INFO - Evaluation at episode 11900: -5.00 reward, Win rate: 0.40
+2025-03-02 19:08:59,366 - train - INFO - Episode 12000/40000 | Reward: -1.54 | Length: 15.11 | Loss: 0.0000
+2025-03-02 19:08:59,387 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_12000
+2025-03-02 19:09:14,635 - train - INFO - Evaluation at episode 12000: 5.00 reward, Win rate: 0.33
+2025-03-02 19:09:17,772 - train - INFO - Episode 12100/40000 | Reward: -2.35 | Length: 15.61 | Loss: 0.0000
+2025-03-02 19:09:33,224 - train - INFO - Evaluation at episode 12100: -5.00 reward, Win rate: 0.40
+2025-03-02 19:09:37,279 - train - INFO - Episode 12200/40000 | Reward: -1.75 | Length: 15.15 | Loss: 0.0000
+2025-03-02 19:09:52,405 - train - INFO - Evaluation at episode 12200: -5.00 reward, Win rate: 0.40
+2025-03-02 19:09:55,520 - train - INFO - Episode 12300/40000 | Reward: -1.49 | Length: 15.73 | Loss: 0.0000
+2025-03-02 19:10:11,064 - train - INFO - Evaluation at episode 12300: -5.00 reward, Win rate: 0.60
+2025-03-02 19:10:14,208 - train - INFO - Episode 12400/40000 | Reward: -1.34 | Length: 15.30 | Loss: 0.0000
+2025-03-02 19:10:29,658 - train - INFO - Evaluation at episode 12400: 1.00 reward, Win rate: 0.40
+2025-03-02 19:10:33,780 - train - INFO - Episode 12500/40000 | Reward: -1.67 | Length: 15.35 | Loss: 0.0000
+2025-03-02 19:10:49,011 - train - INFO - Evaluation at episode 12500: -5.00 reward, Win rate: 0.47
+2025-03-02 19:10:52,139 - train - INFO - Episode 12600/40000 | Reward: -1.92 | Length: 15.80 | Loss: 0.0000
+2025-03-02 19:11:07,129 - train - INFO - Evaluation at episode 12600: 3.00 reward, Win rate: 0.57
+2025-03-02 19:11:11,452 - train - INFO - Episode 12700/40000 | Reward: -1.71 | Length: 16.21 | Loss: 0.0000
+2025-03-02 19:11:26,648 - train - INFO - Evaluation at episode 12700: -5.00 reward, Win rate: 0.40
+2025-03-02 19:11:29,773 - train - INFO - Episode 12800/40000 | Reward: -1.32 | Length: 15.64 | Loss: 0.0000
+2025-03-02 19:11:45,147 - train - INFO - Evaluation at episode 12800: -5.00 reward, Win rate: 0.50
+2025-03-02 19:11:48,278 - train - INFO - Episode 12900/40000 | Reward: -1.71 | Length: 15.90 | Loss: 0.0000
+2025-03-02 19:12:03,668 - train - INFO - Evaluation at episode 12900: 3.00 reward, Win rate: 0.50
+2025-03-02 19:12:07,770 - train - INFO - Episode 13000/40000 | Reward: -0.78 | Length: 15.62 | Loss: 0.0000
+2025-03-02 19:12:07,790 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_13000
+2025-03-02 19:12:22,940 - train - INFO - Evaluation at episode 13000: 1.00 reward, Win rate: 0.60
+2025-03-02 19:12:26,213 - train - INFO - Episode 13100/40000 | Reward: -1.41 | Length: 16.26 | Loss: 0.0000
+2025-03-02 19:12:41,341 - train - INFO - Evaluation at episode 13100: -5.00 reward, Win rate: 0.40
+2025-03-02 19:12:45,606 - train - INFO - Episode 13200/40000 | Reward: -0.52 | Length: 15.48 | Loss: 0.0000
+2025-03-02 19:13:00,751 - train - INFO - Evaluation at episode 13200: 3.00 reward, Win rate: 0.70
+2025-03-02 19:13:03,824 - train - INFO - Episode 13300/40000 | Reward: -1.02 | Length: 15.35 | Loss: 0.0000
+2025-03-02 19:13:18,923 - train - INFO - Evaluation at episode 13300: 4.00 reward, Win rate: 0.63
+2025-03-02 19:13:22,119 - train - INFO - Episode 13400/40000 | Reward: -0.86 | Length: 15.94 | Loss: 0.0000
+2025-03-02 19:13:37,454 - train - INFO - Evaluation at episode 13400: 3.00 reward, Win rate: 0.73
+2025-03-02 19:13:41,791 - train - INFO - Episode 13500/40000 | Reward: -0.92 | Length: 15.80 | Loss: 0.0000
+2025-03-02 19:13:56,667 - train - INFO - Evaluation at episode 13500: 4.00 reward, Win rate: 0.63
+2025-03-02 19:13:59,783 - train - INFO - Episode 13600/40000 | Reward: -0.88 | Length: 15.50 | Loss: 0.0000
+2025-03-02 19:14:15,068 - train - INFO - Evaluation at episode 13600: -5.00 reward, Win rate: 0.30
+2025-03-02 19:14:18,301 - train - INFO - Episode 13700/40000 | Reward: -0.92 | Length: 15.98 | Loss: 0.0000
+2025-03-02 19:14:33,386 - train - INFO - Evaluation at episode 13700: 1.00 reward, Win rate: 0.53
+2025-03-02 19:14:37,686 - train - INFO - Episode 13800/40000 | Reward: -0.25 | Length: 16.43 | Loss: 0.0000
+2025-03-02 19:14:52,686 - train - INFO - Evaluation at episode 13800: 2.00 reward, Win rate: 0.63
+2025-03-02 19:14:55,773 - train - INFO - Episode 13900/40000 | Reward: -0.72 | Length: 15.31 | Loss: 0.0000
+2025-03-02 19:15:11,152 - train - INFO - Evaluation at episode 13900: -5.00 reward, Win rate: 0.57
+2025-03-02 19:15:15,513 - train - INFO - Episode 14000/40000 | Reward: -1.12 | Length: 15.75 | Loss: 0.0000
+2025-03-02 19:15:15,530 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_14000
+2025-03-02 19:15:30,602 - train - INFO - Evaluation at episode 14000: -5.00 reward, Win rate: 0.63
+2025-03-02 19:15:33,774 - train - INFO - Episode 14100/40000 | Reward: -0.41 | Length: 15.44 | Loss: 0.0000
+2025-03-02 19:15:49,272 - train - INFO - Evaluation at episode 14100: -5.00 reward, Win rate: 0.60
+2025-03-02 19:15:52,461 - train - INFO - Episode 14200/40000 | Reward: -0.60 | Length: 15.82 | Loss: 0.0000
+2025-03-02 19:16:07,811 - train - INFO - Evaluation at episode 14200: 1.00 reward, Win rate: 0.57
+2025-03-02 19:16:12,106 - train - INFO - Episode 14300/40000 | Reward: -0.74 | Length: 15.81 | Loss: 0.0000
+2025-03-02 19:16:27,355 - train - INFO - Evaluation at episode 14300: 1.00 reward, Win rate: 0.50
+2025-03-02 19:16:30,622 - train - INFO - Episode 14400/40000 | Reward: -0.42 | Length: 16.00 | Loss: 0.0000
+2025-03-02 19:16:45,986 - train - INFO - Evaluation at episode 14400: -5.00 reward, Win rate: 0.70
+2025-03-02 19:16:50,285 - train - INFO - Episode 14500/40000 | Reward: -0.82 | Length: 15.69 | Loss: 0.0000
+2025-03-02 19:17:05,271 - train - INFO - Evaluation at episode 14500: -5.00 reward, Win rate: 0.40
+2025-03-02 19:17:08,451 - train - INFO - Episode 14600/40000 | Reward: -0.24 | Length: 15.64 | Loss: 0.0000
+2025-03-02 19:17:23,655 - train - INFO - Evaluation at episode 14600: 4.00 reward, Win rate: 0.67
+2025-03-02 19:17:26,769 - train - INFO - Episode 14700/40000 | Reward: 0.15 | Length: 15.44 | Loss: 0.0000
+2025-03-02 19:17:41,915 - train - INFO - Evaluation at episode 14700: 1.00 reward, Win rate: 0.80
+2025-03-02 19:17:41,915 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:17:46,151 - train - INFO - Episode 14800/40000 | Reward: -0.77 | Length: 15.36 | Loss: 0.0000
+2025-03-02 19:18:01,234 - train - INFO - Evaluation at episode 14800: -5.00 reward, Win rate: 0.47
+2025-03-02 19:18:04,369 - train - INFO - Episode 14900/40000 | Reward: -0.96 | Length: 15.49 | Loss: 0.0000
+2025-03-02 19:18:19,680 - train - INFO - Evaluation at episode 14900: 2.00 reward, Win rate: 0.57
+2025-03-02 19:18:22,793 - train - INFO - Episode 15000/40000 | Reward: -0.21 | Length: 15.43 | Loss: 0.0000
+2025-03-02 19:18:22,812 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_15000
+2025-03-02 19:18:38,134 - train - INFO - Evaluation at episode 15000: -5.00 reward, Win rate: 0.47
+2025-03-02 19:18:42,265 - train - INFO - Episode 15100/40000 | Reward: -0.55 | Length: 15.40 | Loss: 0.0000
+2025-03-02 19:18:56,889 - train - INFO - Evaluation at episode 15100: -5.00 reward, Win rate: 0.53
+2025-03-02 19:19:00,030 - train - INFO - Episode 15200/40000 | Reward: -0.88 | Length: 15.79 | Loss: 0.0000
+2025-03-02 19:19:14,975 - train - INFO - Evaluation at episode 15200: 1.00 reward, Win rate: 0.67
+2025-03-02 19:19:19,137 - train - INFO - Episode 15300/40000 | Reward: 0.14 | Length: 14.88 | Loss: 0.0000
+2025-03-02 19:19:34,060 - train - INFO - Evaluation at episode 15300: -5.00 reward, Win rate: 0.57
+2025-03-02 19:19:37,101 - train - INFO - Episode 15400/40000 | Reward: -0.61 | Length: 15.08 | Loss: 0.0000
+2025-03-02 19:19:52,124 - train - INFO - Evaluation at episode 15400: -5.00 reward, Win rate: 0.60
+2025-03-02 19:19:55,179 - train - INFO - Episode 15500/40000 | Reward: -0.54 | Length: 15.17 | Loss: 0.0000
+2025-03-02 19:20:10,171 - train - INFO - Evaluation at episode 15500: 3.00 reward, Win rate: 0.60
+2025-03-02 19:20:14,407 - train - INFO - Episode 15600/40000 | Reward: -0.50 | Length: 15.72 | Loss: 0.0000
+2025-03-02 19:20:29,011 - train - INFO - Evaluation at episode 15600: 3.00 reward, Win rate: 0.73
+2025-03-02 19:20:32,240 - train - INFO - Episode 15700/40000 | Reward: 0.13 | Length: 15.68 | Loss: 0.0000
+2025-03-02 19:20:47,091 - train - INFO - Evaluation at episode 15700: -5.00 reward, Win rate: 0.57
+2025-03-02 19:20:50,201 - train - INFO - Episode 15800/40000 | Reward: -0.48 | Length: 15.58 | Loss: 0.0000
+2025-03-02 19:21:04,889 - train - INFO - Evaluation at episode 15800: 2.00 reward, Win rate: 0.80
+2025-03-02 19:21:04,889 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:21:09,070 - train - INFO - Episode 15900/40000 | Reward: -0.04 | Length: 15.77 | Loss: 0.0000
+2025-03-02 19:21:23,693 - train - INFO - Evaluation at episode 15900: -5.00 reward, Win rate: 0.77
+2025-03-02 19:21:23,693 - train - INFO - Win rate 0.77 is above threshold 0.75 (2/3)
+2025-03-02 19:21:26,881 - train - INFO - Episode 16000/40000 | Reward: -0.20 | Length: 15.60 | Loss: 0.0000
+2025-03-02 19:21:26,900 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_16000
+2025-03-02 19:21:41,748 - train - INFO - Evaluation at episode 16000: 1.00 reward, Win rate: 0.70
+2025-03-02 19:21:45,918 - train - INFO - Episode 16100/40000 | Reward: -0.06 | Length: 15.32 | Loss: 0.0000
+2025-03-02 19:22:00,265 - train - INFO - Evaluation at episode 16100: -5.00 reward, Win rate: 0.60
+2025-03-02 19:22:03,270 - train - INFO - Episode 16200/40000 | Reward: 0.28 | Length: 14.90 | Loss: 0.0000
+2025-03-02 19:22:18,105 - train - INFO - Evaluation at episode 16200: -5.00 reward, Win rate: 0.53
+2025-03-02 19:22:21,276 - train - INFO - Episode 16300/40000 | Reward: -0.47 | Length: 15.50 | Loss: 0.0000
+2025-03-02 19:22:36,498 - train - INFO - Evaluation at episode 16300: -5.00 reward, Win rate: 0.40
+2025-03-02 19:22:40,700 - train - INFO - Episode 16400/40000 | Reward: -1.01 | Length: 15.22 | Loss: 0.0000
+2025-03-02 19:22:54,702 - train - INFO - Evaluation at episode 16400: -5.00 reward, Win rate: 0.73
+2025-03-02 19:22:57,755 - train - INFO - Episode 16500/40000 | Reward: 0.00 | Length: 14.79 | Loss: 0.0000
+2025-03-02 19:23:12,418 - train - INFO - Evaluation at episode 16500: 2.00 reward, Win rate: 0.67
+2025-03-02 19:23:15,540 - train - INFO - Episode 16600/40000 | Reward: -0.68 | Length: 15.37 | Loss: 0.0000
+2025-03-02 19:23:30,174 - train - INFO - Evaluation at episode 16600: 3.00 reward, Win rate: 0.67
+2025-03-02 19:23:34,272 - train - INFO - Episode 16700/40000 | Reward: -0.01 | Length: 15.19 | Loss: 0.0000
+2025-03-02 19:23:48,836 - train - INFO - Evaluation at episode 16700: 4.00 reward, Win rate: 0.53
+2025-03-02 19:23:51,928 - train - INFO - Episode 16800/40000 | Reward: -0.80 | Length: 15.40 | Loss: 0.0000
+2025-03-02 19:24:06,777 - train - INFO - Evaluation at episode 16800: 4.00 reward, Win rate: 0.73
+2025-03-02 19:24:11,074 - train - INFO - Episode 16900/40000 | Reward: 0.11 | Length: 14.89 | Loss: 0.0000
+2025-03-02 19:24:25,531 - train - INFO - Evaluation at episode 16900: 4.00 reward, Win rate: 0.60
+2025-03-02 19:24:28,630 - train - INFO - Episode 17000/40000 | Reward: 0.39 | Length: 14.96 | Loss: 0.0000
+2025-03-02 19:24:28,649 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_17000
+2025-03-02 19:24:43,526 - train - INFO - Evaluation at episode 17000: 3.00 reward, Win rate: 0.77
+2025-03-02 19:24:43,526 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:24:46,708 - train - INFO - Episode 17100/40000 | Reward: -0.44 | Length: 15.67 | Loss: 0.0000
+2025-03-02 19:25:01,471 - train - INFO - Evaluation at episode 17100: -5.00 reward, Win rate: 0.63
+2025-03-02 19:25:05,632 - train - INFO - Episode 17200/40000 | Reward: -0.07 | Length: 15.05 | Loss: 0.0000
+2025-03-02 19:25:20,151 - train - INFO - Evaluation at episode 17200: 2.00 reward, Win rate: 0.57
+2025-03-02 19:25:23,370 - train - INFO - Episode 17300/40000 | Reward: -0.57 | Length: 15.86 | Loss: 0.0000
+2025-03-02 19:25:38,184 - train - INFO - Evaluation at episode 17300: -5.00 reward, Win rate: 0.80
+2025-03-02 19:25:38,184 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:25:41,287 - train - INFO - Episode 17400/40000 | Reward: -0.09 | Length: 15.11 | Loss: 0.0000
+2025-03-02 19:25:56,166 - train - INFO - Evaluation at episode 17400: 2.00 reward, Win rate: 0.50
+2025-03-02 19:26:00,225 - train - INFO - Episode 17500/40000 | Reward: 0.23 | Length: 15.35 | Loss: 0.0000
+2025-03-02 19:26:14,946 - train - INFO - Evaluation at episode 17500: -5.00 reward, Win rate: 0.67
+2025-03-02 19:26:17,893 - train - INFO - Episode 17600/40000 | Reward: 0.03 | Length: 14.65 | Loss: 0.0000
+2025-03-02 19:26:32,958 - train - INFO - Evaluation at episode 17600: -5.00 reward, Win rate: 0.53
+2025-03-02 19:26:37,274 - train - INFO - Episode 17700/40000 | Reward: -0.11 | Length: 15.39 | Loss: 0.0000
+2025-03-02 19:26:51,821 - train - INFO - Evaluation at episode 17700: 1.00 reward, Win rate: 0.60
+2025-03-02 19:26:54,861 - train - INFO - Episode 17800/40000 | Reward: -0.07 | Length: 14.91 | Loss: 0.0000
+2025-03-02 19:27:09,803 - train - INFO - Evaluation at episode 17800: 2.00 reward, Win rate: 0.60
+2025-03-02 19:27:12,981 - train - INFO - Episode 17900/40000 | Reward: -0.40 | Length: 15.34 | Loss: 0.0000
+2025-03-02 19:27:27,781 - train - INFO - Evaluation at episode 17900: 2.00 reward, Win rate: 0.47
+2025-03-02 19:27:32,015 - train - INFO - Episode 18000/40000 | Reward: -0.38 | Length: 15.01 | Loss: 0.0000
+2025-03-02 19:27:32,032 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_18000
+2025-03-02 19:27:46,567 - train - INFO - Evaluation at episode 18000: -5.00 reward, Win rate: 0.63
+2025-03-02 19:27:49,708 - train - INFO - Episode 18100/40000 | Reward: -0.24 | Length: 15.47 | Loss: 0.0000
+2025-03-02 19:28:04,349 - train - INFO - Evaluation at episode 18100: 1.00 reward, Win rate: 0.73
+2025-03-02 19:28:07,486 - train - INFO - Episode 18200/40000 | Reward: 0.25 | Length: 15.29 | Loss: 0.0000
+2025-03-02 19:28:22,299 - train - INFO - Evaluation at episode 18200: 1.00 reward, Win rate: 0.70
+2025-03-02 19:28:26,331 - train - INFO - Episode 18300/40000 | Reward: -0.19 | Length: 15.18 | Loss: 0.0000
+2025-03-02 19:28:41,095 - train - INFO - Evaluation at episode 18300: 1.00 reward, Win rate: 0.60
+2025-03-02 19:28:44,048 - train - INFO - Episode 18400/40000 | Reward: 0.95 | Length: 14.77 | Loss: 0.0000
+2025-03-02 19:28:58,592 - train - INFO - Evaluation at episode 18400: 4.00 reward, Win rate: 0.80
+2025-03-02 19:28:58,592 - train - INFO - Win rate 0.80 is above threshold 0.75 (1/3)
+2025-03-02 19:29:01,581 - train - INFO - Episode 18500/40000 | Reward: 0.17 | Length: 14.79 | Loss: 0.0000
+2025-03-02 19:29:16,392 - train - INFO - Evaluation at episode 18500: -5.00 reward, Win rate: 0.60
+2025-03-02 19:29:20,322 - train - INFO - Episode 18600/40000 | Reward: -0.09 | Length: 14.65 | Loss: 0.0000
+2025-03-02 19:29:34,583 - train - INFO - Evaluation at episode 18600: 3.00 reward, Win rate: 0.70
+2025-03-02 19:29:37,612 - train - INFO - Episode 18700/40000 | Reward: 0.40 | Length: 15.01 | Loss: 0.0000
+2025-03-02 19:29:52,121 - train - INFO - Evaluation at episode 18700: 3.00 reward, Win rate: 0.70
+2025-03-02 19:29:56,170 - train - INFO - Episode 18800/40000 | Reward: 0.34 | Length: 14.56 | Loss: 0.0000
+2025-03-02 19:30:10,586 - train - INFO - Evaluation at episode 18800: 1.00 reward, Win rate: 0.63
+2025-03-02 19:30:13,613 - train - INFO - Episode 18900/40000 | Reward: 0.36 | Length: 14.97 | Loss: 0.0000
+2025-03-02 19:30:28,182 - train - INFO - Evaluation at episode 18900: 1.00 reward, Win rate: 0.63
+2025-03-02 19:30:31,214 - train - INFO - Episode 19000/40000 | Reward: -0.22 | Length: 14.96 | Loss: 0.0000
+2025-03-02 19:30:31,233 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_19000
+2025-03-02 19:30:46,001 - train - INFO - Evaluation at episode 19000: 4.00 reward, Win rate: 0.67
+2025-03-02 19:30:50,178 - train - INFO - Episode 19100/40000 | Reward: -0.61 | Length: 15.25 | Loss: 0.0000
+2025-03-02 19:31:04,783 - train - INFO - Evaluation at episode 19100: 4.00 reward, Win rate: 0.57
+2025-03-02 19:31:07,624 - train - INFO - Episode 19200/40000 | Reward: 0.16 | Length: 14.56 | Loss: 0.0000
+2025-03-02 19:31:21,905 - train - INFO - Evaluation at episode 19200: 2.00 reward, Win rate: 0.60
+2025-03-02 19:31:24,937 - train - INFO - Episode 19300/40000 | Reward: 0.44 | Length: 14.46 | Loss: 0.0000
+2025-03-02 19:31:39,507 - train - INFO - Evaluation at episode 19300: -5.00 reward, Win rate: 0.73
+2025-03-02 19:31:43,586 - train - INFO - Episode 19400/40000 | Reward: 0.69 | Length: 14.50 | Loss: 0.0000
+2025-03-02 19:31:57,244 - train - INFO - Evaluation at episode 19400: 5.00 reward, Win rate: 0.87
+2025-03-02 19:31:57,244 - train - INFO - Win rate 0.87 is above threshold 0.75 (1/3)
+2025-03-02 19:32:00,232 - train - INFO - Episode 19500/40000 | Reward: 0.42 | Length: 14.46 | Loss: 0.0000
+2025-03-02 19:32:14,529 - train - INFO - Evaluation at episode 19500: -5.00 reward, Win rate: 0.63
+2025-03-02 19:32:17,468 - train - INFO - Episode 19600/40000 | Reward: 0.63 | Length: 14.42 | Loss: 0.0000
+2025-03-02 19:32:31,481 - train - INFO - Evaluation at episode 19600: 2.00 reward, Win rate: 0.60
+2025-03-02 19:32:35,476 - train - INFO - Episode 19700/40000 | Reward: -0.08 | Length: 14.98 | Loss: 0.0000
+2025-03-02 19:32:49,105 - train - INFO - Evaluation at episode 19700: 2.00 reward, Win rate: 0.83
+2025-03-02 19:32:49,105 - train - INFO - Win rate 0.83 is above threshold 0.75 (1/3)
+2025-03-02 19:32:52,080 - train - INFO - Episode 19800/40000 | Reward: -0.24 | Length: 14.79 | Loss: 0.0000
+2025-03-02 19:33:06,010 - train - INFO - Evaluation at episode 19800: 1.00 reward, Win rate: 0.67
+2025-03-02 19:33:10,276 - train - INFO - Episode 19900/40000 | Reward: 0.18 | Length: 14.57 | Loss: 0.0000
+2025-03-02 19:33:24,021 - train - INFO - Evaluation at episode 19900: 5.00 reward, Win rate: 0.77
+2025-03-02 19:33:24,021 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:33:26,893 - train - INFO - Episode 20000/40000 | Reward: 0.41 | Length: 13.86 | Loss: 0.0000
+2025-03-02 19:33:26,913 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_20000
+2025-03-02 19:33:41,226 - train - INFO - Evaluation at episode 20000: 4.00 reward, Win rate: 0.70
+2025-03-02 19:33:44,143 - train - INFO - Episode 20100/40000 | Reward: 0.61 | Length: 14.33 | Loss: 0.0000
+2025-03-02 19:33:58,178 - train - INFO - Evaluation at episode 20100: -5.00 reward, Win rate: 0.73
+2025-03-02 19:34:02,293 - train - INFO - Episode 20200/40000 | Reward: 0.30 | Length: 14.25 | Loss: 0.0000
+2025-03-02 19:34:16,164 - train - INFO - Evaluation at episode 20200: -5.00 reward, Win rate: 0.77
+2025-03-02 19:34:16,165 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:34:19,118 - train - INFO - Episode 20300/40000 | Reward: 0.74 | Length: 14.38 | Loss: 0.0000
+2025-03-02 19:34:32,991 - train - INFO - Evaluation at episode 20300: 3.00 reward, Win rate: 0.77
+2025-03-02 19:34:32,991 - train - INFO - Win rate 0.77 is above threshold 0.75 (2/3)
+2025-03-02 19:34:35,940 - train - INFO - Episode 20400/40000 | Reward: 0.68 | Length: 14.61 | Loss: 0.0000
+2025-03-02 19:34:50,011 - train - INFO - Evaluation at episode 20400: 3.00 reward, Win rate: 0.70
+2025-03-02 19:34:53,997 - train - INFO - Episode 20500/40000 | Reward: 0.22 | Length: 14.60 | Loss: 0.0000
+2025-03-02 19:35:07,872 - train - INFO - Evaluation at episode 20500: -5.00 reward, Win rate: 0.83
+2025-03-02 19:35:07,872 - train - INFO - Win rate 0.83 is above threshold 0.75 (1/3)
+2025-03-02 19:35:10,741 - train - INFO - Episode 20600/40000 | Reward: 0.62 | Length: 14.17 | Loss: 0.0000
+2025-03-02 19:35:24,905 - train - INFO - Evaluation at episode 20600: -5.00 reward, Win rate: 0.67
+2025-03-02 19:35:27,828 - train - INFO - Episode 20700/40000 | Reward: 0.47 | Length: 14.54 | Loss: 0.0000
+2025-03-02 19:35:42,049 - train - INFO - Evaluation at episode 20700: -5.00 reward, Win rate: 0.60
+2025-03-02 19:35:46,136 - train - INFO - Episode 20800/40000 | Reward: 0.95 | Length: 14.12 | Loss: 0.0000
+2025-03-02 19:35:59,977 - train - INFO - Evaluation at episode 20800: 2.00 reward, Win rate: 0.73
+2025-03-02 19:36:02,895 - train - INFO - Episode 20900/40000 | Reward: 1.13 | Length: 14.08 | Loss: 0.0000
+2025-03-02 19:36:16,900 - train - INFO - Evaluation at episode 20900: 4.00 reward, Win rate: 0.83
+2025-03-02 19:36:16,900 - train - INFO - Win rate 0.83 is above threshold 0.75 (1/3)
+2025-03-02 19:36:19,800 - train - INFO - Episode 21000/40000 | Reward: 0.58 | Length: 14.03 | Loss: 0.0000
+2025-03-02 19:36:19,822 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_21000
+2025-03-02 19:36:33,835 - train - INFO - Evaluation at episode 21000: 4.00 reward, Win rate: 0.77
+2025-03-02 19:36:33,835 - train - INFO - Win rate 0.77 is above threshold 0.75 (2/3)
+2025-03-02 19:36:37,890 - train - INFO - Episode 21100/40000 | Reward: 0.74 | Length: 14.24 | Loss: 0.0000
+2025-03-02 19:36:51,661 - train - INFO - Evaluation at episode 21100: 2.00 reward, Win rate: 0.70
+2025-03-02 19:36:54,523 - train - INFO - Episode 21200/40000 | Reward: 0.69 | Length: 14.18 | Loss: 0.0000
+2025-03-02 19:37:08,185 - train - INFO - Evaluation at episode 21200: -5.00 reward, Win rate: 0.53
+2025-03-02 19:37:11,067 - train - INFO - Episode 21300/40000 | Reward: 0.41 | Length: 14.33 | Loss: 0.0000
+2025-03-02 19:37:24,993 - train - INFO - Evaluation at episode 21300: 2.00 reward, Win rate: 0.67
+2025-03-02 19:37:28,828 - train - INFO - Episode 21400/40000 | Reward: 0.99 | Length: 13.72 | Loss: 0.0000
+2025-03-02 19:37:42,529 - train - INFO - Evaluation at episode 21400: 2.00 reward, Win rate: 0.77
+2025-03-02 19:37:42,529 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:37:45,518 - train - INFO - Episode 21500/40000 | Reward: 0.30 | Length: 14.53 | Loss: 0.0000
+2025-03-02 19:37:59,290 - train - INFO - Evaluation at episode 21500: -5.00 reward, Win rate: 0.67
+2025-03-02 19:38:02,132 - train - INFO - Episode 21600/40000 | Reward: 0.82 | Length: 13.79 | Loss: 0.0000
+2025-03-02 19:38:16,064 - train - INFO - Evaluation at episode 21600: 2.00 reward, Win rate: 0.87
+2025-03-02 19:38:16,064 - train - INFO - Win rate 0.87 is above threshold 0.75 (1/3)
+2025-03-02 19:38:19,937 - train - INFO - Episode 21700/40000 | Reward: 1.10 | Length: 13.83 | Loss: 0.0000
+2025-03-02 19:38:33,660 - train - INFO - Evaluation at episode 21700: 4.00 reward, Win rate: 0.70
+2025-03-02 19:38:36,540 - train - INFO - Episode 21800/40000 | Reward: 1.11 | Length: 14.07 | Loss: 0.0000
+2025-03-02 19:38:50,336 - train - INFO - Evaluation at episode 21800: -5.00 reward, Win rate: 0.57
+2025-03-02 19:38:53,184 - train - INFO - Episode 21900/40000 | Reward: 0.72 | Length: 14.14 | Loss: 0.0000
+2025-03-02 19:39:07,078 - train - INFO - Evaluation at episode 21900: 4.00 reward, Win rate: 0.63
+2025-03-02 19:39:10,922 - train - INFO - Episode 22000/40000 | Reward: 0.92 | Length: 13.86 | Loss: 0.0000
+2025-03-02 19:39:10,941 - train - INFO - Saved checkpoint to curriculum_learning/ppo_5dice\ppo_standard_2p5d_20250302_182515\checkpoints\level_2_conservative\agent_episode_22000
+2025-03-02 19:39:24,820 - train - INFO - Evaluation at episode 22000: 5.00 reward, Win rate: 0.67
+2025-03-02 19:39:27,693 - train - INFO - Episode 22100/40000 | Reward: 0.88 | Length: 14.08 | Loss: 0.0000
+2025-03-02 19:39:41,385 - train - INFO - Evaluation at episode 22100: 1.00 reward, Win rate: 0.77
+2025-03-02 19:39:41,385 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:39:44,278 - train - INFO - Episode 22200/40000 | Reward: 0.80 | Length: 14.05 | Loss: 0.0000
+2025-03-02 19:39:58,117 - train - INFO - Evaluation at episode 22200: 5.00 reward, Win rate: 0.57
+2025-03-02 19:40:02,188 - train - INFO - Episode 22300/40000 | Reward: 1.16 | Length: 14.34 | Loss: 0.0000
+2025-03-02 19:40:16,056 - train - INFO - Evaluation at episode 22300: 5.00 reward, Win rate: 0.77
+2025-03-02 19:40:16,056 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:40:18,911 - train - INFO - Episode 22400/40000 | Reward: 1.60 | Length: 13.59 | Loss: 0.0000
+2025-03-02 19:40:32,753 - train - INFO - Evaluation at episode 22400: -5.00 reward, Win rate: 0.50
+2025-03-02 19:40:35,657 - train - INFO - Episode 22500/40000 | Reward: 1.11 | Length: 14.15 | Loss: 0.0000
+2025-03-02 19:40:49,533 - train - INFO - Evaluation at episode 22500: 4.00 reward, Win rate: 0.60
+2025-03-02 19:40:53,353 - train - INFO - Episode 22600/40000 | Reward: 0.90 | Length: 14.01 | Loss: 0.0000
+2025-03-02 19:41:07,159 - train - INFO - Evaluation at episode 22600: 3.00 reward, Win rate: 0.73
+2025-03-02 19:41:10,021 - train - INFO - Episode 22700/40000 | Reward: 0.34 | Length: 14.06 | Loss: 0.0000
+2025-03-02 19:41:23,868 - train - INFO - Evaluation at episode 22700: -5.00 reward, Win rate: 0.77
+2025-03-02 19:41:23,868 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/3)
+2025-03-02 19:41:27,923 - train - INFO - Episode 22800/40000 | Reward: 0.63 | Length: 13.97 | Loss: 0.0000
+2025-03-02 19:41:41,437 - train - INFO - Evaluation at episode 22800: -5.00 reward, Win rate: 0.77
+2025-03-02 19:41:41,437 - train - INFO - Win rate 0.77 is above threshold 0.75 (2/3)
+2025-03-02 19:41:44,309 - train - INFO - Episode 22900/40000 | Reward: 1.19 | Length: 13.99 | Loss: 0.0000
+2025-03-02 19:41:58,042 - train - INFO - Evaluation at episode 22900: -5.00 reward, Win rate: 0.83
+2025-03-02 19:41:58,042 - train - INFO - Win rate 0.83 is above threshold 0.75 (3/3)
+2025-03-02 19:41:58,042 - train - INFO - Early stopping triggered at episode 22900 with win rate 0.83
+2025-03-02 19:41:58,063 - train - INFO - Training completed!
+2025-03-02 19:42:24,118 - train - INFO - Final evaluation: 1.02 reward

@@ -1,0 +1,44 @@
+2025-03-02 16:11:17,767 - train - INFO - Starting training for 10000 episodes with agent type: PPOAgent
+2025-03-02 16:11:17,768 - train - INFO - Agent config: {'obs_dim': 35, 'action_dim': 37, 'hidden_dims': [256, 128, 64], 'learning_rate': 0.0003, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.0032905509736802967, 'batch_size': 64, 'update_frequency': 2048, 'max_grad_norm': 0.5, 'update_counter': 71, 'step_counter': 398, 'total_training_steps': 1000000, 'current_lr': 0.0004758764928527057, 'device': 'cuda', 'memory_size': 401, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 8.5415}
+2025-03-02 16:11:19,433 - train - INFO - Episode 100/10000 | Reward: 1.98 | Length: 4.68 | Loss: 0.0000
+2025-03-02 16:11:27,415 - train - INFO - Evaluation at episode 100: 4.00 reward, Win rate: 0.77
+2025-03-02 16:11:29,050 - train - INFO - Episode 200/10000 | Reward: 1.82 | Length: 4.78 | Loss: 0.0000
+2025-03-02 16:11:37,064 - train - INFO - Evaluation at episode 200: 5.00 reward, Win rate: 0.70
+2025-03-02 16:11:38,743 - train - INFO - Episode 300/10000 | Reward: 1.83 | Length: 4.84 | Loss: 0.0000
+2025-03-02 16:11:46,729 - train - INFO - Evaluation at episode 300: -3.00 reward, Win rate: 0.53
+2025-03-02 16:11:48,752 - train - INFO - Episode 400/10000 | Reward: 2.05 | Length: 4.53 | Loss: 0.0000
+2025-03-02 16:11:56,643 - train - INFO - Evaluation at episode 400: -3.00 reward, Win rate: 0.57
+2025-03-02 16:11:58,244 - train - INFO - Episode 500/10000 | Reward: 2.71 | Length: 4.55 | Loss: 0.0000
+2025-03-02 16:11:58,253 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_160105\checkpoints\round_2\agent_episode_500
+2025-03-02 16:12:06,813 - train - INFO - Evaluation at episode 500: 3.00 reward, Win rate: 0.60
+2025-03-02 16:12:08,420 - train - INFO - Episode 600/10000 | Reward: 1.86 | Length: 4.72 | Loss: 0.0000
+2025-03-02 16:12:16,585 - train - INFO - Evaluation at episode 600: 3.00 reward, Win rate: 0.67
+2025-03-02 16:12:18,150 - train - INFO - Episode 700/10000 | Reward: 1.83 | Length: 4.69 | Loss: 0.0000
+2025-03-02 16:12:26,043 - train - INFO - Evaluation at episode 700: -3.00 reward, Win rate: 0.73
+2025-03-02 16:12:28,087 - train - INFO - Episode 800/10000 | Reward: 1.86 | Length: 4.55 | Loss: 0.0000
+2025-03-02 16:12:35,900 - train - INFO - Evaluation at episode 800: -3.00 reward, Win rate: 0.70
+2025-03-02 16:12:37,452 - train - INFO - Episode 900/10000 | Reward: 2.33 | Length: 4.64 | Loss: 0.0000
+2025-03-02 16:12:45,512 - train - INFO - Evaluation at episode 900: 3.00 reward, Win rate: 0.73
+2025-03-02 16:12:47,080 - train - INFO - Episode 1000/10000 | Reward: 1.90 | Length: 4.73 | Loss: 0.0000
+2025-03-02 16:12:47,089 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_160105\checkpoints\round_2\agent_episode_1000
+2025-03-02 16:12:55,188 - train - INFO - Evaluation at episode 1000: 4.00 reward, Win rate: 0.80
+2025-03-02 16:12:56,710 - train - INFO - Episode 1100/10000 | Reward: 1.95 | Length: 4.43 | Loss: 0.0000
+2025-03-02 16:13:04,641 - train - INFO - Evaluation at episode 1100: -3.00 reward, Win rate: 0.63
+2025-03-02 16:13:06,164 - train - INFO - Episode 1200/10000 | Reward: 2.90 | Length: 4.51 | Loss: 0.0000
+2025-03-02 16:13:14,412 - train - INFO - Evaluation at episode 1200: 4.00 reward, Win rate: 0.57
+2025-03-02 16:13:16,504 - train - INFO - Episode 1300/10000 | Reward: 1.93 | Length: 4.79 | Loss: 0.0000
+2025-03-02 16:13:24,458 - train - INFO - Evaluation at episode 1300: -3.00 reward, Win rate: 0.77
+2025-03-02 16:13:26,068 - train - INFO - Episode 1400/10000 | Reward: 2.63 | Length: 4.72 | Loss: 0.0000
+2025-03-02 16:13:34,276 - train - INFO - Evaluation at episode 1400: 4.00 reward, Win rate: 0.87
+2025-03-02 16:13:35,886 - train - INFO - Episode 1500/10000 | Reward: 2.54 | Length: 4.60 | Loss: 0.0000
+2025-03-02 16:13:35,894 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_160105\checkpoints\round_2\agent_episode_1500
+2025-03-02 16:13:44,276 - train - INFO - Evaluation at episode 1500: -3.00 reward, Win rate: 0.67
+2025-03-02 16:13:45,977 - train - INFO - Episode 1600/10000 | Reward: 2.27 | Length: 4.71 | Loss: 0.0000
+2025-03-02 16:13:54,252 - train - INFO - Evaluation at episode 1600: 5.00 reward, Win rate: 0.63
+2025-03-02 16:13:56,457 - train - INFO - Episode 1700/10000 | Reward: 2.35 | Length: 4.79 | Loss: 0.0000
+2025-03-02 16:14:04,346 - train - INFO - Evaluation at episode 1700: -3.00 reward, Win rate: 0.67
+2025-03-02 16:14:06,020 - train - INFO - Episode 1800/10000 | Reward: 2.36 | Length: 4.59 | Loss: 0.0000
+2025-03-02 16:14:14,464 - train - INFO - Evaluation at episode 1800: 3.00 reward, Win rate: 0.93
+2025-03-02 16:14:14,477 - train - INFO - Training stopped early by callback at episode 1800
+2025-03-02 16:14:14,477 - train - INFO - Training completed!
+2025-03-02 16:14:29,992 - train - INFO - Final evaluation: 2.35 reward

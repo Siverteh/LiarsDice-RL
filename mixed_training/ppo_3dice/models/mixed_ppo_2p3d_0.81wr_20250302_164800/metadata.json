@@ -1,0 +1,32 @@
+{
+  "timestamp": "20250302_164800",
+  "agent_type": "ppo",
+  "num_players": 2,
+  "num_dice": 3,
+  "dice_faces": 6,
+  "win_rates": {
+    "random": 0.9933333333333333,
+    "naive": 0.94,
+    "conservative": 0.62,
+    "anti_exploitation": 0.7833333333333333,
+    "aggressive": 1.0,
+    "strategic": 0.71,
+    "adaptive": 0.7233333333333334,
+    "counter_strategy": 0.7033333333333334,
+    "optimal": 0.81
+  },
+  "overall_win_rate": 0.8092592592592592,
+  "network_size": [
+    256,
+    128,
+    64
+  ],
+  "training_parameters": {
+    "num_rounds": 5,
+    "episodes_per_round": 10000,
+    "self_play_ratio": 0.7,
+    "use_population": false,
+    "population_size": 5,
+    "win_rate_threshold": 0.85
+  }
+}

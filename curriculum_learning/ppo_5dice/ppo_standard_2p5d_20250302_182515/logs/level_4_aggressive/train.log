@@ -1,0 +1,14 @@
+2025-03-02 19:44:10,980 - train - INFO - Starting training for 8000 episodes with agent type: PPOAgent
+2025-03-02 19:44:10,980 - train - INFO - Agent config: {'obs_dim': 47, 'action_dim': 61, 'hidden_dims': [1024, 512, 256, 128, 64], 'learning_rate': 0.0003, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.002, 'batch_size': 64, 'update_frequency': 4096, 'max_grad_norm': 0.5, 'update_counter': 79, 'step_counter': 3587, 'total_training_steps': 1000000, 'current_lr': 0.0002359813905993898, 'device': 'cuda', 'memory_size': 2279, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 8.923}
+2025-03-02 19:44:13,459 - train - INFO - Episode 100/8000 | Reward: 4.73 | Length: 8.09 | Loss: 0.0000
+2025-03-02 19:44:20,819 - train - INFO - Evaluation at episode 100: 5.00 reward, Win rate: 1.00
+2025-03-02 19:44:20,819 - train - INFO - Win rate 1.00 is above threshold 0.75 (1/3)
+2025-03-02 19:44:22,363 - train - INFO - Episode 200/8000 | Reward: 4.72 | Length: 7.81 | Loss: 0.0000
+2025-03-02 19:44:30,052 - train - INFO - Evaluation at episode 200: 5.00 reward, Win rate: 1.00
+2025-03-02 19:44:30,053 - train - INFO - Win rate 1.00 is above threshold 0.75 (2/3)
+2025-03-02 19:44:31,605 - train - INFO - Episode 300/8000 | Reward: 4.72 | Length: 7.74 | Loss: 0.0000
+2025-03-02 19:44:39,299 - train - INFO - Evaluation at episode 300: 5.00 reward, Win rate: 1.00
+2025-03-02 19:44:39,300 - train - INFO - Win rate 1.00 is above threshold 0.75 (3/3)
+2025-03-02 19:44:39,300 - train - INFO - Early stopping triggered at episode 300 with win rate 1.00
+2025-03-02 19:44:39,320 - train - INFO - Training completed!
+2025-03-02 19:44:53,739 - train - INFO - Final evaluation: 4.68 reward

@@ -48,17 +48,17 @@ CONFIG_PRESETS = {
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'curriculum_episodes': 50000,
+        'curriculum_episodes': 200000,
         'self_play_episodes': 15000,
-        'network_size': [512, 256, 128, 64],
+        'network_size': [1024, 512, 256, 128, 64],  # Very large
         'learning_rate': 0.0003,
-        'win_rate_threshold': 0.70
+        'win_rate_threshold': 0.75
     },
     # 4 players, 5 dice, complex game
     'advanced': {
         'num_players': 4,
         'num_dice': 5,
-        'curriculum_episodes': 100000,
+        'curriculum_episodes': 200000,
         'self_play_episodes': 30000,
         'network_size': [1024, 512, 256, 128],
         'learning_rate': 0.0002,
@@ -83,9 +83,7 @@ def train_curriculum(
     
     # Training schedule
     curriculum_episodes: Optional[int] = None,
-    self_play_episodes: Optional[int] = None,
     curriculum_distribution: Dict[str, float] = None,  # Maps level names to percentages
-    enable_self_play: bool = True,
     enable_remedial: bool = True,
     
     # Agent configuration
@@ -101,12 +99,13 @@ def train_curriculum(
     early_stopping_patience: int = 3,
     
     # Exploration settings
-    initial_epsilon: float = 0.9,
-    min_epsilon: float = 0.05,
-    epsilon_decay_per_level: float = 0.2  # How much to reduce epsilon per level
+    initial_epsilon: float = 1.0,
+    min_epsilon: float = 0.1,
+    epsilon_decay_per_level: float = 0.15  # How much to reduce epsilon per level
 ) -> Tuple[RLAgent, Dict[str, Any]]:
     """
     Train an agent using curriculum learning with progressively more difficult opponents.
+    Self-play functionality has been removed and will be implemented separately.
     
     Args:
         agent_type: Type of agent to train ('dqn' or 'ppo')
@@ -123,9 +122,7 @@ def train_curriculum(
         
         # Training schedule
         curriculum_episodes: Total episodes for curriculum phase (overrides preset if specified)
-        self_play_episodes: Episodes for self-play phase (overrides preset if specified)
         curriculum_distribution: Custom distribution of episodes across levels (default: progressive)
-        enable_self_play: Whether to run self-play after curriculum
         enable_remedial: Whether to run remedial training for weak areas
         
         # Agent configuration
@@ -155,7 +152,6 @@ def train_curriculum(
     _num_players = num_players if num_players is not None else preset_config['num_players']
     _num_dice = num_dice if num_dice is not None else preset_config['num_dice']
     _curriculum_episodes = curriculum_episodes if curriculum_episodes is not None else preset_config['curriculum_episodes']
-    _self_play_episodes = self_play_episodes if self_play_episodes is not None else preset_config['self_play_episodes']
     _win_rate_threshold = win_rate_threshold if win_rate_threshold is not None else preset_config['win_rate_threshold']
     _learning_rate = learning_rate if learning_rate is not None else preset_config['learning_rate']
     _network_size = network_size if network_size is not None else preset_config['network_size']
@@ -176,7 +172,7 @@ def train_curriculum(
     logger = setup_logger('curriculum', os.path.join(log_dir, 'curriculum.log'))
     logger.info(f"Starting curriculum learning for Liar's Dice with {agent_type} agent")
     logger.info(f"Game setup: {_num_players} players, {_num_dice} dice, {dice_faces} faces")
-    logger.info(f"Curriculum: {_curriculum_episodes} episodes, Self-play: {_self_play_episodes} episodes")
+    logger.info(f"Curriculum: {_curriculum_episodes} episodes")
     
     # Resolve device
     if device == 'auto':
@@ -220,8 +216,8 @@ def train_curriculum(
         })
     elif agent_type.lower() == 'ppo':
         agent_config.update({
-            'entropy_coef': 0.02,  # Higher entropy for more exploration
-            'update_frequency': 2048,  # Update less frequently for more stable learning
+            'entropy_coef': 0.025,  # Higher entropy for more exploration
+            'update_frequency': 4096,  # Update less frequently for more stable learning
             'gae_lambda': 0.95  # Standard GAE parameter
         })
     
@@ -245,15 +241,15 @@ def train_curriculum(
     if curriculum_distribution is None:
         # Default progressive distribution (more episodes for harder opponents)
         curriculum_distribution = {
-            'random': 0.05,       # 5%
-            'naive': 0.05,        # 10%
-            'conservative': 0.2, # 15%
+            'random': 0.03,       # 5%
+            'naive': 0.03,        # 5%
+            'conservative': 0.2,  # 20%
             'anti_exploitation': 0.15, # 15%
-            'aggressive': 0.05,   # 20%
-            'strategic': 0.10,    # 25%
-            'adaptive': 0.10,      # 25%
-            'counter_strategy': 0.15, # 25%
-            'optimal': 0.15       # 25%
+            'aggressive': 0.04,   # 5%
+            'strategic': 0.13,    # 10%
+            'adaptive': 0.13,     # 10%
+            'counter_strategy': 0.14, # 15%
+            'optimal': 0.15       # 15%
         }
     
     # Convert distribution to episode counts
@@ -445,7 +441,7 @@ def train_curriculum(
         # Evaluate against all levels to find weaknesses
         eval_results = evaluate_against_curriculum(
             agent=agent,
-            num_episodes_per_level=500,
+            num_episodes_per_level=100,
             num_players=_num_players,
             num_dice=_num_dice,
             dice_faces=dice_faces,
@@ -555,57 +551,11 @@ def train_curriculum(
         else:
             logger.info("No levels need remedial training - all above threshold!")
     
-    # Self-play phase for final improvement
-    if enable_self_play and _self_play_episodes > 0:
-        logger.info("\n=== Starting Self-Play Phase ===")
-        
-        # Start with the best model
-        if best_overall_model:
-            logger.info(f"Loading best overall model with win rate {best_overall_winrate:.2f}")
-            agent.load(best_overall_model)
-        
-        # Set moderate exploration for self-play (DQN only)
-        if agent_type.lower() == 'dqn':
-            agent.epsilon = 0.3
-        
-        # Create self-play directory
-        self_play_checkpoint_dir = os.path.join(checkpoint_dir, "self_play")
-        os.makedirs(self_play_checkpoint_dir, exist_ok=True)
-        
-        # Run self-play training
-        self_play_results = train_self_play(
-            agent=agent,
-            num_episodes=_self_play_episodes,
-            num_players=_num_players,
-            num_dice=_num_dice,
-            dice_faces=dice_faces,
-            checkpoint_dir=self_play_checkpoint_dir,
-            log_dir=os.path.join(log_dir, "self_play"),
-            seed=seed,
-            eval_interval=evaluation_frequency,
-            update_opponent_interval=1000,  # Update opponent model every 1000 episodes
-            reward_shaping=True
-        )
-        
-        # Add self-play results
-        all_results['self_play'] = self_play_results
-        
-        # Save final self-play model
-        final_self_play_path = os.path.join(self_play_checkpoint_dir, "final_self_play")
-        agent.save(final_self_play_path)
-        logger.info(f"Saved final self-play model to {final_self_play_path}")
-        
-        # Update best model if self-play improved it
-        if self_play_results.get('final_win_rate', 0) > best_overall_winrate:
-            best_overall_winrate = self_play_results['final_win_rate']
-            best_overall_model = final_self_play_path
-            logger.info(f"Self-play produced new best model: {best_overall_winrate:.2f}")
-    
     # Final evaluation against all levels
     logger.info("\n=== Final Evaluation ===")
     final_eval_results = evaluate_against_curriculum(
         agent=agent,
-        num_episodes_per_level=1000,  # More episodes for final evaluation
+        num_episodes_per_level=500,  # More episodes for final evaluation
         num_players=_num_players,
         num_dice=_num_dice,
         dice_faces=dice_faces,
@@ -632,7 +582,6 @@ def train_curriculum(
             'num_dice': _num_dice,
             'dice_faces': dice_faces,
             'curriculum_episodes': _curriculum_episodes,
-            'self_play_episodes': _self_play_episodes,
             'network_size': _network_size,
             'win_rate_threshold': _win_rate_threshold
         }
@@ -660,8 +609,7 @@ def train_curriculum(
         'overall_win_rate': overall_win_rate,
         'network_size': _network_size,
         'training_parameters': {
-            'curriculum_episodes': _curriculum_episodes,
-            'self_play_episodes': _self_play_episodes
+            'curriculum_episodes': _curriculum_episodes
         }
     }
     
@@ -684,12 +632,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Curriculum learning for Liar's Dice")
     parser.add_argument('--agent', type=str, default='ppo', choices=['dqn', 'ppo'],
                         help='Type of agent to train')
-    parser.add_argument('--preset', type=str, default='basic', choices=['basic', 'standard', 'advanced'],
+    parser.add_argument('--preset', type=str, default='standard', choices=['basic', 'standard', 'advanced'],
                         help='Configuration preset to use')
-    parser.add_argument('--path', type=str, default='results/ppo_3dice', help='Base path for results')
+    parser.add_argument('--path', type=str, default='curriculum_learning/ppo_5dice', help='Base path for results')
     parser.add_argument('--seed', type=int, default=None, help='Random seed')
     parser.add_argument('--render', action='store_true', help='Enable rendering during training')
-    parser.add_argument('--no-self-play', action='store_true', help='Disable self-play phase')
     parser.add_argument('--no-remedial', action='store_true', help='Disable remedial training')
     parser.add_argument('--no-early-stopping', action='store_true', help='Disable early stopping')
     
@@ -702,7 +649,6 @@ if __name__ == "__main__":
         results_path=args.path,
         seed=args.seed,
         render_training=args.render,
-        enable_self_play=not args.no_self_play,
         enable_remedial=not args.no_remedial,
         enable_early_stopping=not args.no_early_stopping,
         evaluation_frequency=100,

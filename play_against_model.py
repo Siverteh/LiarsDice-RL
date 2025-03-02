@@ -330,7 +330,7 @@ def play_against_model(
         action_dim = len(action_mapping)
         
         # Get network size from metadata if available
-        network_size = metadata.get('network_size', [256, 128, 64]) if metadata else [256, 128, 64]
+        network_size = metadata.get('network_size', [1024, 512, 256, 128, 64]) if metadata else [1024, 512, 256, 128, 64]
         
         # Create the appropriate agent based on agent_type
         if agent_type.lower() == 'dqn':
@@ -338,9 +338,10 @@ def play_against_model(
                 obs_dim=obs_dim,
                 action_dim=action_dim,
                 hidden_dims=network_size if isinstance(network_size, list) else 
-                         [512, 256, 128, 64] if network_size == 'large' else 
-                         [256, 128, 64] if network_size == 'medium' else 
-                         [128, 64],
+                        [1024, 512, 256, 128, 64] if network_size == 'very large' else 
+                        [512, 256, 128, 64] if network_size == 'large' else 
+                        [256, 128, 64] if network_size == 'medium' else 
+                        [128, 64],
                 device=device
             )
             # For DQN, we want a deterministic policy during play
@@ -353,9 +354,10 @@ def play_against_model(
                 obs_dim=obs_dim,
                 action_dim=action_dim,
                 hidden_dims=network_size if isinstance(network_size, list) else 
-                         [512, 256, 128, 64] if network_size == 'large' else 
-                         [256, 128, 64] if network_size == 'medium' else 
-                         [128, 64],
+                        [1024, 512, 256, 128, 64] if network_size == 'very large' else 
+                        [512, 256, 128, 64] if network_size == 'large' else 
+                        [256, 128, 64] if network_size == 'medium' else 
+                        [128, 64],
                 device=device
             )
         else:

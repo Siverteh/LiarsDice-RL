@@ -1,0 +1,39 @@
+2025-03-02 15:59:18,679 - train - INFO - Starting training for 10000 episodes with agent type: PPOAgent
+2025-03-02 15:59:18,680 - train - INFO - Agent config: {'obs_dim': 35, 'action_dim': 37, 'hidden_dims': [256, 128, 64], 'learning_rate': 0.0003, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.00372073463157373, 'batch_size': 64, 'update_frequency': 2048, 'max_grad_norm': 0.5, 'update_counter': 60, 'step_counter': 1910, 'total_training_steps': 1000000, 'current_lr': 0.00048268613253910135, 'device': 'cuda', 'memory_size': 1940, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 6.197}
+2025-03-02 15:59:20,958 - train - INFO - Episode 100/10000 | Reward: 0.95 | Length: 4.69 | Loss: 0.0000
+2025-03-02 15:59:22,470 - train - INFO - Episode 200/10000 | Reward: 0.89 | Length: 4.63 | Loss: 0.0000
+2025-03-02 15:59:24,103 - train - INFO - Episode 300/10000 | Reward: 1.55 | Length: 4.75 | Loss: 0.0000
+2025-03-02 15:59:25,708 - train - INFO - Episode 400/10000 | Reward: 1.89 | Length: 4.59 | Loss: 0.0000
+2025-03-02 15:59:28,133 - train - INFO - Episode 500/10000 | Reward: 0.86 | Length: 4.80 | Loss: 0.0000
+2025-03-02 15:59:28,140 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_155730\checkpoints\round_2\agent_episode_500
+2025-03-02 15:59:35,932 - train - INFO - Evaluation at episode 500: 4.00 reward, Win rate: 0.67
+2025-03-02 15:59:37,604 - train - INFO - Episode 600/10000 | Reward: 1.21 | Length: 4.57 | Loss: 0.0000
+2025-03-02 15:59:39,354 - train - INFO - Episode 700/10000 | Reward: 1.13 | Length: 5.07 | Loss: 0.0000
+2025-03-02 15:59:40,944 - train - INFO - Episode 800/10000 | Reward: 0.60 | Length: 4.87 | Loss: 0.0000
+2025-03-02 15:59:43,297 - train - INFO - Episode 900/10000 | Reward: 0.74 | Length: 4.80 | Loss: 0.0000
+2025-03-02 15:59:44,923 - train - INFO - Episode 1000/10000 | Reward: 1.46 | Length: 4.72 | Loss: 0.0000
+2025-03-02 15:59:44,930 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_155730\checkpoints\round_2\agent_episode_1000
+2025-03-02 15:59:52,458 - train - INFO - Evaluation at episode 1000: 3.00 reward, Win rate: 0.73
+2025-03-02 15:59:54,110 - train - INFO - Episode 1100/10000 | Reward: 1.75 | Length: 4.52 | Loss: 0.0000
+2025-03-02 15:59:55,778 - train - INFO - Episode 1200/10000 | Reward: 1.28 | Length: 4.73 | Loss: 0.0000
+2025-03-02 15:59:57,376 - train - INFO - Episode 1300/10000 | Reward: 0.97 | Length: 4.80 | Loss: 0.0000
+2025-03-02 15:59:59,455 - train - INFO - Episode 1400/10000 | Reward: 1.33 | Length: 4.73 | Loss: 0.0000
+2025-03-02 16:00:01,063 - train - INFO - Episode 1500/10000 | Reward: 1.36 | Length: 4.61 | Loss: 0.0000
+2025-03-02 16:00:01,070 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_155730\checkpoints\round_2\agent_episode_1500
+2025-03-02 16:00:08,687 - train - INFO - Evaluation at episode 1500: -3.00 reward, Win rate: 0.70
+2025-03-02 16:00:10,424 - train - INFO - Episode 1600/10000 | Reward: 2.09 | Length: 4.67 | Loss: 0.0000
+2025-03-02 16:00:12,054 - train - INFO - Episode 1700/10000 | Reward: 1.69 | Length: 4.73 | Loss: 0.0000
+2025-03-02 16:00:14,244 - train - INFO - Episode 1800/10000 | Reward: 1.28 | Length: 4.76 | Loss: 0.0000
+2025-03-02 16:00:15,837 - train - INFO - Episode 1900/10000 | Reward: 2.14 | Length: 4.77 | Loss: 0.0000
+2025-03-02 16:00:17,450 - train - INFO - Episode 2000/10000 | Reward: 1.98 | Length: 4.57 | Loss: 0.0000
+2025-03-02 16:00:17,458 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_155730\checkpoints\round_2\agent_episode_2000
+2025-03-02 16:00:25,320 - train - INFO - Evaluation at episode 2000: -3.00 reward, Win rate: 0.63
+2025-03-02 16:00:27,021 - train - INFO - Episode 2100/10000 | Reward: 1.70 | Length: 4.80 | Loss: 0.0000
+2025-03-02 16:00:28,667 - train - INFO - Episode 2200/10000 | Reward: 2.12 | Length: 4.87 | Loss: 0.0000
+2025-03-02 16:00:30,690 - train - INFO - Episode 2300/10000 | Reward: 2.33 | Length: 4.57 | Loss: 0.0000
+2025-03-02 16:00:32,416 - train - INFO - Episode 2400/10000 | Reward: 1.12 | Length: 4.83 | Loss: 0.0000
+2025-03-02 16:00:34,085 - train - INFO - Episode 2500/10000 | Reward: 1.76 | Length: 4.82 | Loss: 0.0000
+2025-03-02 16:00:34,093 - train - INFO - Saved checkpoint to results/self_play\self_play_ppo_2p3d_20250302_155730\checkpoints\round_2\agent_episode_2500
+2025-03-02 16:00:41,712 - train - INFO - Evaluation at episode 2500: -3.00 reward, Win rate: 0.60
+2025-03-02 16:00:43,492 - train - INFO - Episode 2600/10000 | Reward: 1.54 | Length: 4.87 | Loss: 0.0000
+2025-03-02 16:00:45,656 - train - INFO - Episode 2700/10000 | Reward: 2.40 | Length: 4.66 | Loss: 0.0000

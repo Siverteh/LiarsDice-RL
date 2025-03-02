@@ -22,6 +22,7 @@ class LiarsDiceEnvWrapper:
     - Observation preprocessing
     - Environment reset and step methods
     - Support for playing against rule-based agents
+    - Support for self-play (using RL agent as opponent)
     
     Attributes:
         game: The underlying Liar's Dice game
@@ -29,6 +30,7 @@ class LiarsDiceEnvWrapper:
         num_players: Number of players in the game
         action_mapping: Mapping from action indices to game actions
         rule_agents: Dict of rule-based opponents, if any
+        rl_opponent: RL agent used as opponent (for self-play)
         active_player_id: Index of the learning agent in the game
     """
     
@@ -38,7 +40,8 @@ class LiarsDiceEnvWrapper:
         num_dice: int = 2,
         dice_faces: int = 6,
         seed: Optional[int] = None,
-        rule_agent_types: Optional[List[str]] = None
+        rule_agent_types: Optional[List[str]] = None,
+        rl_agent_as_opponent: Optional[Any] = None
     ):
         """
         Initialize the environment wrapper.
@@ -50,6 +53,7 @@ class LiarsDiceEnvWrapper:
             seed: Random seed for reproducibility
             rule_agent_types: List of rule agent types for opponents
                 (if None, environment expects actions for all players)
+            rl_agent_as_opponent: RL agent to use as opponent (for self-play)
         """
         self.game = LiarsDiceGame(
             num_players=num_players,
@@ -80,9 +84,17 @@ class LiarsDiceEnvWrapper:
         
         # Set up rule-based agents if specified
         self.rule_agents = {}
+        self.rl_opponent = None
         self.active_player_id = 0  # Default: first player is the learning agent
         
-        if rule_agent_types is not None:
+        # Set up RL agent as opponent if specified (for self-play)
+        if rl_agent_as_opponent is not None:
+            self.rl_opponent = rl_agent_as_opponent
+            # Set opponent as player 1 (player 0 is the learning agent)
+            if hasattr(self.rl_opponent, 'set_player_id'):
+                self.rl_opponent.set_player_id(1, num_players)
+        # Set up rule-based agents if specified
+        elif rule_agent_types is not None:
             if len(rule_agent_types) != num_players - 1:
                 raise ValueError("Number of rule agent types must be num_players - 1")
             
@@ -126,19 +138,48 @@ class LiarsDiceEnvWrapper:
         # Execute the action in the game
         observations, rewards, done, info = self.game.step(game_action)
         
-        # If rule agents are specified and game not done, let them take their turns
+        # Handle opponent turns (rule agents or RL agent)
         current_player = self.game.current_player
-        while not done and current_player != self.active_player_id and current_player in self.rule_agents:
-            agent = self.rule_agents[current_player]
-            valid_actions = self.game.get_valid_actions(current_player)
-            agent_action = agent.select_action(observations[current_player], valid_actions)
-            observations, rewards, done, info = self.game.step(agent_action)
-            current_player = self.game.current_player
         
-        # If the game is still not done and it's not the active player's turn,
-        # something went wrong
-        if not done and current_player != self.active_player_id:
-            raise RuntimeError(f"Game is waiting for player {current_player}, not the active player {self.active_player_id}")
+        # Keep taking opponent actions until it's the active player's turn or game is done
+        while not done and current_player != self.active_player_id:
+            # First check if we're doing self-play with an RL opponent
+            if self.rl_opponent is not None and current_player == 1:
+                # Get encoded observation for the RL opponent
+                opponent_obs = self.observation_encoder.encode(observations[current_player])
+                
+                # Get action from RL opponent
+                valid_actions = self.get_valid_actions_for_player(current_player)
+                
+                # Use training=False instead of evaluation=True to be compatible with your agent implementation
+                opponent_action_idx = self.rl_opponent.select_action(opponent_obs, 
+                                                                    [self.action_mapping[idx] for idx in valid_actions], 
+                                                                    training=False)
+                
+                # Find the index of the selected action
+                opponent_action = None
+                for idx, valid_action in enumerate([self.action_mapping[i] for i in valid_actions]):
+                    if self._actions_equal(opponent_action_idx, valid_action):
+                        opponent_action = valid_action
+                        break
+                
+                if opponent_action is None:
+                    raise ValueError(f"Selected action {opponent_action_idx} not found in valid actions")
+                
+                # Execute opponent action
+                observations, rewards, done, info = self.game.step(opponent_action)
+            # Next check if we have a rule agent for this player
+            elif current_player in self.rule_agents:
+                agent = self.rule_agents[current_player]
+                valid_actions = self.game.get_valid_actions(current_player)
+                agent_action = agent.select_action(observations[current_player], valid_actions)
+                observations, rewards, done, info = self.game.step(agent_action)
+            else:
+                # If we get here, there's no agent defined for the current player
+                raise RuntimeError(f"No agent defined for player {current_player}")
+            
+            # Update current player
+            current_player = self.game.current_player
         
         # Return the observation, reward, done flag, and info for the active player
         encoded_obs = self.observation_encoder.encode(observations[self.active_player_id])
@@ -148,13 +189,25 @@ class LiarsDiceEnvWrapper:
     
     def get_valid_actions(self) -> List[int]:
         """
-        Get valid action indices for the current state.
+        Get valid action indices for the current state for the active player.
         
         Returns:
             List of valid action indices
         """
+        return self.get_valid_actions_for_player(self.active_player_id)
+    
+    def get_valid_actions_for_player(self, player_id: int) -> List[int]:
+        """
+        Get valid action indices for the specified player.
+        
+        Args:
+            player_id: ID of the player to get valid actions for
+            
+        Returns:
+            List of valid action indices
+        """
         # Get valid game actions
-        valid_game_actions = self.game.get_valid_actions(self.active_player_id)
+        valid_game_actions = self.game.get_valid_actions(player_id)
         
         # Convert to action indices
         valid_indices = []
@@ -260,6 +313,19 @@ class LiarsDiceEnvWrapper:
         """Render the game state."""
         self.game.render()
 
+    def update_rl_opponent(self, new_opponent):
+        """
+        Update the RL opponent with a new agent.
+        
+        Args:
+            new_opponent: New RL agent to use as opponent
+        """
+        self.rl_opponent = new_opponent
+        # Set opponent as player 1 (player 0 is the learning agent)
+        if hasattr(self.rl_opponent, 'set_player_id'):
+            self.rl_opponent.set_player_id(1, self.num_players)
+
+    @staticmethod
     def create_progressive_env(
         num_players: int,
         num_dice: int, 

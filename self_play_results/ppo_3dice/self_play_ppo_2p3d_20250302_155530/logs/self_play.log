@@ -1,0 +1,8 @@
+2025-03-02 15:55:30,946 - self_play - INFO - Starting self-play learning for Liar's Dice with loaded ppo agent
+2025-03-02 15:55:30,946 - self_play - INFO - Game setup: 2 players, 3 dice, 6 faces
+2025-03-02 15:55:30,946 - self_play - INFO - Self-play: 5 rounds with 10000 episodes per round
+2025-03-02 15:55:30,957 - self_play - INFO - Using device: cuda
+2025-03-02 15:55:30,958 - self_play - INFO - Observation dimension: 35, Action dimension: 37
+2025-03-02 15:55:31,466 - self_play - INFO - Loading pre-trained model from results\ppo_3dice\models\ppo_2p3d_0.85wr_20250302_152449
+2025-03-02 15:55:31,490 - self_play - INFO - 
+=== Starting Self-Play Round 1/5 ===
