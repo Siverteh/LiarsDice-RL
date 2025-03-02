@@ -1,0 +1,257 @@
+2025-03-02 15:24:49,815 - curriculum - INFO - Starting curriculum learning for Liar's Dice with ppo agent
+2025-03-02 15:24:49,816 - curriculum - INFO - Game setup: 2 players, 3 dice, 6 faces
+2025-03-02 15:24:49,816 - curriculum - INFO - Curriculum: 100000 episodes, Self-play: 10000 episodes
+2025-03-02 15:24:49,827 - curriculum - INFO - Using device: cuda
+2025-03-02 15:24:49,828 - curriculum - INFO - Observation dimension: 35, Action dimension: 37
+2025-03-02 15:24:50,296 - curriculum - INFO - Created ppo agent with 37 actions
+2025-03-02 15:24:50,296 - curriculum - INFO - Curriculum schedule:
+2025-03-02 15:24:50,296 - curriculum - INFO -   random: 5000 episodes (5.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   naive: 5000 episodes (5.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   conservative: 20000 episodes (20.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   anti_exploitation: 15000 episodes (15.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   aggressive: 5000 episodes (5.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   strategic: 10000 episodes (10.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   adaptive: 10000 episodes (10.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   counter_strategy: 15000 episodes (15.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO -   optimal: 15000 episodes (15.0%)
+2025-03-02 15:24:50,297 - curriculum - INFO - 
+=== Training against random (5000 episodes) ===
+2025-03-02 15:24:52,852 - curriculum - INFO - New best model for random: 0.53 win rate
+2025-03-02 15:24:52,855 - curriculum - INFO - New best overall model: 0.53 win rate
+2025-03-02 15:24:58,315 - curriculum - INFO - New best model for random: 0.70 win rate
+2025-03-02 15:24:58,321 - curriculum - INFO - New best overall model: 0.70 win rate
+2025-03-02 15:25:06,393 - curriculum - INFO - New best model for random: 0.73 win rate
+2025-03-02 15:25:06,399 - curriculum - INFO - New best overall model: 0.73 win rate
+2025-03-02 15:25:09,097 - curriculum - INFO - New best model for random: 0.77 win rate
+2025-03-02 15:25:09,104 - curriculum - INFO - New best overall model: 0.77 win rate
+2025-03-02 15:25:09,104 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:25:11,781 - curriculum - INFO - New best model for random: 0.80 win rate
+2025-03-02 15:25:11,786 - curriculum - INFO - New best overall model: 0.80 win rate
+2025-03-02 15:25:11,786 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (2/3)
+2025-03-02 15:25:16,763 - curriculum - INFO - Loading best model for random (win rate: 0.80)
+2025-03-02 15:25:16,793 - curriculum - INFO - Completed training against random
+2025-03-02 15:25:16,793 - curriculum - INFO - Episodes: 5000, Duration: 26.46 seconds
+2025-03-02 15:25:16,793 - curriculum - INFO - Final evaluation reward: 3.09
+2025-03-02 15:25:16,793 - curriculum - INFO - Best win rate: 0.80
+2025-03-02 15:25:16,794 - curriculum - INFO - 
+=== Training against naive (5000 episodes) ===
+2025-03-02 15:25:19,212 - curriculum - INFO - New best model for naive: 0.07 win rate
+2025-03-02 15:25:21,544 - curriculum - INFO - New best model for naive: 0.10 win rate
+2025-03-02 15:25:26,658 - curriculum - INFO - New best model for naive: 0.17 win rate
+2025-03-02 15:25:28,913 - curriculum - INFO - New best model for naive: 0.27 win rate
+2025-03-02 15:25:45,092 - curriculum - INFO - New best model for naive: 0.37 win rate
+2025-03-02 15:25:50,872 - curriculum - INFO - New best model for naive: 0.43 win rate
+2025-03-02 15:25:56,338 - curriculum - INFO - New best model for naive: 0.57 win rate
+2025-03-02 15:25:59,515 - curriculum - INFO - New best model for naive: 0.73 win rate
+2025-03-02 15:26:11,161 - curriculum - INFO - New best model for naive: 0.77 win rate
+2025-03-02 15:26:11,161 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:26:17,060 - curriculum - INFO - New best model for naive: 0.80 win rate
+2025-03-02 15:26:17,060 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:26:23,174 - curriculum - INFO - New best model for naive: 0.97 win rate
+2025-03-02 15:26:23,180 - curriculum - INFO - New best overall model: 0.97 win rate
+2025-03-02 15:26:23,180 - curriculum - INFO - Win rate 0.97 above threshold 0.75 (1/3)
+2025-03-02 15:26:25,856 - curriculum - INFO - Win rate 0.93 above threshold 0.75 (2/3)
+2025-03-02 15:26:30,889 - curriculum - INFO - Loading best model for naive (win rate: 0.97)
+2025-03-02 15:26:30,920 - curriculum - INFO - Completed training against naive
+2025-03-02 15:26:30,920 - curriculum - INFO - Episodes: 5000, Duration: 74.10 seconds
+2025-03-02 15:26:30,920 - curriculum - INFO - Final evaluation reward: 2.92
+2025-03-02 15:26:30,921 - curriculum - INFO - Best win rate: 0.97
+2025-03-02 15:26:30,921 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:26:31,680 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:26:32,604 - curriculum - INFO -   vs naive: win rate = 0.83
+2025-03-02 15:26:32,693 - curriculum - INFO -   Average win rate across all levels: 0.92
+2025-03-02 15:26:32,694 - curriculum - INFO - 
+=== Training against conservative (20000 episodes) ===
+2025-03-02 15:26:34,602 - curriculum - INFO - New best model for conservative: 0.03 win rate
+2025-03-02 15:26:51,172 - curriculum - INFO - New best model for conservative: 0.07 win rate
+2025-03-02 15:27:09,030 - curriculum - INFO - New best model for conservative: 0.13 win rate
+2025-03-02 15:27:38,623 - curriculum - INFO - New best model for conservative: 0.20 win rate
+2025-03-02 15:28:00,618 - curriculum - INFO - New best model for conservative: 0.23 win rate
+2025-03-02 15:28:14,653 - curriculum - INFO - New best model for conservative: 0.27 win rate
+2025-03-02 15:28:16,953 - curriculum - INFO - New best model for conservative: 0.47 win rate
+2025-03-02 15:29:01,441 - curriculum - INFO - New best model for conservative: 0.50 win rate
+2025-03-02 15:29:11,900 - curriculum - INFO - New best model for conservative: 0.57 win rate
+2025-03-02 15:29:33,693 - curriculum - INFO - New best model for conservative: 0.63 win rate
+2025-03-02 15:30:00,753 - curriculum - INFO - New best model for conservative: 0.70 win rate
+2025-03-02 15:30:14,380 - curriculum - INFO - New best model for conservative: 0.73 win rate
+2025-03-02 15:30:35,671 - curriculum - INFO - New best model for conservative: 0.77 win rate
+2025-03-02 15:30:35,672 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:31:04,975 - curriculum - INFO - New best model for conservative: 0.80 win rate
+2025-03-02 15:31:04,975 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:31:31,569 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:31:36,935 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:31:53,730 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:31:56,519 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (2/3)
+2025-03-02 15:32:08,084 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:32:10,758 - curriculum - INFO - New best model for conservative: 0.90 win rate
+2025-03-02 15:32:10,758 - curriculum - INFO - Win rate 0.90 above threshold 0.75 (2/3)
+2025-03-02 15:32:21,905 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:32:27,578 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:32:30,173 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (2/3)
+2025-03-02 15:32:35,331 - curriculum - INFO - Loading best model for conservative (win rate: 0.90)
+2025-03-02 15:32:35,368 - curriculum - INFO - Completed training against conservative
+2025-03-02 15:32:35,369 - curriculum - INFO - Episodes: 20000, Duration: 362.64 seconds
+2025-03-02 15:32:35,369 - curriculum - INFO - Final evaluation reward: 1.94
+2025-03-02 15:32:35,369 - curriculum - INFO - Best win rate: 0.90
+2025-03-02 15:32:35,369 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:32:35,989 - curriculum - INFO -   vs random: win rate = 0.93
+2025-03-02 15:32:36,952 - curriculum - INFO -   vs naive: win rate = 0.90
+2025-03-02 15:32:37,790 - curriculum - INFO -   vs conservative: win rate = 0.67
+2025-03-02 15:32:37,790 - curriculum - INFO -   Average win rate across all levels: 0.83
+2025-03-02 15:32:37,790 - curriculum - INFO - 
+=== Training against anti_exploitation (15000 episodes) ===
+2025-03-02 15:32:40,244 - curriculum - INFO - New best model for anti_exploitation: 0.67 win rate
+2025-03-02 15:32:43,068 - curriculum - INFO - New best model for anti_exploitation: 0.80 win rate
+2025-03-02 15:32:43,068 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:32:45,533 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (2/3)
+2025-03-02 15:32:50,885 - curriculum - INFO - New best model for anti_exploitation: 0.87 win rate
+2025-03-02 15:32:50,885 - curriculum - INFO - Win rate 0.87 above threshold 0.75 (1/3)
+2025-03-02 15:32:55,915 - curriculum - INFO - Win rate 0.83 above threshold 0.75 (1/3)
+2025-03-02 15:32:58,823 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (2/3)
+2025-03-02 15:33:03,187 - curriculum - INFO - Loading best model for anti_exploitation (win rate: 0.87)
+2025-03-02 15:33:03,223 - curriculum - INFO - Completed training against anti_exploitation
+2025-03-02 15:33:03,223 - curriculum - INFO - Episodes: 15000, Duration: 25.40 seconds
+2025-03-02 15:33:03,223 - curriculum - INFO - Final evaluation reward: 2.81
+2025-03-02 15:33:03,224 - curriculum - INFO - Best win rate: 0.87
+2025-03-02 15:33:03,224 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:33:03,901 - curriculum - INFO -   vs random: win rate = 0.97
+2025-03-02 15:33:04,890 - curriculum - INFO -   vs naive: win rate = 1.00
+2025-03-02 15:33:05,793 - curriculum - INFO -   vs conservative: win rate = 0.67
+2025-03-02 15:33:06,634 - curriculum - INFO -   vs anti_exploitation: win rate = 0.93
+2025-03-02 15:33:06,634 - curriculum - INFO -   Average win rate across all levels: 0.89
+2025-03-02 15:33:06,634 - curriculum - INFO - 
+=== Training against aggressive (5000 episodes) ===
+2025-03-02 15:33:08,508 - curriculum - INFO - New best model for aggressive: 1.00 win rate
+2025-03-02 15:33:08,516 - curriculum - INFO - New best overall model: 1.00 win rate
+2025-03-02 15:33:08,516 - curriculum - INFO - Win rate 1.00 above threshold 0.75 (1/3)
+2025-03-02 15:33:10,261 - curriculum - INFO - Win rate 1.00 above threshold 0.75 (2/3)
+2025-03-02 15:33:13,573 - curriculum - INFO - Loading best model for aggressive (win rate: 1.00)
+2025-03-02 15:33:13,583 - curriculum - INFO - Completed training against aggressive
+2025-03-02 15:33:13,584 - curriculum - INFO - Episodes: 5000, Duration: 6.94 seconds
+2025-03-02 15:33:13,584 - curriculum - INFO - Final evaluation reward: 4.78
+2025-03-02 15:33:13,584 - curriculum - INFO - Best win rate: 1.00
+2025-03-02 15:33:13,584 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:33:14,209 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:33:15,146 - curriculum - INFO -   vs naive: win rate = 0.90
+2025-03-02 15:33:16,013 - curriculum - INFO -   vs conservative: win rate = 0.73
+2025-03-02 15:33:16,844 - curriculum - INFO -   vs anti_exploitation: win rate = 0.70
+2025-03-02 15:33:17,441 - curriculum - INFO -   vs aggressive: win rate = 1.00
+2025-03-02 15:33:17,441 - curriculum - INFO -   Average win rate across all levels: 0.87
+2025-03-02 15:33:17,441 - curriculum - INFO - 
+=== Training against strategic (10000 episodes) ===
+2025-03-02 15:33:20,616 - curriculum - INFO - New best model for strategic: 0.77 win rate
+2025-03-02 15:33:20,616 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:33:31,023 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:33:37,720 - curriculum - INFO - Win rate 0.77 above threshold 0.75 (1/3)
+2025-03-02 15:33:41,187 - curriculum - INFO - New best model for strategic: 0.83 win rate
+2025-03-02 15:33:41,187 - curriculum - INFO - Win rate 0.83 above threshold 0.75 (2/3)
+2025-03-02 15:33:46,876 - curriculum - INFO - Loading best model for strategic (win rate: 0.83)
+2025-03-02 15:33:46,920 - curriculum - INFO - Completed training against strategic
+2025-03-02 15:33:46,920 - curriculum - INFO - Episodes: 10000, Duration: 29.43 seconds
+2025-03-02 15:33:46,920 - curriculum - INFO - Final evaluation reward: 2.71
+2025-03-02 15:33:46,920 - curriculum - INFO - Best win rate: 0.83
+2025-03-02 15:33:46,920 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:33:47,629 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:33:48,569 - curriculum - INFO -   vs naive: win rate = 1.00
+2025-03-02 15:33:49,465 - curriculum - INFO -   vs conservative: win rate = 0.70
+2025-03-02 15:33:50,290 - curriculum - INFO -   vs anti_exploitation: win rate = 0.57
+2025-03-02 15:33:51,005 - curriculum - INFO -   vs aggressive: win rate = 0.97
+2025-03-02 15:33:52,251 - curriculum - INFO -   vs strategic: win rate = 0.87
+2025-03-02 15:33:52,251 - curriculum - INFO -   Average win rate across all levels: 0.85
+2025-03-02 15:33:52,251 - curriculum - INFO - 
+=== Training against adaptive (10000 episodes) ===
+2025-03-02 15:33:55,277 - curriculum - INFO - New best model for adaptive: 0.90 win rate
+2025-03-02 15:33:55,277 - curriculum - INFO - Win rate 0.90 above threshold 0.75 (1/3)
+2025-03-02 15:33:58,381 - curriculum - INFO - New best model for adaptive: 0.93 win rate
+2025-03-02 15:33:58,382 - curriculum - INFO - Win rate 0.93 above threshold 0.75 (2/3)
+2025-03-02 15:34:04,714 - curriculum - INFO - Loading best model for adaptive (win rate: 0.93)
+2025-03-02 15:34:04,780 - curriculum - INFO - Completed training against adaptive
+2025-03-02 15:34:04,781 - curriculum - INFO - Episodes: 10000, Duration: 12.46 seconds
+2025-03-02 15:34:04,781 - curriculum - INFO - Final evaluation reward: 3.35
+2025-03-02 15:34:04,781 - curriculum - INFO - Best win rate: 0.93
+2025-03-02 15:34:04,781 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:34:05,542 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:34:06,435 - curriculum - INFO -   vs naive: win rate = 0.97
+2025-03-02 15:34:07,290 - curriculum - INFO -   vs conservative: win rate = 0.67
+2025-03-02 15:34:08,050 - curriculum - INFO -   vs anti_exploitation: win rate = 0.80
+2025-03-02 15:34:08,674 - curriculum - INFO -   vs aggressive: win rate = 1.00
+2025-03-02 15:34:09,771 - curriculum - INFO -   vs strategic: win rate = 0.77
+2025-03-02 15:34:10,805 - curriculum - INFO -   vs adaptive: win rate = 0.97
+2025-03-02 15:34:10,805 - curriculum - INFO -   Average win rate across all levels: 0.88
+2025-03-02 15:34:10,805 - curriculum - INFO - 
+=== Training against counter_strategy (15000 episodes) ===
+2025-03-02 15:34:13,557 - curriculum - INFO - New best model for counter_strategy: 0.70 win rate
+2025-03-02 15:34:16,126 - curriculum - INFO - New best model for counter_strategy: 0.83 win rate
+2025-03-02 15:34:16,126 - curriculum - INFO - Win rate 0.83 above threshold 0.75 (1/3)
+2025-03-02 15:34:24,608 - curriculum - INFO - New best model for counter_strategy: 0.90 win rate
+2025-03-02 15:34:24,608 - curriculum - INFO - Win rate 0.90 above threshold 0.75 (1/3)
+2025-03-02 15:34:27,296 - curriculum - INFO - New best model for counter_strategy: 0.97 win rate
+2025-03-02 15:34:27,296 - curriculum - INFO - Win rate 0.97 above threshold 0.75 (2/3)
+2025-03-02 15:34:32,693 - curriculum - INFO - Loading best model for counter_strategy (win rate: 0.97)
+2025-03-02 15:34:32,725 - curriculum - INFO - Completed training against counter_strategy
+2025-03-02 15:34:32,725 - curriculum - INFO - Episodes: 15000, Duration: 21.89 seconds
+2025-03-02 15:34:32,725 - curriculum - INFO - Final evaluation reward: 2.19
+2025-03-02 15:34:32,726 - curriculum - INFO - Best win rate: 0.97
+2025-03-02 15:34:32,726 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:34:33,314 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:34:34,154 - curriculum - INFO -   vs naive: win rate = 1.00
+2025-03-02 15:34:34,976 - curriculum - INFO -   vs conservative: win rate = 0.57
+2025-03-02 15:34:35,742 - curriculum - INFO -   vs anti_exploitation: win rate = 0.77
+2025-03-02 15:34:36,345 - curriculum - INFO -   vs aggressive: win rate = 1.00
+2025-03-02 15:34:37,321 - curriculum - INFO -   vs strategic: win rate = 0.90
+2025-03-02 15:34:38,232 - curriculum - INFO -   vs adaptive: win rate = 0.70
+2025-03-02 15:34:39,055 - curriculum - INFO -   vs counter_strategy: win rate = 0.77
+2025-03-02 15:34:39,055 - curriculum - INFO -   Average win rate across all levels: 0.84
+2025-03-02 15:34:39,055 - curriculum - INFO - 
+=== Training against optimal (15000 episodes) ===
+2025-03-02 15:34:46,826 - curriculum - INFO - New best model for optimal: 0.80 win rate
+2025-03-02 15:34:46,826 - curriculum - INFO - Win rate 0.80 above threshold 0.75 (1/3)
+2025-03-02 15:35:36,564 - curriculum - INFO - New best model for optimal: 0.83 win rate
+2025-03-02 15:35:36,564 - curriculum - INFO - Win rate 0.83 above threshold 0.75 (1/3)
+2025-03-02 15:36:17,918 - curriculum - INFO - New best model for optimal: 0.90 win rate
+2025-03-02 15:36:17,918 - curriculum - INFO - Win rate 0.90 above threshold 0.75 (2/3)
+2025-03-02 15:37:59,273 - curriculum - INFO - Loading best model for optimal (win rate: 0.90)
+2025-03-02 15:37:59,280 - curriculum - INFO - Completed training against optimal
+2025-03-02 15:37:59,280 - curriculum - INFO - Episodes: 15000, Duration: 200.22 seconds
+2025-03-02 15:37:59,280 - curriculum - INFO - Final evaluation reward: 4.17
+2025-03-02 15:37:59,280 - curriculum - INFO - Best win rate: 0.90
+2025-03-02 15:37:59,280 - curriculum - INFO - Evaluating against all previous levels...
+2025-03-02 15:37:59,938 - curriculum - INFO -   vs random: win rate = 1.00
+2025-03-02 15:38:00,858 - curriculum - INFO -   vs naive: win rate = 1.00
+2025-03-02 15:38:01,777 - curriculum - INFO -   vs conservative: win rate = 0.63
+2025-03-02 15:38:02,601 - curriculum - INFO -   vs anti_exploitation: win rate = 0.77
+2025-03-02 15:38:03,235 - curriculum - INFO -   vs aggressive: win rate = 1.00
+2025-03-02 15:38:04,260 - curriculum - INFO -   vs strategic: win rate = 0.90
+2025-03-02 15:38:05,209 - curriculum - INFO -   vs adaptive: win rate = 0.53
+2025-03-02 15:38:06,093 - curriculum - INFO -   vs counter_strategy: win rate = 0.77
+2025-03-02 15:38:07,370 - curriculum - INFO -   vs optimal: win rate = 0.90
+2025-03-02 15:38:07,371 - curriculum - INFO -   Average win rate across all levels: 0.83
+2025-03-02 15:38:07,371 - curriculum - INFO - 
+=== Starting Remedial Training ===
+2025-03-02 15:38:07,371 - curriculum - INFO - Loading best overall model with win rate 1.00
+2025-03-02 15:38:12,867 - curriculum - INFO - Identified 3 levels needing remedial training: ['conservative', 'strategic', 'adaptive']
+2025-03-02 15:38:12,867 - curriculum - INFO - Starting remedial training against conservative
+2025-03-02 15:38:15,022 - curriculum - INFO - Remedial training new best: 0.57
+2025-03-02 15:38:17,398 - curriculum - INFO - Remedial training new best: 0.70
+2025-03-02 15:38:19,342 - curriculum - INFO - Remedial training new best: 0.73
+2025-03-02 15:38:21,312 - curriculum - INFO - Remedial training new best: 0.83
+2025-03-02 15:38:21,312 - curriculum - INFO - Remedial training goal achieved with 0.83
+2025-03-02 15:38:22,358 - curriculum - INFO - Completed remedial training against conservative
+2025-03-02 15:38:22,358 - curriculum - INFO - Final remedial win rate: 0.83
+2025-03-02 15:38:22,358 - curriculum - INFO - Starting remedial training against strategic
+2025-03-02 15:38:25,211 - curriculum - INFO - Remedial training new best: 0.73
+2025-03-02 15:38:27,616 - curriculum - INFO - Remedial training new best: 0.87
+2025-03-02 15:38:27,616 - curriculum - INFO - Remedial training goal achieved with 0.87
+2025-03-02 15:38:28,912 - curriculum - INFO - Completed remedial training against strategic
+2025-03-02 15:38:28,912 - curriculum - INFO - Final remedial win rate: 0.87
+2025-03-02 15:38:28,946 - curriculum - INFO - Starting remedial training against adaptive
+2025-03-02 15:38:31,415 - curriculum - INFO - Remedial training new best: 0.77
+2025-03-02 15:38:31,415 - curriculum - INFO - Remedial training goal achieved with 0.77
+2025-03-02 15:38:32,689 - curriculum - INFO - Completed remedial training against adaptive
+2025-03-02 15:38:32,689 - curriculum - INFO - Final remedial win rate: 0.77
+2025-03-02 15:38:32,689 - curriculum - INFO - 
+=== Final Evaluation ===
+2025-03-02 15:38:57,609 - curriculum - INFO - Saved final evaluation visualization to results/ppo_3dice\ppo_basic_2p3d_20250302_152449\logs\final_evaluation.png
+2025-03-02 15:38:57,619 - curriculum - INFO - Saved final model to results/ppo_3dice\models\ppo_2p3d_0.85wr_20250302_152449
+2025-03-02 15:38:57,619 - curriculum - INFO - 
+Curriculum learning completed!

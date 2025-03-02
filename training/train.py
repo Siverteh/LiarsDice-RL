@@ -457,10 +457,152 @@ def train_self_play(
     logger = setup_logger('self_play', os.path.join(log_dir, 'self_play.log'))
     logger.info(f"Starting self-play training for {num_episodes} episodes")
     
-    # Create opponent agent (must be same type as main agent)
-    # Since this is just a clone, we create it the same way
-    opponent_agent = agent.__class__(**agent.get_statistics())
-    
+    # Create opponent agent - FIXED INITIALIZATION
+    # Get agent type correctly
+    agent_type = agent.__class__.__name__
+
+    if agent_type == 'PPOAgent':
+        # For PPO, create with minimal parameters and then copy networks
+        from agents.ppo_agent import PPOAgent
+        import torch
+        
+        # Try to get parameters first from direct agent attributes
+        try:
+            obs_dim = agent.obs_dim
+            action_dim = agent.action_dim
+            device = str(agent.device)
+            hidden_dims = agent.hidden_dims.copy() if hasattr(agent, 'hidden_dims') else [256, 128, 64]
+            learning_rate = agent.initial_learning_rate if hasattr(agent, 'initial_learning_rate') else 0.0003
+        except AttributeError:
+            # Fall back to get_statistics() if direct access fails
+            logger.info("Falling back to get_statistics for PPO agent parameters")
+            agent_stats = agent.get_statistics()
+            obs_dim = agent_stats.get('obs_dim', 0)
+            action_dim = agent_stats.get('action_dim', 0)
+            device = agent_stats.get('device', 'cpu')
+            hidden_dims = agent_stats.get('hidden_dims', [256, 128, 64])
+            learning_rate = agent_stats.get('learning_rate', 0.0003)
+        
+        # Log the dimensions to diagnose any issues
+        logger.info(f"Creating PPO opponent with: obs_dim={obs_dim}, action_dim={action_dim}, hidden_dims={hidden_dims}")
+        
+        # Create opponent with parameters
+        opponent_agent = PPOAgent(
+            obs_dim=obs_dim,
+            action_dim=action_dim,
+            hidden_dims=hidden_dims,
+            learning_rate=learning_rate,
+            device=device
+        )
+        
+        # Copy the networks
+        temp_dir = os.path.join(checkpoint_dir, 'temp_opponent_init')
+        os.makedirs(temp_dir, exist_ok=True)
+        agent.save(temp_dir)
+        
+        try:
+            opponent_agent.load(temp_dir)
+            logger.info("Successfully loaded PPO opponent model")
+        except Exception as e:
+            logger.warning(f"Error loading PPO opponent model: {e}")
+            logger.warning("Using fresh PPO opponent with matching architecture")
+
+    elif agent_type == 'DQNAgent':
+        # For DQN, we can use a different approach
+        from agents.dqn_agent import DQNAgent
+        
+        # Try to get parameters directly first
+        try:
+            obs_dim = agent.obs_dim
+            action_dim = agent.action_dim
+            device = str(agent.device)
+            hidden_dims = agent.hidden_dims.copy() if hasattr(agent, 'hidden_dims') else [256, 128, 64]
+            learning_rate = agent.learning_rate if hasattr(agent, 'learning_rate') else 0.0005
+            gamma = agent.gamma if hasattr(agent, 'gamma') else 0.99
+        except AttributeError:
+            # Fall back to get_statistics
+            agent_stats = agent.get_statistics()
+            
+            # Filter out problematic parameters
+            init_params = {k: v for k, v in agent_stats.items() 
+                        if k in ['obs_dim', 'action_dim', 'hidden_dims', 
+                                'learning_rate', 'gamma', 'device']}
+            
+            obs_dim = init_params.get('obs_dim', 0)
+            action_dim = init_params.get('action_dim', 0)
+            device = init_params.get('device', 'cpu')
+            hidden_dims = init_params.get('hidden_dims', [256, 128, 64])
+            learning_rate = init_params.get('learning_rate', 0.0005)
+            gamma = init_params.get('gamma', 0.99)
+        
+        # Log the dimensions
+        logger.info(f"Creating DQN opponent with: obs_dim={obs_dim}, action_dim={action_dim}, hidden_dims={hidden_dims}")
+        
+        # Create opponent with filtered parameters
+        opponent_agent = DQNAgent(
+            obs_dim=obs_dim,
+            action_dim=action_dim,
+            hidden_dims=hidden_dims,
+            learning_rate=learning_rate,
+            gamma=gamma,
+            device=device
+        )
+        
+        # Copy weights
+        temp_dir = os.path.join(checkpoint_dir, 'temp_opponent_init')
+        os.makedirs(temp_dir, exist_ok=True)
+        agent.save(temp_dir)
+        
+        try:
+            opponent_agent.load(temp_dir)
+            logger.info("Successfully loaded DQN opponent model")
+        except Exception as e:
+            logger.warning(f"Error loading DQN opponent model: {e}")
+            logger.warning("Using fresh DQN opponent with matching architecture")
+
+    else:
+        # Fallback for other agent types
+        logger.info(f"Creating opponent for unknown agent type: {agent_type}")
+        try:
+            # Try original approach first
+            opponent_agent = agent.__class__(**agent.get_statistics())
+            logger.info("Successfully created opponent using get_statistics()")
+        except Exception as e:
+            logger.warning(f"Error creating opponent via get_statistics(): {e}")
+            logger.warning("Using alternative approach for opponent creation")
+            
+            # Create with minimal parameters
+            try:
+                # Try to get attributes directly
+                obs_dim = getattr(agent, 'obs_dim', 0)
+                action_dim = getattr(agent, 'action_dim', 0)
+                device = str(getattr(agent, 'device', 'cpu'))
+                
+                # If dimensions are still 0, try get_statistics as a fallback
+                if obs_dim == 0 or action_dim == 0:
+                    stats = agent.get_statistics()
+                    obs_dim = stats.get('obs_dim', 0)
+                    action_dim = stats.get('action_dim', 0)
+                    
+                if obs_dim == 0 or action_dim == 0:
+                    raise ValueError(f"Could not determine obs_dim ({obs_dim}) or action_dim ({action_dim})")
+                    
+                logger.info(f"Creating generic opponent with: obs_dim={obs_dim}, action_dim={action_dim}")
+                opponent_agent = agent.__class__(
+                    obs_dim=obs_dim,
+                    action_dim=action_dim,
+                    device=device
+                )
+                
+                # Copy weights
+                temp_dir = os.path.join(checkpoint_dir, 'temp_opponent_init')
+                os.makedirs(temp_dir, exist_ok=True)
+                agent.save(temp_dir)
+                opponent_agent.load(temp_dir)
+                logger.info("Successfully loaded opponent model")
+            except Exception as e:
+                logger.error(f"All methods failed to create opponent: {e}")
+                raise ValueError(f"Cannot create opponent agent of type {agent_type} for self-play")
     # Create a specialized self-play environment wrapper
     class SelfPlayEnv:
         def __init__(self):
@@ -559,6 +701,7 @@ def train_self_play(
     win_rates = []
     
     # Main training loop
+    from tqdm import tqdm
     for episode in tqdm(range(1, num_episodes + 1), desc="Self-Play Training"):
         # Run a training episode
         reward, steps, info = train_episode(
@@ -579,7 +722,7 @@ def train_self_play(
             
             logger.info(f"Self-play episode {episode}/{num_episodes} | "
                        f"Reward: {mean_reward:.2f} | Length: {mean_length:.2f} | "
-                       f"Loss: {mean_loss:.4f}")
+                       f"Loss: {mean_loss:.4f} | Epsilon: {agent.epsilon:.4f}")
         
         # Update opponent with current agent periodically
         if episode % update_opponent_interval == 0:

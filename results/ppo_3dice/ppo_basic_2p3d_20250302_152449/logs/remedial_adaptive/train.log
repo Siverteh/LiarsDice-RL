@@ -1,0 +1,8 @@
+2025-03-02 15:38:28,948 - train - INFO - Starting training for 3000 episodes with agent type: PPOAgent
+2025-03-02 15:38:28,949 - train - INFO - Agent config: {'obs_dim': 35, 'action_dim': 37, 'hidden_dims': [256, 128, 64], 'learning_rate': 0.0005, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.95, 'policy_clip': 0.2, 'value_coef': 0.5, 'entropy_coef': 0.0038771650526258873, 'batch_size': 64, 'update_frequency': 2048, 'max_grad_norm': 0.5, 'update_counter': 56, 'step_counter': 1039, 'total_training_steps': 1000000, 'current_lr': 0.000484893452474516, 'device': 'cuda', 'memory_size': 1041, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 7.865500000000002}
+2025-03-02 15:38:30,385 - train - INFO - Episode 100/3000 | Reward: 2.33 | Length: 8.15 | Loss: 0.0000
+2025-03-02 15:38:31,405 - train - INFO - Evaluation at episode 100: 4.00 reward, Win rate: 0.77
+2025-03-02 15:38:31,406 - train - INFO - Win rate 0.77 is above threshold 0.75 (1/2)
+2025-03-02 15:38:31,415 - train - INFO - Training stopped early by callback at episode 100
+2025-03-02 15:38:31,415 - train - INFO - Training completed!
+2025-03-02 15:38:32,689 - train - INFO - Final evaluation: 2.46 reward

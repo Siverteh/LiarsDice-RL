@@ -738,21 +738,43 @@ class PPOAgent(RLAgent):
         )
         self.entropy_scheduler.steps = params.get('entropy_scheduler_step', 0)
     
+    # Add this improved get_statistics method to your PPOAgent class
     def get_statistics(self) -> Dict[str, Any]:
         """
-        Get statistics about the agent for logging.
+        Get complete statistics about the agent for logging and cloning.
         
         Returns:
             Dictionary of agent statistics
         """
         return {
+            # Add critical dimension parameters
+            'obs_dim': self.obs_dim,
+            'action_dim': self.action_dim,
+            'hidden_dims': self.hidden_dims,
+            
+            # Training parameters
+            'learning_rate': self.initial_learning_rate,
+            'min_learning_rate': self.min_learning_rate,
+            'gamma': self.gamma,
+            'gae_lambda': self.gae_lambda,
+            'policy_clip': self.policy_clip,
+            'value_coef': self.value_coef,
+            'entropy_coef': self.current_entropy_coef,
+            'batch_size': self.batch_size,
+            'update_frequency': self.update_frequency,
+            'max_grad_norm': self.max_grad_norm,
+            
+            # State counters
             'update_counter': self.update_counter,
             'step_counter': self.step_counter,
+            'total_training_steps': self.total_training_steps,
+            
+            # Current values
             'current_lr': self.current_lr,
-            'current_entropy': self.current_entropy_coef,
-            'network_size': self.hidden_dims,
             'device': str(self.device),
-            'memory_size': len(self.memory),
+            
+            # Statistics
+            'memory_size': len(self.memory) if hasattr(self.memory, '__len__') else 0,
             'avg_policy_loss': np.mean(self.loss_stats['policy']) if self.loss_stats['policy'] else 0.0,
             'avg_value_loss': np.mean(self.loss_stats['value']) if self.loss_stats['value'] else 0.0,
             'avg_entropy': np.mean(self.loss_stats['entropy']) if self.loss_stats['entropy'] else 0.0,

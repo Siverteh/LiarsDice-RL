@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from agents.base_agent import RLAgent
 from agents.rule_agent import create_agent, CURRICULUM_LEVELS
 from environment.game import LiarsDiceGame
-from .environment_wrapper import LiarsDiceEnvWrapper
+from .environment_wrapper import LiarsDiceEnvWrapper, ObservationEncoder
 from .utils import setup_logger
 
 

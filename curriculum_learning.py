@@ -247,10 +247,13 @@ def train_curriculum(
         curriculum_distribution = {
             'random': 0.05,       # 5%
             'naive': 0.05,        # 10%
-            'conservative': 0.3, # 15%
+            'conservative': 0.2, # 15%
+            'anti_exploitation': 0.15, # 15%
             'aggressive': 0.05,   # 20%
-            'strategic': 0.35,    # 25%
-            'adaptive': 0.25      # 25%
+            'strategic': 0.10,    # 25%
+            'adaptive': 0.10,      # 25%
+            'counter_strategy': 0.15, # 25%
+            'optimal': 0.15       # 25%
         }
     
     # Convert distribution to episode counts
@@ -364,7 +367,7 @@ def train_curriculum(
             checkpoint_dir=os.path.join(checkpoint_dir, f"level_{level_idx}_{level_name}"),
             log_dir=os.path.join(log_dir, f"level_{level_idx}_{level_name}"),
             render_interval=100 if render_training else None,
-            eval_episodes=100,  # More episodes for reliable evaluation
+            eval_episodes=500,  # More episodes for reliable evaluation
             early_stopping=enable_early_stopping,
             win_rate_threshold=_win_rate_threshold,
             patience=early_stopping_patience,
@@ -442,7 +445,7 @@ def train_curriculum(
         # Evaluate against all levels to find weaknesses
         eval_results = evaluate_against_curriculum(
             agent=agent,
-            num_episodes_per_level=50,
+            num_episodes_per_level=500,
             num_players=_num_players,
             num_dice=_num_dice,
             dice_faces=dice_faces,
@@ -522,7 +525,7 @@ def train_curriculum(
                     checkpoint_dir=os.path.join(checkpoint_dir, f"remedial_{level_name}"),
                     log_dir=os.path.join(log_dir, f"remedial_{level_name}"),
                     render_interval=100 if render_training else None,
-                    eval_episodes=50,
+                    eval_episodes=500,
                     early_stopping=True,
                     win_rate_threshold=_win_rate_threshold,
                     patience=2,  # Less patience for remedial
@@ -602,7 +605,7 @@ def train_curriculum(
     logger.info("\n=== Final Evaluation ===")
     final_eval_results = evaluate_against_curriculum(
         agent=agent,
-        num_episodes_per_level=200,  # More episodes for final evaluation
+        num_episodes_per_level=1000,  # More episodes for final evaluation
         num_players=_num_players,
         num_dice=_num_dice,
         dice_faces=dice_faces,
