@@ -1,0 +1,16 @@
+2025-03-02 10:09:34,786 - curriculum - INFO - Starting curriculum learning for Liar's Dice with dqn agent
+2025-03-02 10:09:34,786 - curriculum - INFO - Game setup: 2 players, 3 dice, 6 faces
+2025-03-02 10:09:34,787 - curriculum - INFO - Curriculum: 30000 episodes, Self-play: 10000 episodes
+2025-03-02 10:09:34,800 - curriculum - INFO - Using device: cuda
+2025-03-02 10:09:34,801 - curriculum - INFO - Observation dimension: 35, Action dimension: 37
+2025-03-02 10:09:35,296 - curriculum - INFO - Created dqn agent with 37 actions
+2025-03-02 10:09:35,296 - curriculum - INFO - Curriculum schedule:
+2025-03-02 10:09:35,298 - curriculum - INFO -   random: 1500 episodes (5.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO -   naive: 3000 episodes (10.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO -   conservative: 4500 episodes (15.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO -   aggressive: 6000 episodes (20.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO -   strategic: 7500 episodes (25.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO -   adaptive: 7500 episodes (25.0%)
+2025-03-02 10:09:35,298 - curriculum - INFO - 
+=== Training against random (1500 episodes) ===
+2025-03-02 10:09:35,298 - curriculum - INFO - Setting epsilon to 0.70 for level random

@@ -1,7 +1,7 @@
 """
-Interactive gameplay against a trained DQN agent.
+Interactive gameplay against a trained RL agent.
 
-This script allows you to play Liar's Dice against a trained DQN agent.
+This script allows you to play Liar's Dice against a trained DQN or PPO agent.
 """
 
 import os
@@ -16,6 +16,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from environment.game import LiarsDiceGame, GameState
 from environment.state import ObservationEncoder
 from agents.dqn_agent import DQNAgent
+from agents.ppo_agent import PPOAgent
 from training.utils import get_action_mapping
 
 
@@ -45,12 +46,12 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def print_banner():
+def print_banner(agent_type="RL"):
     """Print game banner."""
     banner = f"""
     {Colors.BOLD}{Colors.YELLOW}╔═══════════════════════════════════════════════════════╗
     ║                   LIAR'S DICE                         ║
-    ║           Playing against a trained DQN agent         ║
+    ║           Playing against a trained {agent_type} agent         ║
     ╚═══════════════════════════════════════════════════════╝{Colors.RESET}
     """
     print(banner)
@@ -248,6 +249,7 @@ def get_human_action(game: LiarsDiceGame, human_player: int) -> Dict[str, Any]:
 
 def play_against_model(
     model_path: str,
+    agent_type: str = None,
     num_dice: int = 2,
     dice_faces: int = 6,
     human_goes_first: bool = True,
@@ -255,10 +257,11 @@ def play_against_model(
     device: str = 'auto'
 ) -> None:
     """
-    Play Liar's Dice against a trained DQN model.
+    Play Liar's Dice against a trained RL model.
     
     Args:
         model_path: Path to the trained model
+        agent_type: Type of agent ('dqn' or 'ppo')
         num_dice: Number of dice per player
         dice_faces: Number of faces on each die
         human_goes_first: Whether the human player goes first
@@ -281,6 +284,21 @@ def play_against_model(
             num_dice = metadata['num_dice']
         if 'dice_faces' in metadata:
             dice_faces = metadata['dice_faces']
+        
+        # Get agent type from metadata if not specified
+        if agent_type is None and 'agent_type' in metadata:
+            agent_type = metadata['agent_type'].lower()
+    
+    # If agent_type is still None, try to guess from file presence
+    if agent_type is None:
+        if os.path.exists(os.path.join(model_path, 'q_network.pth')):
+            agent_type = 'dqn'
+        elif os.path.exists(os.path.join(model_path, 'actor_critic.pth')):
+            agent_type = 'ppo'
+        else:
+            raise ValueError("Could not determine agent type. Please specify --agent_type")
+    
+    print(f"Using agent type: {agent_type}")
     
     # Determine player IDs
     human_player = 0 if human_goes_first else 1
@@ -312,22 +330,42 @@ def play_against_model(
         action_dim = len(action_mapping)
         
         # Get network size from metadata if available
-        network_size = 'large'  # Default to medium if not specified
+        network_size = metadata.get('network_size', [256, 128, 64]) if metadata else [256, 128, 64]
         
-        # Create and load the agent with the correct network size
-        agent = DQNAgent(
-            obs_dim=obs_dim,
-            action_dim=action_dim,
-            hidden_dims=[512, 256, 128, 64] if network_size == 'large' else 
-                    [256, 128, 64] if network_size == 'medium' else 
-                    [128, 64],
-            device=device
-        )
+        # Create the appropriate agent based on agent_type
+        if agent_type.lower() == 'dqn':
+            agent = DQNAgent(
+                obs_dim=obs_dim,
+                action_dim=action_dim,
+                hidden_dims=network_size if isinstance(network_size, list) else 
+                         [512, 256, 128, 64] if network_size == 'large' else 
+                         [256, 128, 64] if network_size == 'medium' else 
+                         [128, 64],
+                device=device
+            )
+            # For DQN, we want a deterministic policy during play
+            try_set_epsilon = getattr(agent, 'epsilon', None)
+            if try_set_epsilon is not None:
+                agent.epsilon = 0.0
+                
+        elif agent_type.lower() == 'ppo':
+            agent = PPOAgent(
+                obs_dim=obs_dim,
+                action_dim=action_dim,
+                hidden_dims=network_size if isinstance(network_size, list) else 
+                         [512, 256, 128, 64] if network_size == 'large' else 
+                         [256, 128, 64] if network_size == 'medium' else 
+                         [128, 64],
+                device=device
+            )
+        else:
+            raise ValueError(f"Unsupported agent type: {agent_type}")
+        
+        # Load the agent
         agent.load(model_path)
         agent.set_action_mapping(action_mapping)
-        agent.epsilon = 0.0  # Use greedy policy for playing
         
-        print(f"Successfully loaded model from {model_path} (network size: {network_size})")
+        print(f"Successfully loaded {agent_type.upper()} model from {model_path}")
         print(f"Playing with {num_dice} dice per player, {dice_faces} faces per die")
         print(f"You are {'going first' if human_goes_first else 'going second'}")
         input("Press Enter to start the game...")
@@ -340,6 +378,10 @@ def play_against_model(
     observations = game.reset()
     done = False
     rounds_played = 0
+    
+    # Variable to store the game state before final reset
+    pre_step_dice = None
+    pre_step_dice_counts = None
     
     while not done:
         current_player = game.current_player
@@ -426,30 +468,15 @@ def play_against_model(
                 
                 print(f"{Colors.CYAN}{explanation}{Colors.RESET}")
                 
-                # Additional debug info
-                if ((total_matching >= bid_quantity) and challenge_successful) or \
-                   ((total_matching < bid_quantity) and not challenge_successful):
-                    print(f"{Colors.RED}Note: The actual dice count seems inconsistent with the game's decision.{Colors.RESET}")
-                    print(f"{Colors.RED}This might be due to a different rule implementation or special case.{Colors.RESET}")
+                # Show dice when an extra layer of verification/interest
+                print("\nDice before the challenge:")
+                for p in range(game.num_players):
+                    player_label = "You" if p == human_player else "AI"
+                    dice_values = [int(d) for d in pre_step_dice[p, :pre_step_dice_counts[p]]]
+                    print(f"{player_label}'s dice:")
+                    print_dice(dice_values)
                 
-                # Check if the next player is correctly set (should be the player after the loser)
-                next_player = (loser + 1) % game.num_players
-                # Skip players with no dice
-                while next_player != game.current_player and game.dice_counts[next_player] == 0:
-                    next_player = (next_player + 1) % game.num_players
-                
-                if game.current_player != next_player and not done:
-                    print(f"{Colors.RED}Turn order issue: According to standard Liar's Dice rules,")
-                    print(f"Player {next_player} should start the next round (player after the loser).{Colors.RESET}")
-                    print(f"{Colors.RED}But the game engine has selected Player {game.current_player} to go next.{Colors.RESET}")
-                    
-                    # Provide guidance on how to fix this
-                    print(f"\n{Colors.YELLOW}To fix this issue, modify the _handle_challenge method in")
-                    print(f"environment/game.py to set the current_player correctly.{Colors.RESET}")
-                    print(f"{Colors.YELLOW}Look for the line: self.current_player = start_player")
-                    print(f"and change the logic that determines start_player.{Colors.RESET}")
-                
-                input("Press Enter to continue...")
+                input("\nPress Enter to continue...")
         else:
             # For normal bids, just execute the action
             observations, rewards, done, info = game.step(action)
@@ -463,6 +490,11 @@ def play_against_model(
         
         # If the game is done, show the final state
         if done:
+            # Store the final dice state
+            pre_step_dice = np.copy(game.dice)
+            pre_step_dice_counts = np.copy(game.dice_counts)
+            
+            # Print game state
             print_game_state(game, human_player, show_all=True)
             
             # Determine winner
@@ -477,11 +509,14 @@ def play_against_model(
                     print(f"{Colors.GREEN}{player_label}: {game.dice_counts[player]} dice{Colors.RESET}")
                 else:
                     print(f"{player_label}: {game.dice_counts[player]} dice")
+            
+            input("\nPress Enter to continue...")
     
     # Ask to play again
     if input("\nPlay again? (y/n): ").lower() == 'y':
         play_against_model(
             model_path=model_path,
+            agent_type=agent_type,
             num_dice=num_dice,
             dice_faces=dice_faces,
             human_goes_first=not human_goes_first,  # Switch who goes first
@@ -500,17 +535,20 @@ def list_available_models(models_dir: str = 'results/models') -> List[str]:
     for item in os.listdir(models_dir):
         full_path = os.path.join(models_dir, item)
         if os.path.isdir(full_path):
-            # Check if it's actually a model (has q_network.pth)
-            if os.path.exists(os.path.join(full_path, 'q_network.pth')):
+            # Check if it's a supported model type (DQN or PPO)
+            if (os.path.exists(os.path.join(full_path, 'q_network.pth')) or 
+                os.path.exists(os.path.join(full_path, 'actor_critic.pth'))):
                 models.append(item)
     
     return models
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Play Liar's Dice against a trained DQN model")
+    parser = argparse.ArgumentParser(description="Play Liar's Dice against a trained RL model")
     parser.add_argument('--model', type=str, default=None, 
                         help='Path to the trained model. If not specified, will use the most recent model.')
+    parser.add_argument('--agent_type', type=str, choices=['dqn', 'ppo'], default=None,
+                        help='Type of RL agent. If not specified, will try to determine from model files.')
     parser.add_argument('--models_dir', type=str, default='results/models',
                         help='Directory containing trained models')
     parser.add_argument('--dice', type=int, default=3, help='Number of dice per player')
@@ -551,6 +589,7 @@ if __name__ == "__main__":
     # Play the game
     play_against_model(
         model_path=model_path,
+        agent_type=args.agent_type,
         num_dice=args.dice,
         dice_faces=args.faces,
         human_goes_first=not args.ai_first,

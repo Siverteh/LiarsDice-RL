@@ -13,7 +13,7 @@ from typing import List, Dict, Tuple, Any, Optional, Union
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from agents.dqn_agent import DQNAgent
+from agents.base_agent import RLAgent
 from agents.rule_agent import create_agent, CURRICULUM_LEVELS
 from environment.game import LiarsDiceGame
 from .environment_wrapper import LiarsDiceEnvWrapper
@@ -21,7 +21,7 @@ from .utils import setup_logger
 
 
 def evaluate_agent(
-    agent: DQNAgent,
+    agent: RLAgent,  # Change to generic RLAgent instead of DQNAgent
     opponent_type: str,
     num_episodes: int = 100,
     num_players: int = 2,
@@ -33,16 +33,16 @@ def evaluate_agent(
     render_every: Optional[int] = None
 ) -> Dict[str, Any]:
     """
-    Evaluate a DQN agent against a specific opponent type.
+    Evaluate a reinforcement learning agent against a specific opponent type.
     
     Args:
-        agent: DQN agent to evaluate
+        agent: RL agent to evaluate (DQN, PPO, etc.)
         opponent_type: Type of rule-based opponent
         num_episodes: Number of episodes to evaluate
         num_players: Number of players in the game
         num_dice: Number of dice per player
         dice_faces: Number of faces on each die
-        epsilon: Exploration rate during evaluation
+        epsilon: Exploration rate during evaluation (for DQN agents)
         seed: Random seed for reproducibility
         verbose: Whether to print detailed evaluation information
         render_every: Render every N episodes (None for no rendering)
@@ -59,9 +59,11 @@ def evaluate_agent(
         rule_agent_types=[opponent_type]
     )
     
-    # Set exploration rate
-    original_epsilon = agent.epsilon
-    agent.epsilon = epsilon
+    # Set exploration rate for agents that use epsilon (e.g., DQN)
+    original_epsilon = None
+    if hasattr(agent, 'epsilon'):
+        original_epsilon = agent.epsilon
+        agent.epsilon = epsilon
     
     # Set up action mapping if not already set
     if agent.action_to_game_action is None:
@@ -121,8 +123,9 @@ def evaluate_agent(
             rewards.append(total_reward)
             episode_lengths.append(steps)
     finally:
-        # Restore original epsilon
-        agent.epsilon = original_epsilon
+        # Restore original epsilon if agent has it
+        if original_epsilon is not None and hasattr(agent, 'epsilon'):
+            agent.epsilon = original_epsilon
     
     # Calculate results
     win_rate = wins / num_episodes
@@ -147,7 +150,7 @@ def evaluate_agent(
 
 
 def evaluate_against_curriculum(
-    agent: DQNAgent,
+    agent: RLAgent,
     num_episodes_per_level: int = 50,
     num_players: int = 2,
     num_dice: int = 2,
@@ -265,7 +268,7 @@ def visualize_evaluation_results(
 
 
 def evaluate_self_play(
-    agent: DQNAgent,
+    agent: RLAgent,
     num_episodes: int = 50,
     num_dice: int = 2,
     dice_faces: int = 6,
@@ -290,7 +293,7 @@ def evaluate_self_play(
     """
     # Create a copy of the agent for the opponent
     device = agent.device
-    opponent_agent = DQNAgent(agent.obs_dim, agent.action_dim, device=device)
+    opponent_agent = RLAgent(agent.obs_dim, agent.action_dim, device=device)
     opponent_agent.q_network.load_state_dict(agent.q_network.state_dict())
     opponent_agent.target_network.load_state_dict(agent.target_network.state_dict())
     opponent_agent.epsilon = epsilon

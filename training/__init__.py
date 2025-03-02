@@ -5,7 +5,7 @@ This package contains training utilities, evaluation functions,
 and environment wrappers for training DQN agents to play Liar's Dice.
 """
 
-from .train import train_dqn_episode, train_dqn
+from .train import train_episode, train_agent
 from .evaluate import evaluate_agent, evaluate_against_curriculum
 from .environment_wrapper import LiarsDiceEnvWrapper
 from .utils import (
@@ -17,8 +17,8 @@ from .utils import (
 )
 
 __all__ = [
-    'train_dqn_episode',
-    'train_dqn',
+    'train_episode',
+    'train_agent',
     'evaluate_agent',
     'evaluate_against_curriculum',
     'LiarsDiceEnvWrapper',

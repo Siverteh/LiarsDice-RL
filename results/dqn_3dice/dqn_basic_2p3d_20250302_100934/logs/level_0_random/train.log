@@ -1,0 +1,2 @@
+2025-03-02 10:09:35,300 - train - INFO - Starting training for 1500 episodes with agent type: DQNAgent
+2025-03-02 10:09:35,300 - train - INFO - Agent config: {'epsilon': 0.7, 'buffer_size': 0, 'update_counter': 0, 'total_steps': 0, 'learning_rate': 0.0005, 'network_size': [256, 128, 64], 'device': 'cuda', 'avg_loss': 0.0, 'double_dqn': True}

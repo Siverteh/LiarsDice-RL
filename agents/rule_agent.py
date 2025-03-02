@@ -6,11 +6,14 @@ designed to better mimic human play patterns for more effective learning.
 """
 
 import random
+import os
+import json
 import numpy as np
 from typing import List, Dict, Tuple, Any, Optional
+from agents.base_agent import RLAgent
 
 
-class RuleAgent:
+class RuleAgent(RLAgent):
     """
     Base class for human-like Liar's Dice agents.
     
@@ -32,6 +35,7 @@ class RuleAgent:
             agent_type: Type identifier for the agent
             dice_faces: Number of faces on each die
         """
+        super(RuleAgent, self).__init__()
         self.agent_type = agent_type
         self.player_id = None
         self.num_players = None
@@ -48,13 +52,14 @@ class RuleAgent:
         self.player_id = player_id
         self.num_players = num_players
     
-    def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]], training: bool = True) -> Dict[str, Any]:
         """
         Select an action based on the current observation.
         
         Args:
             observation: Current game observation
             valid_actions: List of valid actions
+            training: Whether the agent is training (ignored for rule agents)
             
         Returns:
             Selected action as a dictionary
@@ -164,6 +169,93 @@ class RuleAgent:
             probability += binomial_coef * (p ** k) * ((1 - p) ** (unknown_dice - k))
         
         return probability
+        
+    # Implement required abstract methods from RLAgent
+    
+    def update(self, *args, **kwargs) -> float:
+        """
+        Rule agents don't update through learning.
+        
+        Returns:
+            0.0 (no loss)
+        """
+        return 0.0
+        
+    def add_experience(self, obs: np.ndarray, action: Dict[str, Any], 
+                      reward: float, next_obs: np.ndarray, done: bool):
+        """
+        Rule agents don't store experiences.
+        """
+        pass
+        
+    def save(self, path: str):
+        """
+        Save agent parameters to the specified path.
+        
+        Args:
+            path: Directory to save the agent
+        """
+        os.makedirs(path, exist_ok=True)
+        
+        # Save agent type and parameters
+        config = {
+            'agent_type': self.agent_type,
+            'dice_faces': self.dice_faces
+        }
+        
+        # Add specific parameters for different agent types
+        if hasattr(self, 'challenge_threshold'):
+            config['challenge_threshold'] = self.challenge_threshold
+            
+        if hasattr(self, 'bluff_frequency'):
+            config['bluff_frequency'] = self.bluff_frequency
+            
+        with open(os.path.join(path, 'rule_agent_config.json'), 'w') as f:
+            json.dump(config, f)
+            
+    def load(self, path: str):
+        """
+        Load agent parameters from the specified path.
+        
+        Args:
+            path: Directory to load the agent from
+        """
+        config_path = os.path.join(path, 'rule_agent_config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+                
+            # Set parameters
+            if 'dice_faces' in config:
+                self.dice_faces = config['dice_faces']
+                
+            if 'challenge_threshold' in config and hasattr(self, 'challenge_threshold'):
+                self.challenge_threshold = config['challenge_threshold']
+                
+            if 'bluff_frequency' in config and hasattr(self, 'bluff_frequency'):
+                self.bluff_frequency = config['bluff_frequency']
+                
+    def get_statistics(self) -> Dict[str, Any]:
+        """
+        Get statistics about the agent for logging.
+        
+        Returns:
+            Dictionary of agent statistics
+        """
+        stats = {
+            'agent_type': self.agent_type,
+            'dice_faces': self.dice_faces
+        }
+        
+        # Add specific parameters for different agent types
+        if hasattr(self, 'challenge_threshold'):
+            stats['challenge_threshold'] = self.challenge_threshold
+            
+        if hasattr(self, 'bluff_frequency'):
+            stats['bluff_frequency'] = self.bluff_frequency
+            
+        return stats
+
 
 
 class RandomAgent(RuleAgent):

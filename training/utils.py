@@ -16,6 +16,7 @@ from typing import List, Dict, Tuple, Any, Optional
 def setup_logger(name: str, log_file: str, level: int = logging.INFO) -> logging.Logger:
     """
     Set up a logger with file and console handlers.
+    Prevents duplicate handlers when called multiple times with the same name.
     
     Args:
         name: Name of the logger
@@ -28,6 +29,13 @@ def setup_logger(name: str, log_file: str, level: int = logging.INFO) -> logging
     # Create logger
     logger = logging.getLogger(name)
     logger.setLevel(level)
+    
+    # Clear existing handlers to prevent duplicates
+    if logger.hasHandlers():
+        logger.handlers.clear()
+    
+    # Prevent propagation to the root logger
+    logger.propagate = False
     
     # Create file handler
     file_handler = logging.FileHandler(log_file)
