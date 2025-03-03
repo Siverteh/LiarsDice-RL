@@ -141,13 +141,13 @@ def print_game_state(game: LiarsDiceGame, human_player: int, show_all: bool = Fa
     print_dice(dice_values)
     
     # Show AI's dice if show_all is True (for debugging)
-    if show_all:
-        ai_player = 1 - human_player  # Assuming 2-player game
-        print(f"\n{Colors.YELLOW}AI's Dice (Debug Mode):{Colors.RESET}")
-        ai_dice = [int(d) for d in game.dice[ai_player, :game.dice_counts[ai_player]]]
-        print_dice(ai_dice)
-        dice_str = ", ".join(str(d) for d in ai_dice)
-        print(f"AI's dice: [{dice_str}]")
+    #if show_all:
+    #    ai_player = 1 - human_player  # Assuming 2-player game
+    #    print(f"\n{Colors.YELLOW}AI's Dice (Debug Mode):{Colors.RESET}")
+    #    ai_dice = [int(d) for d in game.dice[ai_player, :game.dice_counts[ai_player]]]
+    #    print_dice(ai_dice)
+    #    dice_str = ", ".join(str(d) for d in ai_dice)
+    #    print(f"AI's dice: [{dice_str}]")
     
     # Count total number of each value if debug mode
     if show_all and game.current_bid is not None:
@@ -553,7 +553,7 @@ if __name__ == "__main__":
                         help='Type of RL agent. If not specified, will try to determine from model files.')
     parser.add_argument('--models_dir', type=str, default='results/models',
                         help='Directory containing trained models')
-    parser.add_argument('--dice', type=int, default=3, help='Number of dice per player')
+    parser.add_argument('--dice', type=int, default=5, help='Number of dice per player')
     parser.add_argument('--faces', type=int, default=6, help='Number of faces per die')
     parser.add_argument('--ai_first', action='store_true', help='Let the AI go first')
     parser.add_argument('--show_ai_dice', action='store_true', help='Show the AI\'s dice (debug mode)')

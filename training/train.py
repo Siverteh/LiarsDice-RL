@@ -342,7 +342,8 @@ def shape_reward(
     """
     Shape the reward to provide better learning signals.
     
-    Enhances rewards based on game state and action quality.
+    Enhances rewards based on game state and action quality, with special
+    penalties for risky bluffing and fixations on specific values.
     
     Args:
         original_reward: Original reward from the environment
@@ -357,8 +358,24 @@ def shape_reward(
     """
     reward = original_reward
 
+    # Initialize static variables if needed
+    if not hasattr(shape_reward, "last_action"):
+        shape_reward.last_action = None
+    if not hasattr(shape_reward, "last_bid_value"):
+        shape_reward.last_bid_value = None
+    if not hasattr(shape_reward, "six_bid_count"):
+        shape_reward.six_bid_count = 0
+    if not hasattr(shape_reward, "total_bids"):
+        shape_reward.total_bids = 0
+        
+    # Get player dice information
+    player_dice_key = 'player_0_dice'  # Assuming agent is player 0
+    own_dice = info.get(player_dice_key, [])
+    player_dice_count = len(own_dice)
+    total_dice = sum(info.get('dice_counts', [0]))
+    
     # Add a penalty for repetitive actions
-    if hasattr(shape_reward, "last_action") and action == shape_reward.last_action:
+    if shape_reward.last_action and action == shape_reward.last_action:
         reward -= 0.2  # Small penalty for repeating the same action
     
     # Store the current action for next comparison
@@ -376,30 +393,69 @@ def shape_reward(
     
     # Reward specific actions
     if action['type'] == 'bid':
+        shape_reward.total_bids += 1
+        
         # Small reward for making a bid (encourages action)
         reward += 0.05
         
+        bid_value = action.get('value')
+        bid_quantity = action.get('quantity')
+        
+        # Track and punish fixation on 6's
+        if bid_value == 6:
+            shape_reward.six_bid_count += 1
+            
+            # Penalize over-reliance on 6's
+            six_bid_ratio = shape_reward.six_bid_count / max(1, shape_reward.total_bids)
+            if six_bid_ratio > 0.4 and shape_reward.total_bids > 10:  # If more than 40% of bids are 6's
+                reward -= 0.4
+            
+            # Extra penalty for repeatedly bidding 6's in succession
+            if shape_reward.last_bid_value == 6:
+                reward -= 0.5
+        
         # Add reward for bidding values the agent actually has
-        player_dice_key = 'player_0_dice'  # Assuming agent is player 0
-        if player_dice_key in info and action.get('value') is not None:
-            bid_value = action['value']
-            own_dice = info[player_dice_key]
+        if own_dice and bid_value is not None:
             own_dice_count = sum(1 for d in own_dice if d == bid_value)
             
-            # Reward for bidding values you actually have
-            if own_dice_count > 0:
-                reward += 0.15 * own_dice_count
-            # Small penalty for bidding values you don't have
-            else:
-                reward -= 0.1
+            # Calculate bid risk factor (how much the bid exceeds agent's actual dice)
+            if bid_quantity is not None:
+                risk_factor = max(0, (bid_quantity - own_dice_count)) / max(1, total_dice)
+                
+                # Reward for bidding values you actually have
+                if own_dice_count > 0:
+                    reward += 0.15 * own_dice_count
+                # Progressive penalty for risky bluffs
+                else:
+                    reward -= 0.2 + (risk_factor * 0.4)
+                
+                # CRITICAL: Heavily penalize risky bids when down to few dice
+                if player_dice_count <= 2:  # When agent has 1-2 dice left
+                    # Larger penalty for risky bids when vulnerable
+                    reward -= risk_factor * 0.8
+                    
+                    # Severe penalty for extremely risky bids when vulnerable
+                    if risk_factor > 0.5:
+                        reward -= 1.0
+                        
+                # Moderate penalty for slightly risky bids in normal situations
+                elif risk_factor > 0.5:
+                    reward -= 0.3
+                    
+        # Store current bid value for next comparison
+        shape_reward.last_bid_value = bid_value
         
     elif action['type'] == 'challenge':
         # If the challenge was successful (reward is positive)
         if reward > 0:
-            reward += 0.5  # Bonus for successful challenges
+            reward += 0.8  # Larger bonus for successful challenges
         # If the challenge failed (reward is negative)
         elif reward < 0:
-            reward -= 0.1  # Extra penalty for failed challenges
+            reward -= 0.3  # Larger penalty for failed challenges
+        
+        # Reset bid tracking after challenges (new round starts)
+        if hasattr(shape_reward, "last_bid_value"):
+            shape_reward.last_bid_value = None
     
     # Reward for keeping dice (survival)
     if 'dice_counts' in info:
@@ -413,7 +469,6 @@ def shape_reward(
         reward += 0.1
     
     return reward
-
 
 def train_self_play(
     agent: RLAgent,

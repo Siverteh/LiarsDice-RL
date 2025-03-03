@@ -3196,6 +3196,255 @@ class AntiExploitationAgent(RuleAgent):
         # If no match for value, find closest valid bid
         return min(bid_actions, key=lambda a: 
                   (abs(a['value'] - target_value) * 10) + abs(a['quantity'] - target_quantity))
+    
+class BluffPunisherAgent(RuleAgent):
+    """
+    BluffPunisher agent that specifically targets and punishes bluffing behavior.
+    
+    This agent:
+    - Has a strong bias toward challenging suspicious bids, especially 6's
+    - Makes conservative bids based on its own dice
+    - Remembers past bids to identify patterns of bluffing
+    - Becomes more aggressive in punishing bluffs as the game progresses
+    """
+    
+    def __init__(self, dice_faces: int = 6, six_challenge_threshold: float = 0.6):
+        """
+        Initialize the BluffPunisher agent.
+        
+        Args:
+            dice_faces: Number of faces on each die
+            six_challenge_threshold: Higher threshold specifically for 6's (0-1)
+        """
+        super().__init__(agent_type='bluff_punisher', dice_faces=dice_faces)
+        self.general_challenge_threshold = 0.45  # More aggressive than most agents
+        self.six_challenge_threshold = six_challenge_threshold  # Even more aggressive for 6's
+        
+        # Track bidding patterns
+        self.bid_history = []
+        self.value_frequency = {i: 0 for i in range(1, dice_faces + 1)}
+        self.bluff_score = {i: 0.5 for i in range(1, dice_faces + 1)}  # Starting belief about each value
+        
+        # Game state tracking
+        self.round_num = 0
+        
+    def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Select an action that punishes bluffing, especially with 6's.
+        
+        Args:
+            observation: Current game observation
+            valid_actions: List of valid actions
+            
+        Returns:
+            Selected action as a dictionary
+        """
+        # Update game state tracking
+        if observation.get('round_num', 0) > self.round_num:
+            self.round_num = observation.get('round_num', 0)
+            self.bid_history = []  # Reset bid history for new round
+            
+        # Analyze game state
+        analysis = self.analyze_game_state(observation)
+        current_bid = observation['current_bid']
+        
+        # Challenge decision
+        challenge_actions = [a for a in valid_actions if a['type'] == 'challenge']
+        if challenge_actions and current_bid is not None:
+            bid_quantity, bid_value = current_bid
+            
+            # Calculate probability of bid being valid
+            probability = analysis['probabilities'].get(bid_value, 1.0)
+            
+            # Adjust threshold based on game state and bid value
+            adjusted_threshold = self._get_challenge_threshold(bid_value, observation)
+            
+            # Update bid history and bluff score if needed
+            self._update_bid_tracking(current_bid, observation)
+            
+            # Special handling for 6's
+            if bid_value == 6:
+                # More likely to challenge 6's, especially if they appear frequently
+                frequency_factor = self.value_frequency.get(6, 0) / max(1, sum(self.value_frequency.values()))
+                
+                # Become even more aggressive against 6's if they're frequent
+                if frequency_factor > 0.3:  # If more than 30% of bids are 6's
+                    adjusted_threshold += 0.15
+                    
+                # In late game or critical situations, be extra skeptical of 6's
+                dice_counts = observation['dice_counts']
+                if min(dice_counts) == 1 or self.round_num > 5:
+                    adjusted_threshold += 0.1
+            
+            # Challenge if probability is below adjusted threshold
+            if probability < adjusted_threshold:
+                return challenge_actions[0]
+        
+        # Bidding decision
+        bid_actions = [a for a in valid_actions if a['type'] == 'bid']
+        if not bid_actions:
+            return challenge_actions[0]  # Must challenge if no valid bids
+        
+        # First bid vs. subsequent bid
+        if current_bid is None:
+            return self._select_initial_bid(analysis, bid_actions)
+        else:
+            return self._select_subsequent_bid(analysis, bid_actions, current_bid)
+    
+    def _get_challenge_threshold(self, bid_value: int, observation: Dict[str, Any]) -> float:
+        """
+        Get challenge threshold adjusted for specific values and game state.
+        
+        Args:
+            bid_value: Value of the current bid
+            observation: Current game observation
+            
+        Returns:
+            Adjusted challenge threshold
+        """
+        # Start with base threshold
+        if bid_value == 6:
+            threshold = self.six_challenge_threshold
+        else:
+            threshold = self.general_challenge_threshold
+            
+        # Adjust based on game phase
+        dice_counts = observation['dice_counts']
+        total_dice = sum(dice_counts)
+        max_dice = len(dice_counts) * max(dice_counts)
+        game_progress = 1 - (total_dice / max_dice)
+        
+        # More aggressive challenging in late game
+        if game_progress > 0.6:
+            threshold += 0.1
+            
+        # More aggressive when opponent is down to last die
+        if min(dice_counts) == 1 and dice_counts[self.player_id] > 1:
+            threshold += 0.15
+            
+        # Use bluff score to adjust threshold if we have data
+        if self.bluff_score.get(bid_value, 0.5) > 0.6:  # We suspect this value is often bluffed
+            threshold += 0.1
+            
+        return threshold
+    
+    def _update_bid_tracking(self, current_bid: Tuple[int, int], observation: Dict[str, Any]):
+        """
+        Update bid tracking to detect bluffing patterns.
+        
+        Args:
+            current_bid: Current bid as (quantity, value) tuple
+            observation: Current game observation
+        """
+        bid_quantity, bid_value = current_bid
+        
+        # Add bid to history
+        self.bid_history.append(current_bid)
+        
+        # Update value frequency
+        self.value_frequency[bid_value] = self.value_frequency.get(bid_value, 0) + 1
+        
+        # Look for challenge results in history to update bluff scores
+        history = observation.get('history', [])
+        if history:
+            for entry in reversed(history):
+                if entry['action']['type'] == 'challenge':
+                    # Find the challenged bid
+                    if self.bid_history:
+                        challenged_value = self.bid_history[-1][1]
+                        challenge_success = entry['action'].get('success', False)
+                        
+                        # Update bluff score for this value
+                        old_score = self.bluff_score.get(challenged_value, 0.5)
+                        if challenge_success:  # It was a bluff
+                            # Increase bluff score (more likely to be bluffed)
+                            self.bluff_score[challenged_value] = min(1.0, old_score + 0.15)
+                        else:  # It was not a bluff
+                            # Decrease bluff score (less likely to be bluffed)
+                            self.bluff_score[challenged_value] = max(0.0, old_score - 0.1)
+                    break  # Only look at most recent challenge
+    
+    def _select_initial_bid(self, analysis: Dict[str, Any], bid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Select initial bid - very conservative approach.
+        
+        Args:
+            analysis: Results from analyze_game_state
+            bid_actions: List of valid bid actions
+            
+        Returns:
+            Selected bid action
+        """
+        own_value_counts = analysis['own_value_counts']
+        
+        # Default to bidding our strongest value
+        if own_value_counts:
+            # Always bid what we have - focus on punishing bluffs, not making them
+            best_value, best_count = max(own_value_counts.items(), key=lambda x: x[1])
+            
+            # Occasionally bid below what we have to be extra safe
+            if random.random() < 0.3 and best_count > 1:
+                best_count -= 1
+                
+            # Find closest matching bid
+            for action in bid_actions:
+                if action['value'] == best_value and action['quantity'] == best_count:
+                    return action
+                    
+            # Find close match
+            matching_bids = [a for a in bid_actions if a['value'] == best_value]
+            if matching_bids:
+                return min(matching_bids, key=lambda a: abs(a['quantity'] - best_count))
+        
+        # Fallback to a modest bid
+        sorted_bids = sorted(bid_actions, key=lambda a: a['quantity'])
+        idx = min(len(sorted_bids) // 3, len(sorted_bids) - 1)  # Low 1/3 of bids
+        return sorted_bids[idx]
+    
+    def _select_subsequent_bid(self, analysis: Dict[str, Any], bid_actions: List[Dict[str, Any]], 
+                             current_bid: Tuple[int, int]) -> Dict[str, Any]:
+        """
+        Select subsequent bid - focus on safe increases.
+        
+        Args:
+            analysis: Results from analyze_game_state
+            bid_actions: List of valid bid actions
+            current_bid: Current bid as (quantity, value) tuple
+            
+        Returns:
+            Selected bid action
+        """
+        bid_quantity, bid_value = current_bid
+        own_value_counts = analysis['own_value_counts']
+        
+        # Default to minimum increase
+        target_value = bid_value
+        target_quantity = bid_quantity + 1
+        
+        # Avoid increasing 6's if possible
+        if bid_value == 6:
+            # Try to switch to a different value we have
+            for value, count in sorted(own_value_counts.items(), key=lambda x: (x[1], x[0]), reverse=True):
+                if count > 0 and value != 6:
+                    valid_actions = [a for a in bid_actions if a['value'] == value]
+                    if valid_actions:
+                        return min(valid_actions, key=lambda a: a['quantity'])
+        
+        # If we have the current value, make a small increase
+        if own_value_counts.get(bid_value, 0) > 0:
+            for action in bid_actions:
+                if action['value'] == bid_value and action['quantity'] == bid_quantity + 1:
+                    return action
+        
+        # Switch to a value we have, if possible
+        for value, count in sorted(own_value_counts.items(), key=lambda x: (x[1], x[0]), reverse=True):
+            if count > 0 and value > bid_value:
+                for action in bid_actions:
+                    if action['value'] == value and action['quantity'] == bid_quantity:
+                        return action
+        
+        # If forced to increase, make the smallest valid bid
+        return min(bid_actions, key=lambda a: (a['quantity'], a['value']))
 
 # Dictionary of available agents by difficulty level
 RULE_AGENTS = {
@@ -3203,6 +3452,7 @@ RULE_AGENTS = {
     'naive': NaiveAgent,
     'anti_exploitation': AntiExploitationAgent,
     'conservative': ConservativeAgent,
+    'bluff_punisher': BluffPunisherAgent,
     'aggressive': AggressiveAgent,
     'strategic': StrategicAgent,
     'adaptive': AdaptiveAgent,
@@ -3215,12 +3465,13 @@ CURRICULUM_LEVELS = [
     'random',       # Level 0: Mostly random with slight preference for own dice
     'naive',        # Level 1: Beginner human focusing on own dice
     'conservative', # Level 2: Cautious human with minimal risk-taking
-    'anti_exploitation', # Level 3: Anti-exploitation human that adapts to RL's behavior
-    'aggressive',   # Level 4: Bold human with frequent bluffing
-    'strategic',    # Level 5: Strategic human that adapts to game state
-    'adaptive',      # Level 6: Expert human with advanced tactics
-    'counter_strategy', # Level 7: Counter-strategy human that adapts to RL's behavior
-    'optimal'       # Level 8: Optimal human that uses optimal strategy
+    'bluff_punisher', # Level 3: Bluff-punishing human that challenges suspicious bids
+    'anti_exploitation', # Level 4: Anti-exploitation human that adapts to RL's behavior
+    'aggressive',   # Level 5: Bold human with frequent bluffing
+    'strategic',    # Level 6: Strategic human that adapts to game state
+    'adaptive',      # Level 7: Expert human with advanced tactics
+    'counter_strategy', # Level 8: Counter-strategy human that adapts to RL's behavior
+    'optimal'       # Level 9: Optimal human that uses optimal strategy
 ]
 
 

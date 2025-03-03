@@ -48,10 +48,10 @@ CONFIG_PRESETS = {
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'curriculum_episodes': 500000,
+        'curriculum_episodes': 250000,
         'self_play_episodes': 15000,
         'network_size': [1024, 512, 256, 128, 64],  # Very large
-        'learning_rate': 0.0003,
+        'learning_rate': 0.0002,
         'win_rate_threshold': 0.9
     },
     # 4 players, 5 dice, complex game
@@ -105,7 +105,7 @@ def train_curriculum(
 ) -> Tuple[RLAgent, Dict[str, Any]]:
     """
     Train an agent using curriculum learning with progressively more difficult opponents.
-    Self-play functionality has been removed and will be implemented separately.
+    Self-play functionality has been implemented separately.
     
     Args:
         agent_type: Type of agent to train ('dqn' or 'ppo')
@@ -216,8 +216,8 @@ def train_curriculum(
         })
     elif agent_type.lower() == 'ppo':
         agent_config.update({
-            'entropy_coef': 0.025,  # Higher entropy for more exploration
-            'update_frequency': 4096,  # Update less frequently for more stable learning
+            'entropy_coef': 0.04,  # Higher entropy for more exploration
+            'update_frequency': 2048,  # Update less frequently for more stable learning
             'gae_lambda': 0.95  # Standard GAE parameter
         })
     
@@ -241,17 +241,18 @@ def train_curriculum(
     if curriculum_distribution is None:
         # Default progressive distribution (more episodes for harder opponents)
         curriculum_distribution = {
-            'random': 0.03,       # 5%
-            'naive': 0.03,        # 5%
-            'conservative': 0.2,  # 20%
-            'anti_exploitation': 0.15, # 15%
-            'aggressive': 0.04,   # 5%
-            'strategic': 0.13,    # 10%
-            'adaptive': 0.13,     # 10%
-            'counter_strategy': 0.14, # 15%
-            'optimal': 0.15       # 15%
+            'random': 0.02,          # 2% (reduced from 3% since it's quick)
+            'naive': 0.02,           # 2% (reduced from 3% since it's quick)
+            'conservative': 0.18,    # 18% (slightly reduced to make room)
+            'bluff_punisher': 0.20,  # 20% (increased to focus on anti-bluff training)
+            'anti_exploitation': 0.15, # 15% (keep the same)
+            'aggressive': 0.03,      # 3% (reduced from 4% since it's quick)
+            'strategic': 0.12,       # 12% (slightly reduced to make room)
+            'adaptive': 0.12,        # 12% (slightly reduced to make room)
+            'counter_strategy': 0.12, # 12% (slightly reduced to make room)
+            'optimal': 0.04          # 4% (significantly reduced - explained below)
         }
-    
+            
     # Convert distribution to episode counts
     episode_distribution = {}
     remaining_episodes = _curriculum_episodes
@@ -272,9 +273,14 @@ def train_curriculum(
     # Track training progress and models
     all_results = {}
     best_models = {}
-    best_overall_model = None
-    best_overall_winrate = 0.0
+    # NOTE: We'll still track best_overall_model during training for checkpointing,
+    # but we'll choose the final best model by evaluating all candidate models against all opponents
+    best_overall_winrate_during_training = 0.0
+    best_overall_model_during_training = None
     current_epsilon = initial_epsilon
+    
+    # Store all candidate models for final evaluation
+    candidate_models = {}
     
     # Curriculum learning loop
     for level_idx, level_name in enumerate(CURRICULUM_LEVELS):
@@ -319,7 +325,7 @@ def train_curriculum(
         
         # Define callback for early stopping and model saving
         def checkpoint_callback(episode, data, current_agent):
-            nonlocal best_level_winrate, best_level_model_path, best_overall_winrate, best_overall_model
+            nonlocal best_level_winrate, best_level_model_path, best_overall_winrate_during_training, best_overall_model_during_training
             nonlocal above_threshold_count
             
             if 'last_win_rate' in data:
@@ -332,12 +338,12 @@ def train_curriculum(
                     current_agent.save(best_level_model_path)
                     logger.info(f"New best model for {level_name}: {current_winrate:.2f} win rate")
                 
-                # Update best overall model if better
-                if current_winrate > best_overall_winrate:
-                    best_overall_winrate = current_winrate
-                    best_overall_model = os.path.join(checkpoint_dir, "best_overall")
-                    current_agent.save(best_overall_model)
-                    logger.info(f"New best overall model: {current_winrate:.2f} win rate")
+                # Update best overall model during training (still needed for checkpointing)
+                if current_winrate > best_overall_winrate_during_training:
+                    best_overall_winrate_during_training = current_winrate
+                    best_overall_model_during_training = os.path.join(checkpoint_dir, "best_during_training")
+                    current_agent.save(best_overall_model_during_training)
+                    logger.info(f"New best model during training: {current_winrate:.2f} win rate")
                 
                 # Check for early stopping
                 if enable_early_stopping and current_winrate >= _win_rate_threshold:
@@ -378,6 +384,10 @@ def train_curriculum(
             "path": best_level_model_path,
             "win_rate": best_level_winrate
         }
+        
+        # Add to candidate models for final evaluation
+        if best_level_model_path and best_level_winrate >= 0.6:
+            candidate_models[f"level_{level_name}"] = best_level_model_path
         
         # Use best model for next level if good enough
         if best_level_model_path and best_level_winrate >= 0.6:
@@ -430,25 +440,92 @@ def train_curriculum(
             avg_win_rate = sum(all_levels_win_rate) / len(all_levels_win_rate)
             logger.info(f"  Average win rate across all levels: {avg_win_rate:.2f}")
     
-    # Remedial training phase for any weak spots
-    if enable_remedial and best_overall_model:
-        logger.info("\n=== Starting Remedial Training ===")
+    # Add the current agent state as a candidate
+    current_model_path = os.path.join(checkpoint_dir, "final_agent")
+    agent.save(current_model_path)
+    candidate_models["final_agent"] = current_model_path
+    
+    # Add the best model from training as a candidate
+    if best_overall_model_during_training:
+        candidate_models["best_during_training"] = best_overall_model_during_training
+    
+    # First find the best overall model by evaluating all candidates against all opponents
+    logger.info("\n=== First Evaluation: Finding Best Overall Model ===")
+    logger.info(f"Found {len(candidate_models)} candidate models to evaluate")
+    
+    # Initialize variables to track the true best overall model
+    best_overall_model = None
+    best_overall_winrate = 0.0
+    model_evaluation_results = {}
+    
+    # Define evaluation function to get consistent results
+    def evaluate_model_against_all_opponents(model_path):
+        # Load the model to evaluate
+        agent.load(model_path)
         
-        # Load best overall model
-        logger.info(f"Loading best overall model with win rate {best_overall_winrate:.2f}")
-        agent.load(best_overall_model)
-        
-        # Evaluate against all levels to find weaknesses
+        # Evaluate against all curriculum levels
         eval_results = evaluate_against_curriculum(
             agent=agent,
-            num_episodes_per_level=100,
+            num_episodes_per_level=500,  # Use sufficient episodes for stable results
             num_players=_num_players,
             num_dice=_num_dice,
             dice_faces=dice_faces,
-            epsilon=0.05,
+            epsilon=0.05,  # Low exploration for evaluation
             seed=seed,
-            verbose=True
+            verbose=False  # Suppress detailed output
         )
+        
+        # Return the overall win rate and results
+        return eval_results['overall']['win_rate'], eval_results
+    
+    # Evaluate each candidate model
+    for model_name, model_path in candidate_models.items():
+        logger.info(f"Evaluating candidate model: {model_name}")
+        
+        try:
+            overall_winrate, detailed_results = evaluate_model_against_all_opponents(model_path)
+            model_evaluation_results[model_name] = {
+                'path': model_path,
+                'overall_winrate': overall_winrate,
+                'detailed_results': detailed_results
+            }
+            
+            logger.info(f"  {model_name}: Overall win rate = {overall_winrate:.4f}")
+            
+            # Check if this is the best model so far
+            if overall_winrate > best_overall_winrate:
+                best_overall_winrate = overall_winrate
+                best_overall_model = model_path
+                logger.info(f"  New best overall model: {model_name} with {overall_winrate:.4f} win rate")
+                
+        except Exception as e:
+            logger.error(f"Error evaluating model {model_name}: {e}")
+    
+    if not best_overall_model:
+        logger.warning("No valid best model found! Using the latest model.")
+        best_overall_model = current_model_path
+        best_overall_winrate = 0.0
+    
+    # Now we have the true best overall model, load it for remedial training
+    logger.info(f"\nBest overall model selected: with overall win rate: {best_overall_winrate:.4f}")
+    agent.load(best_overall_model)
+    
+    # Save detailed evaluation of the best model before remedial training
+    pre_remedial_evaluation = model_evaluation_results.get(
+        next(name for name, info in model_evaluation_results.items() if info['path'] == best_overall_model),
+        {'detailed_results': None}
+    )['detailed_results']
+    
+    # REMEDIAL TRAINING ON THE BEST OVERALL MODEL
+    if enable_remedial:
+        logger.info("\n=== Starting Remedial Training on Best Overall Model ===")
+        
+        # We already have the evaluation results from the previous evaluation
+        if pre_remedial_evaluation:
+            eval_results = pre_remedial_evaluation
+        else:
+            # Re-evaluate if we don't have the results
+            _, eval_results = evaluate_model_against_all_opponents(best_overall_model)
         
         # Identify levels that need remedial training (below win threshold)
         remedial_levels = []
@@ -458,6 +535,10 @@ def train_curriculum(
         
         if remedial_levels:
             logger.info(f"Identified {len(remedial_levels)} levels needing remedial training: {remedial_levels}")
+            
+            # Create a copy of the best model to preserve it
+            pre_remedial_best_model = os.path.join(checkpoint_dir, "pre_remedial_best")
+            agent.save(pre_remedial_best_model)
             
             # Train on weak levels (starting with easiest)
             remedial_levels.sort(key=lambda x: CURRICULUM_LEVELS.index(x))
@@ -533,26 +614,60 @@ def train_curriculum(
                 logger.info(f"Completed remedial training against {level_name}")
                 logger.info(f"Final remedial win rate: {remedial_best_winrate:.2f}")
                 
-                # Use the best remedial model if it's better
-                if remedial_best_path and remedial_best_winrate > best_models[level_name]["win_rate"]:
-                    agent.load(remedial_best_path)
-                    
-                    # Update model info
+                # Update best models tracking for this level
+                if remedial_best_path and remedial_best_winrate > best_models.get(level_name, {}).get("win_rate", 0):
                     best_models[level_name] = {
                         "path": remedial_best_path,
                         "win_rate": remedial_best_winrate
                     }
-                    
-                    # Update overall best if needed
-                    if remedial_best_winrate > best_overall_winrate:
-                        best_overall_winrate = remedial_best_winrate
-                        best_overall_model = remedial_best_path
-                        logger.info(f"New overall best from remedial: {best_overall_winrate:.2f}")
+            
+            # After all remedial training, evaluate the newly trained model against all opponents
+            logger.info("\n=== Evaluating Remedial-Trained Model ===")
+            post_remedial_winrate, post_remedial_results = evaluate_model_against_all_opponents(current_model_path)
+            
+            logger.info(f"Pre-remedial overall win rate: {best_overall_winrate:.4f}")
+            logger.info(f"Post-remedial overall win rate: {post_remedial_winrate:.4f}")
+            
+            # Only keep the remedial-trained model if it improved the overall win rate
+            if post_remedial_winrate > best_overall_winrate:
+                logger.info("Remedial training improved overall performance - keeping remedial model")
+                best_overall_model = current_model_path
+                best_overall_winrate = post_remedial_winrate
+            else:
+                logger.info("Remedial training did not improve overall performance - reverting to pre-remedial model")
+                agent.load(pre_remedial_best_model)  # Revert to the pre-remedial model
         else:
-            logger.info("No levels need remedial training - all above threshold!")
+            logger.info("No levels need remedial training - all already above threshold!")
     
-    # Final evaluation against all levels
-    logger.info("\n=== Final Evaluation ===")
+    # Add the current agent state as a candidate
+    current_model_path = os.path.join(checkpoint_dir, "final_agent")
+    agent.save(current_model_path)
+    candidate_models["final_agent"] = current_model_path
+    
+    # Add the best model from training as a candidate
+    if best_overall_model_during_training:
+        candidate_models["best_during_training"] = best_overall_model_during_training
+    
+    # Final evaluation after potential remedial training
+    logger.info("\n=== Final Evaluation of Best Overall Model ===")
+    final_eval_results = evaluate_against_curriculum(
+        agent=agent,
+        num_episodes_per_level=250,  # More episodes for final evaluation
+        num_players=_num_players,
+        num_dice=_num_dice,
+        dice_faces=dice_faces,
+        epsilon=0.05,  # Low exploration for evaluation
+        seed=seed,
+        verbose=True
+    )
+    
+    # Save the final best model with a descriptive name
+    best_model_copy = os.path.join(checkpoint_dir, f"best_overall_{best_overall_winrate:.4f}")
+    agent.save(best_model_copy)
+    logger.info(f"Saved best overall model to {best_model_copy}")
+    
+    # Final evaluation using the best model
+    logger.info("\n=== Final Evaluation of Best Model ===")
     final_eval_results = evaluate_against_curriculum(
         agent=agent,
         num_episodes_per_level=250,  # More episodes for final evaluation
@@ -575,6 +690,11 @@ def train_curriculum(
         'level_results': all_results,
         'final_evaluation': final_eval_results,
         'best_models': best_models,
+        'model_evaluation_results': model_evaluation_results,
+        'best_overall_model': {
+            'path': best_overall_model,
+            'win_rate': best_overall_winrate
+        },
         'parameters': {
             'agent_type': agent_type,
             'preset': preset,
@@ -634,7 +754,7 @@ if __name__ == "__main__":
                         help='Type of agent to train')
     parser.add_argument('--preset', type=str, default='standard', choices=['basic', 'standard', 'advanced'],
                         help='Configuration preset to use')
-    parser.add_argument('--path', type=str, default='results/curriculum_learning/ppo_5dice', help='Base path for results')
+    parser.add_argument('--path', type=str, default='results/curriculum_learning/ppo_5dice_better_ppo', help='Base path for results')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--render', action='store_true', help='Enable rendering during training')
     parser.add_argument('--no-remedial', action='store_true', help='Disable remedial training')
@@ -651,5 +771,5 @@ if __name__ == "__main__":
         render_training=args.render,
         enable_remedial=not args.no_remedial,
         enable_early_stopping=not args.no_early_stopping,
-        evaluation_frequency=100,
+        evaluation_frequency=500,
     )
