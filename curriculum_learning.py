@@ -48,11 +48,11 @@ CONFIG_PRESETS = {
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'curriculum_episodes': 200000,
+        'curriculum_episodes': 500000,
         'self_play_episodes': 15000,
         'network_size': [1024, 512, 256, 128, 64],  # Very large
         'learning_rate': 0.0003,
-        'win_rate_threshold': 0.75
+        'win_rate_threshold': 0.9
     },
     # 4 players, 5 dice, complex game
     'advanced': {
@@ -555,7 +555,7 @@ def train_curriculum(
     logger.info("\n=== Final Evaluation ===")
     final_eval_results = evaluate_against_curriculum(
         agent=agent,
-        num_episodes_per_level=500,  # More episodes for final evaluation
+        num_episodes_per_level=250,  # More episodes for final evaluation
         num_players=_num_players,
         num_dice=_num_dice,
         dice_faces=dice_faces,
@@ -634,8 +634,8 @@ if __name__ == "__main__":
                         help='Type of agent to train')
     parser.add_argument('--preset', type=str, default='standard', choices=['basic', 'standard', 'advanced'],
                         help='Configuration preset to use')
-    parser.add_argument('--path', type=str, default='curriculum_learning/ppo_5dice', help='Base path for results')
-    parser.add_argument('--seed', type=int, default=None, help='Random seed')
+    parser.add_argument('--path', type=str, default='results/curriculum_learning/ppo_5dice', help='Base path for results')
+    parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--render', action='store_true', help='Enable rendering during training')
     parser.add_argument('--no-remedial', action='store_true', help='Disable remedial training')
     parser.add_argument('--no-early-stopping', action='store_true', help='Disable early stopping')

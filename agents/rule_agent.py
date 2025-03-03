@@ -1293,10 +1293,11 @@ class OptimalAgent(RuleAgent):
         self.search_depth = search_depth
         self.exact_calculation_threshold = exact_calculation_threshold
         
-        # Belief model parameters (simplified)
+        # Belief model parameters
+        self.belief_model = None  # Will be initialized once we know dice counts
         self.opponent_dice_probs = {}  # Maps player_id -> {value -> probability}
-        self.bid_history = []  # History of bids in current round
-        self.round_history = []  # Condensed history of completed rounds
+        self.bid_history = []     # History of bids in current round
+        self.round_history = []   # History of completed rounds
         
         # Mixed strategy parameters
         self.randomization_freq = 0.15  # How often to use mixed strategies
@@ -1318,7 +1319,7 @@ class OptimalAgent(RuleAgent):
             'bid_utils': {}       # Cache for bid utilities
         }
         
-        # Opponent models (simplified)
+        # Opponent models
         self.opponent_models = {}  # Maps player_id -> model dict
         
         # Current round information
@@ -1327,7 +1328,16 @@ class OptimalAgent(RuleAgent):
         self.bid_counter = 0
     
     def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Select an action using optimized game-theoretic reasoning."""
+        """
+        Select an action using optimized game-theoretic reasoning.
+        
+        Args:
+            observation: Current game observation
+            valid_actions: List of valid actions
+            
+        Returns:
+            Selected action as a dictionary
+        """
         # Clear caches when round changes
         round_num = observation.get('round_num', 0)
         if round_num != self.current_round:
@@ -1340,7 +1350,7 @@ class OptimalAgent(RuleAgent):
         # Only update beliefs periodically or on first turn
         self.bid_counter += 1
         if self.bid_counter % self.update_frequency == 0 or not self.opponent_dice_probs:
-            self._update_beliefs(observation, analysis)
+            self._update_belief_model(observation, analysis)
         
         # Get current bid and available actions
         current_bid = observation['current_bid']
@@ -1361,7 +1371,9 @@ class OptimalAgent(RuleAgent):
                 ev_challenge = self.cache['challenge_ev'][cache_key]
             else:
                 # Calculate probability of bid being valid
-                probability = self._calculate_probability(bid_quantity, bid_value, analysis)
+                probability = self._calculate_probability(analysis['total_dice'], bid_quantity, 
+                                                         analysis['own_value_counts'].get(bid_value, 0), 
+                                                         self.dice_faces, analysis, bid_value)
                 
                 # Calculate expected value of challenging vs making best bid
                 ev_challenge = self._calculate_challenge_ev(probability, observation)
@@ -1399,15 +1411,30 @@ class OptimalAgent(RuleAgent):
         }
         self.bid_counter = 0
     
-    def _update_beliefs(self, observation: Dict[str, Any], analysis: Dict[str, Any]):
-        """Update belief model using a simplified approach."""
+    def _update_belief_model(self, observation: Dict[str, Any], analysis: Dict[str, Any]):
+        """
+        Update belief model of opponent dice distributions.
+        
+        This implements Bayesian updating of our beliefs about what dice
+        other players might have, based on their betting patterns.
+        
+        Args:
+            observation: Current game observation
+            analysis: Results from analyze_game_state
+        """
         dice_counts = observation['dice_counts']
         current_bid = observation['current_bid']
         history = observation.get('history', [])
+        round_num = observation.get('round_num', 0)
+        total_dice = analysis['total_dice']
         
         # Initialize belief model if needed
+        if self.belief_model is None or len(self.belief_model) != self.num_players:
+            self._initialize_belief_model(dice_counts)
+        
+        # Initialize opponent dice probabilities
         if not self.opponent_dice_probs:
-            self._initialize_beliefs(dice_counts)
+            self._initialize_opponent_probs(dice_counts)
         
         # Track bids in the current round
         if current_bid is not None and (not self.bid_history or self.bid_history[-1][0] != current_bid):
@@ -1423,21 +1450,70 @@ class OptimalAgent(RuleAgent):
             
             # Only update beliefs for significant bids to reduce computation
             if len(self.bid_history) % 2 == 0:  # Update every other bid
-                self._update_beliefs_from_bids()
+                self._update_beliefs_from_bids(total_dice)
         
         # Check if a new round started
-        if observation.get('round_num', 0) > len(self.round_history) and self.bid_history:
-            # Simplified round history storage
-            self.round_history.append({
-                'final_bid': self.bid_history[-1][0] if self.bid_history else None,
-                'bidder': self.bid_history[-1][1] if self.bid_history else None
-            })
+        if round_num > len(self.round_history) and self.bid_history:
+            # Record completed round
+            last_challenge = None
+            for entry in reversed(history):
+                if entry['action']['type'] == 'challenge':
+                    last_challenge = entry
+                    break
             
-            # Reset bid history for new round
-            self.bid_history = []
+            if last_challenge:
+                # Extract true dice counts if available in the challenge result
+                true_counts = last_challenge['action'].get('true_counts')
+                
+                round_data = {
+                    'bids': self.bid_history.copy(),
+                    'challenge': {
+                        'player': last_challenge['player'],
+                        'success': last_challenge['action'].get('success', False)
+                    },
+                    'final_bid': self.bid_history[-1][0] if self.bid_history else None,
+                    'true_counts': true_counts
+                }
+                
+                self.round_history.append(round_data)
+                
+                # Use round outcome to calibrate our belief model
+                if true_counts:
+                    self._calibrate_beliefs(true_counts)
+                
+                # Reset bid history for new round
+                self.bid_history = []
     
-    def _initialize_beliefs(self, dice_counts: List[int]):
-        """Initialize simplified belief model of opponent dice."""
+    def _initialize_belief_model(self, dice_counts: List[int]):
+        """
+        Initialize probabilistic belief model of all players' dice.
+        
+        Args:
+            dice_counts: List of dice counts for each player
+        """
+        self.belief_model = []
+        
+        for player in range(self.num_players):
+            if player == self.player_id:
+                # For our own dice, belief is certainty
+                self.belief_model.append(None)
+            else:
+                # For each opponent, initialize uniform belief over possible dice values
+                dice_count = dice_counts[player]
+                if dice_count > 0:
+                    # Probabilities for each die face for each die
+                    player_belief = np.ones((dice_count, self.dice_faces)) / self.dice_faces
+                    self.belief_model.append(player_belief)
+                else:
+                    self.belief_model.append(None)
+    
+    def _initialize_opponent_probs(self, dice_counts: List[int]):
+        """
+        Initialize simplified belief model of opponent dice.
+        
+        Args:
+            dice_counts: List of dice counts for each player
+        """
         for player_id in range(len(dice_counts)):
             if player_id != self.player_id and dice_counts[player_id] > 0:
                 # Simple uniform distribution for each value
@@ -1446,8 +1522,8 @@ class OptimalAgent(RuleAgent):
                     for value in range(1, self.dice_faces + 1)
                 }
     
-    def _update_beliefs_from_bids(self):
-        """Update beliefs based on observed bids (simplified Bayesian update)."""
+    def _update_beliefs_from_bids(self, total_dice: int):
+        """Update beliefs based on observed bids."""
         if not self.bid_history or len(self.bid_history) < 2:
             return
         
@@ -1462,7 +1538,6 @@ class OptimalAgent(RuleAgent):
         if bidder in self.opponent_dice_probs:
             # Strength of the update (adjust based on how strong the bid is)
             # The stronger the bid, the less we trust it
-            total_dice = sum(self.bid_history[0][0])  # Approximate
             bid_strength = bid_quantity / total_dice
             
             # Weaker update for stronger bids (might be bluffing)
@@ -1485,11 +1560,233 @@ class OptimalAgent(RuleAgent):
             if total > 0:
                 for value in probs:
                     probs[value] /= total
+        
+        # Also update the detailed belief model for backward compatibility
+        if self.belief_model and bidder < len(self.belief_model) and self.belief_model[bidder] is not None:
+            self._update_belief_for_bid(bid, bidder, total_dice)
     
-    def _calculate_probability(self, bid_quantity: int, bid_value: int, analysis: Dict[str, Any]) -> float:
-        """Calculate probability of a bid being valid, with caching."""
+    def _update_belief_for_bid(self, bid: Tuple[int, int], bidder: int, total_dice: int):
+        """
+        Update detailed beliefs based on an opponent's bid using Bayesian inference.
+        
+        Args:
+            bid: Tuple of (quantity, value)
+            bidder: Player ID who made the bid
+            total_dice: Total dice in the game
+        """
+        bid_quantity, bid_value = bid
+        
+        # Skip if we don't have a belief model for this player
+        if bidder >= len(self.belief_model) or self.belief_model[bidder] is None:
+            return
+        
+        # Get bidder's model to infer their strategy
+        bidder_model = self._get_opponent_model(bidder)
+        bluff_likelihood = bidder_model.get('bluff_likelihood', 0.5)
+        
+        # Calculate how "strong" the bid is
+        bid_strength = bid_quantity / total_dice
+        
+        # Stronger bids are more likely to be bluffs
+        if bid_strength > 0.7:
+            bluff_probability = min(0.9, bluff_likelihood * 1.5)
+        elif bid_strength > 0.5:
+            bluff_probability = bluff_likelihood
+        else:
+            bluff_probability = max(0.1, bluff_likelihood * 0.7)
+        
+        # Update belief model using Bayesian inference
+        player_belief = self.belief_model[bidder]
+        
+        # If player is bluffing, their dice distribution doesn't change our beliefs much
+        # If player is honest, they're more likely to have the bid value
+        
+        for die_idx in range(len(player_belief)):
+            for face in range(self.dice_faces):
+                face_value = face + 1  # Faces are 1-indexed
+                
+                # Likelihood of this face given the bid
+                if face_value == bid_value:
+                    # Higher likelihood if honest bid
+                    honest_likelihood = 1.5  # More likely to have bid value
+                    bluff_likelihood = 0.7   # Less likely if bluffing
+                    likelihood = (1 - bluff_probability) * honest_likelihood + bluff_probability * bluff_likelihood
+                else:
+                    # Lower likelihood for other values
+                    honest_likelihood = 0.7  # Less likely to have other values
+                    bluff_likelihood = 1.0   # Normal distribution if bluffing
+                    likelihood = (1 - bluff_probability) * honest_likelihood + bluff_probability * bluff_likelihood
+                
+                # Update probability (Bayes' rule)
+                player_belief[die_idx, face] *= likelihood
+            
+            # Normalize to ensure probabilities sum to 1
+            if player_belief[die_idx].sum() > 0:
+                player_belief[die_idx] /= player_belief[die_idx].sum()
+    
+    def _calibrate_beliefs(self, true_counts: Dict[int, int]):
+        """
+        Calibrate our belief model based on revealed true dice counts.
+        
+        Args:
+            true_counts: Dictionary mapping die values to counts
+        """
+        # Reset the belief models
+        dice_counts = [len(self.belief_model[i]) if self.belief_model[i] is not None else 0 
+                      for i in range(len(self.belief_model))]
+        self._initialize_belief_model(dice_counts)
+        
+        # Reset opponent dice probabilities
+        self.opponent_dice_probs = {}
+        for player_id in range(self.num_players):
+            if player_id != self.player_id and player_id < len(dice_counts) and dice_counts[player_id] > 0:
+                self.opponent_dice_probs[player_id] = {
+                    value: 1.0 / self.dice_faces 
+                    for value in range(1, self.dice_faces + 1)
+                }
+    
+    def _get_opponent_model(self, player_id: int) -> Dict[str, Any]:
+        """
+        Get or create a behavioral model for an opponent.
+        
+        Args:
+            player_id: Player ID to get model for
+            
+        Returns:
+            Dictionary with opponent behavioral parameters
+        """
+        if player_id not in self.opponent_models:
+            # Initialize with default values
+            self.opponent_models[player_id] = {
+                'bluff_likelihood': 0.5,      # Initial estimate of bluffing frequency
+                'challenge_threshold': 0.5,   # When they're likely to challenge
+                'value_preferences': {},      # Any bias toward specific die values
+                'bid_patterns': [],           # Recent bid patterns
+                'aggression': 0.5,            # Bidding aggression (0-1)
+                'consistency': 0.5,           # How consistent their strategy is (0-1)
+                'adaptability': 0.5,          # How quickly they adapt to situations (0-1)
+                'skill_estimate': 0.5         # Estimated skill level (0-1)
+            }
+        
+        # If we have enough history, update the model
+        if len(self.round_history) > 2:
+            self._update_opponent_model(player_id)
+        
+        return self.opponent_models[player_id]
+    
+    def _update_opponent_model(self, player_id: int):
+        """
+        Update behavioral model for an opponent based on game history.
+        
+        Args:
+            player_id: Player ID to update model for
+        """
+        model = self.opponent_models[player_id]
+        
+        # Analyze bidding patterns
+        bids_by_player = []
+        bluffs = 0
+        honest_bids = 0
+        challenges = 0
+        
+        for round_data in self.round_history:
+            bids = round_data['bids']
+            challenge = round_data.get('challenge', {})
+            
+            # Count challenges by this player
+            if challenge.get('player') == player_id:
+                challenges += 1
+            
+            # Analyze bids by this player
+            player_bids = [bid for bid, bidder in bids if bidder == player_id]
+            bids_by_player.extend(player_bids)
+            
+            # Check if their final bid was challenged
+            if bids and bids[-1][1] == player_id and challenge:
+                if challenge.get('success', False):
+                    bluffs += 1
+                else:
+                    honest_bids += 1
+        
+        # Update bluff likelihood
+        total_final_bids = bluffs + honest_bids
+        if total_final_bids > 0:
+            model['bluff_likelihood'] = 0.3 * model['bluff_likelihood'] + 0.7 * (bluffs / total_final_bids)
+        
+        # Update bidding aggression based on bid strengths
+        if bids_by_player:
+            bid_strengths = [bid[0] / (self.num_players * 5) for bid in bids_by_player]  # Normalize by approximate max
+            avg_strength = sum(bid_strengths) / len(bid_strengths)
+            model['aggression'] = 0.3 * model['aggression'] + 0.7 * avg_strength
+        
+        # Update value preferences
+        value_counts = {}
+        for bid in bids_by_player:
+            value = bid[1]
+            value_counts[value] = value_counts.get(value, 0) + 1
+        
+        if value_counts:
+            total_bids = sum(value_counts.values())
+            model['value_preferences'] = {value: count / total_bids for value, count in value_counts.items()}
+    
+    # Original interface method kept for compatibility
+    def _calculate_probability(self, total_dice: int, bid_quantity: int, own_count: int, 
+                             dice_faces: int, analysis: Dict[str, Any] = None, bid_value: int = None) -> float:
+        """
+        Calculate probability of a bid being valid, original interface for compatibility.
+        
+        Args:
+            total_dice: Total number of dice in the game
+            bid_quantity: Quantity in the bid
+            own_count: Count of this value among our own dice
+            dice_faces: Number of faces on each die
+            analysis: (Optional) Results from analyze_game_state
+            bid_value: (Optional) Value in the bid
+            
+        Returns:
+            Probability that the bid is valid (0-1)
+        """
+        # If we have analysis and bid_value, use the optimized method
+        if analysis is not None and bid_value is not None:
+            return self._calculate_optimized_probability(bid_quantity, bid_value, analysis)
+        
+        # Otherwise, use the original algorithm
+        # If we already have enough dice, probability is 1
+        if own_count >= bid_quantity:
+            return 1.0
+        
+        # Number of unknown dice and additional successes needed
+        unknown_dice = total_dice - (analysis['own_dice'] if analysis else 0)
+        needed = bid_quantity - own_count
+        
+        # If we need more successes than there are unknown dice, probability is 0
+        if needed > unknown_dice:
+            return 0.0
+        
+        # Fallback to simpler binomial probability
+        probability = 0.0
+        p = 1 / dice_faces  # Probability of rolling the bid value
+        
+        for k in range(needed, unknown_dice + 1):
+            binomial_coef = np.math.comb(unknown_dice, k)
+            probability += binomial_coef * (p ** k) * ((1 - p) ** (unknown_dice - k))
+        
+        return probability
+    
+    def _calculate_optimized_probability(self, bid_quantity: int, bid_value: int, analysis: Dict[str, Any]) -> float:
+        """
+        Calculate exact probability of a bid being valid with optimizations.
+        
+        Args:
+            bid_quantity: Quantity in the bid
+            bid_value: Value in the bid
+            analysis: Results from analyze_game_state
+            
+        Returns:
+            Probability that the bid is valid (0-1)
+        """
         # Check cache first
-        cache_key = (bid_quantity, bid_value, tuple(analysis['total_dice']))
+        cache_key = (bid_quantity, bid_value, tuple(analysis.get('dice_counts', [0])))
         if cache_key in self.cache['probabilities']:
             return self.cache['probabilities'][cache_key]
         
@@ -1511,15 +1808,43 @@ class OptimalAgent(RuleAgent):
             self.cache['probabilities'][cache_key] = 0.0
             return 0.0
         
-        # Use faster binomial approximation for efficiency
-        p_success = self._calculate_binomial_probability(unknown_dice, needed, bid_value)
+        # Use belief model if available
+        if self.opponent_dice_probs:
+            # Use faster binomial approximation with adjusted probabilities
+            p_success = self._calculate_binomial_probability(unknown_dice, needed, bid_value)
+            self.cache['probabilities'][cache_key] = p_success
+            return p_success
         
-        # Cache and return
-        self.cache['probabilities'][cache_key] = p_success
-        return p_success
+        # Fallback to original method if no optimized belief model
+        if self.belief_model and all(self.belief_model[i] is not None for i in range(self.num_players) if i != self.player_id):
+            # Use original belief model
+            p_success = self._calculate_probability_from_belief_model(bid_value, needed, analysis, bid_quantity)
+            self.cache['probabilities'][cache_key] = p_success
+            return p_success
+        else:
+            # Use simple binomial as last resort
+            probability = 0.0
+            p = 1 / self.dice_faces
+            
+            for k in range(needed, unknown_dice + 1):
+                binomial_coef = np.math.comb(unknown_dice, k)
+                probability += binomial_coef * (p ** k) * ((1 - p) ** (unknown_dice - k))
+            
+            self.cache['probabilities'][cache_key] = probability
+            return probability
     
     def _calculate_binomial_probability(self, n_dice: int, needed: int, value: int) -> float:
-        """Calculate binomial probability, optimized version."""
+        """
+        Calculate binomial probability with optimizations.
+        
+        Args:
+            n_dice: Number of unknown dice
+            needed: Number of successes needed
+            value: Die value we're looking for
+            
+        Returns:
+            Probability of at least 'needed' successes
+        """
         # Base probability of rolling the value
         p_base = 1.0 / self.dice_faces
         
@@ -1581,15 +1906,111 @@ class OptimalAgent(RuleAgent):
         
         return probability
     
+    # Keep original method for compatibility
+    def _calculate_probability_from_belief_model(self, bid_value: int, needed: int, 
+                                               analysis: Dict[str, Any] = None, 
+                                               bid_quantity: int = None) -> float:
+        """
+        Calculate probability using our Bayesian belief model.
+        
+        Args:
+            bid_value: The die value we're calculating for
+            needed: Number of additional dice with this value needed
+            analysis: (Optional) Results from analyze_game_state
+            bid_quantity: (Optional) Quantity in the bid
+            
+        Returns:
+            Probability that at least 'needed' unknown dice have the bid value
+        """
+        # Convert to 0-indexed for numpy arrays
+        face_idx = bid_value - 1
+        
+        # Calculate probability distribution for each player's dice
+        player_distributions = []
+        
+        for player_id in range(self.num_players):
+            if player_id == self.player_id or self.belief_model[player_id] is None:
+                continue
+            
+            # Get this player's belief model
+            player_belief = self.belief_model[player_id]
+            
+            # Calculate probability distribution of the number of dice with bid_value
+            num_dice = len(player_belief)
+            
+            # Extract probabilities for the specific face from each die
+            face_probs = player_belief[:, face_idx]
+            
+            # Calculate the probability distribution using convolution
+            # This is a key operation - it computes the probability distribution
+            # for the number of successes across all of this player's dice
+            dist = np.zeros(num_dice + 1)
+            dist[0] = 1.0  # Start with 0 successes
+            
+            for die_idx in range(num_dice):
+                p = face_probs[die_idx]
+                new_dist = np.zeros(num_dice + 1)
+                
+                # Convolve the distributions
+                for i in range(len(dist)):
+                    # Probability of no success from this die
+                    new_dist[i] += dist[i] * (1 - p)
+                    
+                    # Probability of success from this die
+                    if i > 0:
+                        new_dist[i] += dist[i-1] * p
+                
+                dist = new_dist
+            
+            player_distributions.append(dist)
+        
+        # If we don't have any player distributions, use simpler method
+        if not player_distributions:
+            if analysis is not None and bid_quantity is not None:
+                # Use the optimized calculation method if we have analysis and bid_quantity
+                total_dice = analysis['total_dice']
+                own_count = analysis['own_value_counts'].get(bid_value, 0)
+                return self._calculate_probability(total_dice, bid_quantity, own_count, self.dice_faces)
+            else:
+                # Fall back to a basic probability estimate
+                unknown_dice = 10  # Default assumption
+                if analysis:
+                    unknown_dice = analysis['total_dice'] - len(analysis['own_dice'])
+                p = 1 / self.dice_faces
+                probability = 0.0
+                for k in range(needed, unknown_dice + 1):
+                    binomial_coef = np.math.comb(unknown_dice, k)
+                    probability += binomial_coef * (p ** k) * ((1 - p) ** (unknown_dice - k))
+                return probability
+        
+        # Convolve all player distributions to get the overall distribution
+        combined_dist = player_distributions[0]
+        for dist in player_distributions[1:]:
+            combined_dist = np.convolve(combined_dist, dist)
+        
+        # Calculate probability that we have at least 'needed' successes
+        probability = combined_dist[needed:].sum()
+        
+        return probability
+    
     def _calculate_challenge_ev(self, probability: float, observation: Dict[str, Any]) -> float:
-        """Calculate expected value of challenging, simplified version."""
+        """
+        Calculate expected value of challenging.
+        
+        Args:
+            probability: Probability the current bid is valid
+            observation: Current game observation
+            
+        Returns:
+            Expected value of challenging
+        """
         # Simple EV calculation
         p_invalid = 1 - probability
         
         # Expected value is net gain/loss
         basic_ev = p_invalid - probability
         
-        # Consider positional factors (simplified)
+        # Consider positional factors
         dice_counts = observation['dice_counts']
         our_dice = dice_counts[self.player_id]
         
@@ -1597,6 +2018,16 @@ class OptimalAgent(RuleAgent):
         last_bidder = None
         if self.bid_history and len(self.bid_history) > 0:
             _, last_bidder = self.bid_history[-1]
+        else:
+            # Try to find it in the history
+            history = observation.get('history', [])
+            current_bid = observation['current_bid']
+            
+            if history and current_bid:
+                for entry in reversed(history):
+                    if entry['action']['type'] == 'bid':
+                        last_bidder = entry['player']
+                        break
         
         # Adjust for critical situations
         if last_bidder is not None and last_bidder < len(dice_counts):
@@ -1613,7 +2044,17 @@ class OptimalAgent(RuleAgent):
         return basic_ev
     
     def _calculate_best_bid_ev(self, bid_actions: List[Dict[str, Any]], observation: Dict[str, Any], analysis: Dict[str, Any]) -> float:
-        """Calculate EV of best bid we could make (optimized)."""
+        """
+        Calculate EV of best bid we could make (optimized).
+        
+        Args:
+            bid_actions: List of valid bid actions
+            observation: Current game observation
+            analysis: Results from analyze_game_state
+            
+        Returns:
+            Expected value of the best bid
+        """
         best_ev = -float('inf')
         
         # Only evaluate a subset of actions for efficiency
@@ -1633,27 +2074,15 @@ class OptimalAgent(RuleAgent):
                 bid_ev = self.cache['bid_ev'][cache_key]
             else:
                 # Calculate probability
-                probability = self._calculate_probability(bid_quantity, bid_value, analysis)
+                probability = self._calculate_optimized_probability(bid_quantity, bid_value, analysis)
                 
                 # Quick EV calculation
                 challenge_likelihood = self._estimate_challenge_likelihood(bid_quantity, bid_value, observation)
                 bid_ev = challenge_likelihood * (2 * probability - 1) + (1 - challenge_likelihood) * 0.1
                 
-                # Add positional and strategic values (simplified)
-                game_phase = self._estimate_game_phase(observation)
-                
-                # Adjust for game phase
-                if game_phase == 'early':
-                    if probability > 0.7:
-                        bid_ev += 0.2  # Safer bids in early game
-                elif game_phase == 'late':
-                    if probability > 0.5:
-                        bid_ev += 0.3  # More aggressive in late game
-                
-                # Deception value
-                own_count = analysis['own_value_counts'].get(bid_value, 0)
-                if own_count == 0:
-                    bid_ev += 0.2 * self.risk_tolerance  # Bluff value
+                # Add positional and strategic values
+                bid_ev += self._calculate_bid_positional_value(bid_quantity, bid_value, observation)
+                bid_ev += self._calculate_deception_value(bid_quantity, bid_value, analysis)
                 
                 # Cache result
                 self.cache['bid_ev'][cache_key] = bid_ev
@@ -1664,7 +2093,16 @@ class OptimalAgent(RuleAgent):
         return best_ev
     
     def _sample_diverse_bids(self, bid_actions: List[Dict[str, Any]], sample_size: int) -> List[Dict[str, Any]]:
-        """Sample a diverse subset of bid actions to evaluate."""
+        """
+        Sample a diverse subset of bid actions to evaluate.
+        
+        Args:
+            bid_actions: List of bid actions
+            sample_size: Number of actions to sample
+            
+        Returns:
+            Sampled actions
+        """
         if not bid_actions:
             return []
         
@@ -1694,7 +2132,17 @@ class OptimalAgent(RuleAgent):
         return samples
     
     def _estimate_challenge_likelihood(self, bid_quantity: int, bid_value: int, observation: Dict[str, Any]) -> float:
-        """Estimate likelihood of being challenged (optimized)."""
+        """
+        Estimate likelihood of being challenged (optimized).
+        
+        Args:
+            bid_quantity: Quantity in the bid
+            bid_value: Value in the bid
+            observation: Current game observation
+            
+        Returns:
+            Probability of being challenged (0-1)
+        """
         # Faster approximation based on bid strength
         dice_counts = observation['dice_counts']
         total_dice = sum(dice_counts)
@@ -1710,26 +2158,109 @@ class OptimalAgent(RuleAgent):
         else:
             return 0.1  # Unlikely to be challenged
     
-    def _estimate_game_phase(self, observation: Dict[str, Any]) -> str:
-        """Estimate game phase for simplified decision making."""
+    def _calculate_bid_positional_value(self, bid_quantity: int, bid_value: int, observation: Dict[str, Any]) -> float:
+        """
+        Calculate positional value of a bid based on game state.
+        
+        Args:
+            bid_quantity: Quantity in the bid
+            bid_value: Value in the bid
+            observation: Current game observation
+            
+        Returns:
+            Positional value adjustment for the bid
+        """
+        # Consider game state factors that affect bid value
         dice_counts = observation['dice_counts']
+        our_dice = dice_counts[self.player_id]
+        
+        # Leading vs trailing position
+        max_opponent_dice = max([dice_counts[i] for i in range(len(dice_counts)) if i != self.player_id])
+        is_leading = our_dice >= max_opponent_dice
+        
+        # Calculate game phase
         total_dice = sum(dice_counts)
+        max_possible_dice = self.num_players * max(dice_counts)
+        game_progress = 1 - (total_dice / max_possible_dice)
         
-        # Simple estimation of game phase
-        players_with_dice = sum(1 for count in dice_counts if count > 0)
-        max_dice = max(dice_counts)
-        progress = 1 - (total_dice / (len(dice_counts) * max_dice))
+        # Default adjustment
+        adjustment = 0.0
         
-        if progress < 0.3:
-            return 'early'
-        elif progress < 0.7:
-            return 'mid'
+        # In early game, prefer safer bids
+        if game_progress < 0.3:
+            # Lower value for risky bids
+            if bid_quantity > total_dice * 0.6:
+                adjustment -= 0.3
+        
+        # In late game, more aggressive
+        elif game_progress > 0.7:
+            # Higher value for bids that might eliminate opponents
+            if bid_quantity > total_dice * 0.5:
+                adjustment += 0.2
+        
+        # When leading, play more conservatively
+        if is_leading:
+            if bid_quantity > total_dice * 0.6:
+                adjustment -= 0.2
+        # When trailing, more aggressive
         else:
-            return 'late'
+            if bid_quantity > total_dice * 0.5:
+                adjustment += 0.2
+        
+        # If we have only one die left, prioritize survival
+        if our_dice == 1:
+            adjustment -= bid_quantity / total_dice * 0.5
+        
+        return adjustment
+    
+    def _calculate_deception_value(self, bid_quantity: int, bid_value: int, analysis: Dict[str, Any]) -> float:
+        """
+        Calculate strategic deception value of a bid.
+        
+        Args:
+            bid_quantity: Quantity in the bid
+            bid_value: Value in the bid
+            analysis: Results from analyze_game_state
+            
+        Returns:
+            Deception value of the bid
+        """
+        # Consider the value of misleading opponents about our dice
+        
+        own_value_counts = analysis['own_value_counts']
+        own_count = own_value_counts.get(bid_value, 0)
+        
+        # Default deception value
+        deception_value = 0.0
+        
+        # If we have none of this value, it's maximum deception
+        if own_count == 0:
+            deception_value = 0.3
+        # If we have some but are bidding more, moderate deception
+        elif bid_quantity > own_count:
+            deception_value = 0.2
+        # If we're bidding less than we have, we're hiding information
+        elif bid_quantity < own_count:
+            deception_value = 0.15
+        
+        # Balance deception with risk
+        deception_value *= self.risk_tolerance
+        
+        return deception_value
     
     def _select_opening_bid(self, analysis: Dict[str, Any], bid_actions: List[Dict[str, Any]], 
                            observation: Dict[str, Any]) -> Dict[str, Any]:
-        """Select optimal opening bid (optimized)."""
+        """
+        Select optimal opening bid (optimized).
+        
+        Args:
+            analysis: Results from analyze_game_state
+            bid_actions: List of valid bid actions
+            observation: Current game observation
+            
+        Returns:
+            Selected bid action
+        """
         own_value_counts = analysis['own_value_counts']
         
         # Fast path for common cases
@@ -1754,18 +2285,15 @@ class OptimalAgent(RuleAgent):
             if matching_bids:
                 return min(matching_bids, key=lambda a: abs(a['quantity'] - target_quantity))
         
-        # If no good match, calculate utilities for a subset
+        # If no good match, calculate utilities for all
         bid_utilities = []
         
-        # Evaluate a sample of actions for efficiency
-        sample_actions = self._sample_diverse_bids(bid_actions, min(5, len(bid_actions)))
-        
-        for action in sample_actions:
+        for action in bid_actions:
             bid_quantity = action['quantity']
             bid_value = action['value']
             
             # Simple utility calculation
-            probability = self._calculate_probability(bid_quantity, bid_value, analysis)
+            probability = self._calculate_optimized_probability(bid_quantity, bid_value, analysis)
             utility = 2 * probability - 1  # Base utility
             
             # Add minimal adjustments
@@ -1789,7 +2317,18 @@ class OptimalAgent(RuleAgent):
     
     def _select_subsequent_bid(self, analysis: Dict[str, Any], bid_actions: List[Dict[str, Any]],
                              observation: Dict[str, Any], current_bid: Tuple[int, int]) -> Dict[str, Any]:
-        """Select optimal subsequent bid (optimized)."""
+        """
+        Select optimal subsequent bid (optimized).
+        
+        Args:
+            analysis: Results from analyze_game_state
+            bid_actions: List of valid bid actions
+            observation: Current game observation
+            current_bid: Current bid as (quantity, value) tuple
+            
+        Returns:
+            Selected bid action
+        """
         bid_quantity, bid_value = current_bid
         own_value_counts = analysis['own_value_counts']
         
@@ -1807,13 +2346,10 @@ class OptimalAgent(RuleAgent):
                     if action['value'] == value and action['quantity'] == bid_quantity:
                         return action
         
-        # 3. Calculate utilities for a subset of actions
+        # 3. Calculate utilities for all actions
         bid_utilities = []
         
-        # Sample diverse actions for efficiency
-        sample_actions = self._sample_diverse_bids(bid_actions, min(5, len(bid_actions)))
-        
-        for action in sample_actions:
+        for action in bid_actions:
             new_quantity = action['quantity']
             new_value = action['value']
             
@@ -1822,14 +2358,17 @@ class OptimalAgent(RuleAgent):
             if cache_key in self.cache['bid_utils']:
                 utility = self.cache['bid_utils'][cache_key]
             else:
-                # Quick utility calculation
-                probability = self._calculate_probability(new_quantity, new_value, analysis)
+                # Calculate probability
+                probability = self._calculate_optimized_probability(new_quantity, new_value, analysis)
                 utility = self.weights['expected_value'] * (2 * probability - 1)
                 
-                # Game phase consideration
-                game_phase = self._estimate_game_phase(observation)
-                if game_phase == 'late' and probability > 0.5:
-                    utility += 0.3  # More aggressive in late game
+                # Add positional value
+                positional_value = self._calculate_bid_positional_value(new_quantity, new_value, observation)
+                utility += self.weights['positional_value'] * positional_value
+                
+                # Add deception value
+                deception_value = self._calculate_deception_value(new_quantity, new_value, analysis)
+                utility += self.weights['strategic_deception'] * deception_value
                 
                 # Cache result
                 self.cache['bid_utils'][cache_key] = utility

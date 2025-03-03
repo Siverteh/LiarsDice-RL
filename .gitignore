@@ -4,3 +4,11 @@ __pycache__/
 /logs/
 .history/
 .history/*
+self_play_results/
+mixed_play_results/
+curriculum_results/
+.self_play_results/
+.mixed_play_results/
+.curriculum_results/
+results/
+
