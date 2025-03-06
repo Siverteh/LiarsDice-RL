@@ -182,6 +182,11 @@ def train_agent(
     win_rates = []
     above_threshold_count = 0  # Counter for early stopping
     
+    # Track best model information
+    best_win_rate = 0.0
+    best_model_path = None
+    early_stopping_triggered = False
+    
     # Make sure the action mapping is set in the agent
     if agent.action_to_game_action is None:
         agent.set_action_mapping(env.action_mapping)
@@ -252,6 +257,13 @@ def train_agent(
             
             logger.info(f"Evaluation at episode {episode}: {eval_reward:.2f} reward, Win rate: {win_rate:.2f}")
             
+            # Save best model
+            if win_rate > best_win_rate:
+                best_win_rate = win_rate
+                best_model_path = os.path.join(checkpoint_dir, f"best_model_episode_{episode}")
+                agent.save(best_model_path)
+                logger.info(f"New best model with win rate {win_rate:.2f} saved to {best_model_path}")
+            
             # Check for early stopping
             if early_stopping and win_rate >= win_rate_threshold:
                 above_threshold_count += 1
@@ -261,8 +273,16 @@ def train_agent(
                 if above_threshold_count >= patience:
                     logger.info(f"Early stopping triggered at episode {episode} with win rate {win_rate:.2f}")
                     # Save a final checkpoint for this level
-                    checkpoint_path = os.path.join(checkpoint_dir, f"early_stop_episode_{episode}")
-                    agent.save(checkpoint_path)
+                    early_stop_path = os.path.join(checkpoint_dir, f"early_stop_episode_{episode}")
+                    agent.save(early_stop_path)
+                    early_stopping_triggered = True
+                    
+                    # If this is our best model so far, update best model path
+                    if win_rate > best_win_rate:
+                        best_win_rate = win_rate
+                        best_model_path = early_stop_path
+                        logger.info(f"Early stopping model is the new best model")
+                    
                     break
             else:
                 above_threshold_count = 0  # Reset counter if win rate drops below threshold
@@ -277,7 +297,9 @@ def train_agent(
                     'win_rates': win_rates,
                     'current_episode': episode,
                     'last_eval_reward': eval_reward,
-                    'last_win_rate': win_rate
+                    'last_win_rate': win_rate,
+                    'best_win_rate': best_win_rate,
+                    'best_model_path': best_model_path
                 }
                 stop_early = callback(episode, current_data, agent)
                 if stop_early:
@@ -285,6 +307,12 @@ def train_agent(
                     break
     
     logger.info("Training completed!")
+    
+    # Load the best model for final evaluation if early stopping was triggered
+    # or if we found a better model during training
+    if best_model_path and (early_stopping_triggered or best_win_rate > 0.6):
+        logger.info(f"Loading best model with win rate {best_win_rate:.2f} for final evaluation")
+        agent.load(best_model_path)
     
     # Final evaluation
     final_eval_reward = evaluate_agent(env, agent, eval_episodes * 2)
@@ -299,7 +327,9 @@ def train_agent(
         'win_rates': win_rates,
         'final_eval_reward': final_eval_reward,
         'agent_stats': agent.get_statistics(),
-        'trained_episodes': len(rewards)
+        'trained_episodes': len(rewards),
+        'best_win_rate': best_win_rate,
+        'best_model_path': best_model_path
     }
     
     return results
@@ -340,9 +370,9 @@ def shape_reward(
     dice_counts: Optional[np.ndarray] = None
 ) -> float:
     """
-    Shape the reward to provide better learning signals.
+    Shape the reward to provide better learning signals with positional awareness.
     
-    Enhances rewards based on game state and action quality, with special
+    Enhances rewards based on game state, position, and action quality, with special
     penalties for risky bluffing and fixations on specific values.
     
     Args:
@@ -367,12 +397,19 @@ def shape_reward(
         shape_reward.six_bid_count = 0
     if not hasattr(shape_reward, "total_bids"):
         shape_reward.total_bids = 0
+    if not hasattr(shape_reward, "position_success"):
+        # Track success by position {position: [successes, attempts]}
+        shape_reward.position_success = {}
         
-    # Get player dice information
-    player_dice_key = 'player_0_dice'  # Assuming agent is player 0
-    own_dice = info.get(player_dice_key, [])
-    player_dice_count = len(own_dice)
-    total_dice = sum(info.get('dice_counts', [0]))
+    # Get player position information from the info dictionary
+    player_position = info.get('active_player_id', 0)  # Default to 0 if not available
+    
+    # Initialize position tracking if needed
+    if player_position not in shape_reward.position_success:
+        shape_reward.position_success[player_position] = [0, 0]
+    
+    # Track attempt for this position
+    shape_reward.position_success[player_position][1] += 1
     
     # Add a penalty for repetitive actions
     if shape_reward.last_action and action == shape_reward.last_action:
@@ -387,9 +424,72 @@ def shape_reward(
     # Enhanced rewards for winning/losing
     if game_state == 'GAME_OVER':
         if reward > 0:
-            reward *= 2.0  # Double the winning reward
+            # Track success for this position
+            shape_reward.position_success[player_position][0] += 1
+            
+            # Calculate position success rate
+            successes, attempts = shape_reward.position_success[player_position]
+            position_success_rate = successes / max(1, attempts)
+            
+            # Give more reward for succeeding in positions that have been difficult
+            if position_success_rate < 0.4 and attempts > 5:
+                reward *= 2.5  # Bigger boost for improving in challenging positions
+            else:
+                reward *= 2.0  # Standard winning boost
         else:
             reward *= 0.5  # Halve the losing penalty (less discouragement)
+    
+    # Get player dice information
+    player_dice_key = f'player_{player_position}_dice'  # Use position-specific key
+    own_dice = info.get(player_dice_key, [])
+    
+    # Fall back to any available player dice if position-specific not found
+    if not own_dice:
+        for i in range(info.get('num_players', 2)):
+            key = f'player_{i}_dice'
+            if key in info:
+                own_dice = info[key]
+                break
+    
+    player_dice_count = len(own_dice)
+    total_dice = sum(info.get('dice_counts', [0]))
+    
+    # Calculate relative position feature indices
+    # These come from ObservationEncoder in state.py
+    num_dice = info.get('num_dice', 5)  
+    dice_faces = info.get('dice_faces', 6)
+    num_players = len(dice_counts) if dice_counts is not None else info.get('num_players', 2)
+    
+    # Calculate position feature indices based on observation structure
+    dice_shape = num_dice * dice_faces
+    dice_counts_shape = num_players
+    bid_shape = 2
+    
+    relative_positions_start = dice_shape + dice_counts_shape + bid_shape
+    relative_position_count = 5  # From ObservationEncoder: steps_to_current, steps_to_previous, etc.
+    
+    # Extract position features if they exist in the observation
+    if relative_positions_start + relative_position_count <= len(observation):
+        relative_position_features = observation[relative_positions_start:relative_positions_start + relative_position_count]
+    else:
+        # Default empty features if out of bounds
+        relative_position_features = np.zeros(relative_position_count)
+    
+    # Position-specific reward adjustments
+    if player_position > 0:  # Not the default first position
+        # Encourage success in harder positions
+        if reward > 0:  # If successful action
+            # Small bonus proportional to position (higher positions are harder)
+            reward += 0.05 * player_position
+        
+        # Use relative position features for specific adjustments
+        if len(relative_position_features) > 0:
+            # First feature is steps to current player (normalized)
+            steps_to_current = relative_position_features[0] * num_players
+            
+            # Extra reward for good decisions when far from current player
+            if steps_to_current > 1 and reward > 0:
+                reward += 0.1  # Small bonus for good decisions from disadvantaged positions
     
     # Reward specific actions
     if action['type'] == 'bid':
@@ -429,6 +529,12 @@ def shape_reward(
                 else:
                     reward -= 0.2 + (risk_factor * 0.4)
                 
+                # Position-specific risk adjustment
+                # Players in later positions may need to be more aggressive
+                if player_position > 0 and risk_factor > 0:
+                    # Reduce penalty for necessary risks in later positions
+                    reward += 0.1 * min(risk_factor, 0.5) * player_position
+                
                 # CRITICAL: Heavily penalize risky bids when down to few dice
                 if player_dice_count <= 2:  # When agent has 1-2 dice left
                     # Larger penalty for risky bids when vulnerable
@@ -449,24 +555,35 @@ def shape_reward(
         # If the challenge was successful (reward is positive)
         if reward > 0:
             reward += 0.8  # Larger bonus for successful challenges
+            
+            # Position-specific challenge success bonus
+            if player_position > 0:  # Not the default first position
+                reward += 0.2 * player_position  # More reward for challenges from later positions
+                
         # If the challenge failed (reward is negative)
         elif reward < 0:
             reward -= 0.3  # Larger penalty for failed challenges
+            
+            # Reduce penalty for reasonable failed challenges in later positions
+            if player_position > 0:
+                # Challenges from later positions are harder, so be more lenient
+                reward += 0.05 * player_position
         
         # Reset bid tracking after challenges (new round starts)
         if hasattr(shape_reward, "last_bid_value"):
             shape_reward.last_bid_value = None
     
     # Reward for keeping dice (survival)
-    if 'dice_counts' in info:
-        current_player = 0  # Assumes player 0 is the agent
-        if info['dice_counts'][current_player] > 0:
+    if dice_counts is not None and player_position < len(dice_counts):
+        if dice_counts[player_position] > 0:
             reward += 0.1  # Small reward for survival
     
     # Reward for outlasting opponents
-    if dice_counts is not None and sum(dice_counts) < len(dice_counts) * dice_counts[0]:
-        # The agent has more dice than the average player
-        reward += 0.1
+    if dice_counts is not None:
+        player_dice = dice_counts[player_position] if player_position < len(dice_counts) else 0
+        avg_dice = sum(dice_counts) / len(dice_counts)
+        if player_dice > avg_dice:
+            reward += 0.1  # Reward for having more dice than average
     
     return reward
 

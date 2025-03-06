@@ -349,15 +349,12 @@ def play_against_model(
             if try_set_epsilon is not None:
                 agent.epsilon = 0.0
                 
-        elif agent_type.lower() == 'ppo':
+        # Create the appropriate agent based on agent_type
+        if agent_type.lower() == 'ppo':
             agent = PPOAgent(
                 obs_dim=obs_dim,
                 action_dim=action_dim,
-                hidden_dims=network_size if isinstance(network_size, list) else 
-                        [1024, 512, 256, 128, 64] if network_size == 'very large' else 
-                        [512, 256, 128, 64] if network_size == 'large' else 
-                        [256, 128, 64] if network_size == 'medium' else 
-                        [128, 64],
+                hidden_dims=[256, 128, 64],  # Force using this smaller network size
                 device=device
             )
         else:
@@ -553,7 +550,7 @@ if __name__ == "__main__":
                         help='Type of RL agent. If not specified, will try to determine from model files.')
     parser.add_argument('--models_dir', type=str, default='results/models',
                         help='Directory containing trained models')
-    parser.add_argument('--dice', type=int, default=5, help='Number of dice per player')
+    parser.add_argument('--dice', type=int, default=3, help='Number of dice per player')
     parser.add_argument('--faces', type=int, default=6, help='Number of faces per die')
     parser.add_argument('--ai_first', action='store_true', help='Let the AI go first')
     parser.add_argument('--show_ai_dice', action='store_true', help='Show the AI\'s dice (debug mode)')

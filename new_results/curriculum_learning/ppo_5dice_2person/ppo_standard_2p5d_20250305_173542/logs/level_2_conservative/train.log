@@ -1,0 +1,641 @@
+2025-03-05 17:44:44,654 - train - INFO - Starting training for 270000 episodes with agent type: PPOAgent
+2025-03-05 17:44:44,654 - train - INFO - Agent config: {'obs_dim': 52, 'action_dim': 61, 'hidden_dims': [256, 128, 64], 'learning_rate': 0.0001, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.97, 'policy_clip': 0.1, 'value_coef': 0.8, 'entropy_coef': 0.002, 'batch_size': 256, 'update_frequency': 2048, 'max_grad_norm': 0.5, 'update_counter': 57, 'step_counter': 1400, 'total_training_steps': 1000000, 'current_lr': 9.766992877424951e-05, 'device': 'cuda', 'memory_size': 1402, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 11.509}
+2025-03-05 17:44:46,885 - train - INFO - Episode 100/270000 | Reward: -4.92 | Length: 9.42 | Loss: 0.0000
+2025-03-05 17:44:48,703 - train - INFO - Episode 200/270000 | Reward: -5.00 | Length: 9.56 | Loss: 0.0000
+2025-03-05 17:44:50,898 - train - INFO - Episode 300/270000 | Reward: -4.87 | Length: 9.95 | Loss: 0.0000
+2025-03-05 17:44:52,805 - train - INFO - Episode 400/270000 | Reward: -4.76 | Length: 9.93 | Loss: 0.0000
+2025-03-05 17:44:54,959 - train - INFO - Episode 500/270000 | Reward: -5.00 | Length: 9.51 | Loss: 0.0000
+2025-03-05 17:45:04,343 - train - INFO - Evaluation at episode 500: -5.00 reward, Win rate: 0.03
+2025-03-05 17:45:04,353 - train - INFO - New best model with win rate 0.03 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_500
+2025-03-05 17:45:06,510 - train - INFO - Episode 600/270000 | Reward: -4.92 | Length: 9.91 | Loss: 0.0000
+2025-03-05 17:45:08,939 - train - INFO - Episode 700/270000 | Reward: -4.93 | Length: 9.66 | Loss: 0.0000
+2025-03-05 17:45:10,823 - train - INFO - Episode 800/270000 | Reward: -4.85 | Length: 9.92 | Loss: 0.0000
+2025-03-05 17:45:12,730 - train - INFO - Episode 900/270000 | Reward: -4.94 | Length: 9.45 | Loss: 0.0000
+2025-03-05 17:45:14,810 - train - INFO - Episode 1000/270000 | Reward: -5.00 | Length: 9.59 | Loss: 0.0000
+2025-03-05 17:45:24,522 - train - INFO - Evaluation at episode 1000: -5.00 reward, Win rate: 0.00
+2025-03-05 17:45:26,633 - train - INFO - Episode 1100/270000 | Reward: -4.94 | Length: 10.11 | Loss: 0.0000
+2025-03-05 17:45:28,855 - train - INFO - Episode 1200/270000 | Reward: -4.86 | Length: 10.23 | Loss: 0.0000
+2025-03-05 17:45:30,799 - train - INFO - Episode 1300/270000 | Reward: -5.00 | Length: 9.80 | Loss: 0.0000
+2025-03-05 17:45:32,895 - train - INFO - Episode 1400/270000 | Reward: -4.86 | Length: 9.63 | Loss: 0.0000
+2025-03-05 17:45:34,823 - train - INFO - Episode 1500/270000 | Reward: -5.00 | Length: 9.88 | Loss: 0.0000
+2025-03-05 17:45:44,935 - train - INFO - Evaluation at episode 1500: -5.00 reward, Win rate: 0.00
+2025-03-05 17:45:47,163 - train - INFO - Episode 1600/270000 | Reward: -4.87 | Length: 10.03 | Loss: 0.0000
+2025-03-05 17:45:49,150 - train - INFO - Episode 1700/270000 | Reward: -4.74 | Length: 9.99 | Loss: 0.0000
+2025-03-05 17:45:51,421 - train - INFO - Episode 1800/270000 | Reward: -4.92 | Length: 10.32 | Loss: 0.0000
+2025-03-05 17:45:53,491 - train - INFO - Episode 1900/270000 | Reward: -4.81 | Length: 10.61 | Loss: 0.0000
+2025-03-05 17:45:55,779 - train - INFO - Episode 2000/270000 | Reward: -4.80 | Length: 10.66 | Loss: 0.0000
+2025-03-05 17:46:06,417 - train - INFO - Evaluation at episode 2000: -5.00 reward, Win rate: 0.03
+2025-03-05 17:46:08,699 - train - INFO - Episode 2100/270000 | Reward: -4.88 | Length: 10.72 | Loss: 0.0000
+2025-03-05 17:46:11,075 - train - INFO - Episode 2200/270000 | Reward: -4.86 | Length: 10.36 | Loss: 0.0000
+2025-03-05 17:46:13,222 - train - INFO - Episode 2300/270000 | Reward: -4.93 | Length: 10.80 | Loss: 0.0000
+2025-03-05 17:46:15,461 - train - INFO - Episode 2400/270000 | Reward: -5.00 | Length: 10.65 | Loss: 0.0000
+2025-03-05 17:46:17,604 - train - INFO - Episode 2500/270000 | Reward: -4.75 | Length: 10.85 | Loss: 0.0000
+2025-03-05 17:46:28,478 - train - INFO - Evaluation at episode 2500: -5.00 reward, Win rate: 0.00
+2025-03-05 17:46:30,898 - train - INFO - Episode 2600/270000 | Reward: -4.72 | Length: 11.17 | Loss: 0.0000
+2025-03-05 17:46:33,259 - train - INFO - Episode 2700/270000 | Reward: -4.87 | Length: 10.56 | Loss: 0.0000
+2025-03-05 17:46:35,367 - train - INFO - Episode 2800/270000 | Reward: -4.56 | Length: 11.18 | Loss: 0.0000
+2025-03-05 17:46:37,734 - train - INFO - Episode 2900/270000 | Reward: -4.69 | Length: 10.68 | Loss: 0.0000
+2025-03-05 17:46:39,818 - train - INFO - Episode 3000/270000 | Reward: -4.63 | Length: 10.90 | Loss: 0.0000
+2025-03-05 17:46:50,735 - train - INFO - Evaluation at episode 3000: -5.00 reward, Win rate: 0.03
+2025-03-05 17:46:53,198 - train - INFO - Episode 3100/270000 | Reward: -4.85 | Length: 10.86 | Loss: 0.0000
+2025-03-05 17:46:55,372 - train - INFO - Episode 3200/270000 | Reward: -4.54 | Length: 11.43 | Loss: 0.0000
+2025-03-05 17:46:57,850 - train - INFO - Episode 3300/270000 | Reward: -4.79 | Length: 11.21 | Loss: 0.0000
+2025-03-05 17:46:59,986 - train - INFO - Episode 3400/270000 | Reward: -4.65 | Length: 11.05 | Loss: 0.0000
+2025-03-05 17:47:02,431 - train - INFO - Episode 3500/270000 | Reward: -4.72 | Length: 11.26 | Loss: 0.0000
+2025-03-05 17:47:14,383 - train - INFO - Evaluation at episode 3500: -5.00 reward, Win rate: 0.03
+2025-03-05 17:47:16,745 - train - INFO - Episode 3600/270000 | Reward: -4.78 | Length: 11.44 | Loss: 0.0000
+2025-03-05 17:47:19,146 - train - INFO - Episode 3700/270000 | Reward: -4.74 | Length: 11.23 | Loss: 0.0000
+2025-03-05 17:47:21,602 - train - INFO - Episode 3800/270000 | Reward: -4.59 | Length: 11.30 | Loss: 0.0000
+2025-03-05 17:47:23,810 - train - INFO - Episode 3900/270000 | Reward: -4.63 | Length: 11.88 | Loss: 0.0000
+2025-03-05 17:47:26,327 - train - INFO - Episode 4000/270000 | Reward: -4.66 | Length: 11.53 | Loss: 0.0000
+2025-03-05 17:47:37,707 - train - INFO - Evaluation at episode 4000: -5.00 reward, Win rate: 0.03
+2025-03-05 17:47:40,174 - train - INFO - Episode 4100/270000 | Reward: -4.58 | Length: 12.03 | Loss: 0.0000
+2025-03-05 17:47:42,745 - train - INFO - Episode 4200/270000 | Reward: -4.70 | Length: 11.80 | Loss: 0.0000
+2025-03-05 17:47:44,991 - train - INFO - Episode 4300/270000 | Reward: -4.93 | Length: 11.65 | Loss: 0.0000
+2025-03-05 17:47:47,479 - train - INFO - Episode 4400/270000 | Reward: -4.79 | Length: 11.83 | Loss: 0.0000
+2025-03-05 17:47:50,083 - train - INFO - Episode 4500/270000 | Reward: -4.52 | Length: 11.88 | Loss: 0.0000
+2025-03-05 17:48:01,858 - train - INFO - Evaluation at episode 4500: 1.00 reward, Win rate: 0.10
+2025-03-05 17:48:01,899 - train - INFO - New best model with win rate 0.10 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_4500
+2025-03-05 17:48:04,358 - train - INFO - Episode 4600/270000 | Reward: -4.55 | Length: 11.53 | Loss: 0.0000
+2025-03-05 17:48:07,091 - train - INFO - Episode 4700/270000 | Reward: -4.24 | Length: 11.98 | Loss: 0.0000
+2025-03-05 17:48:09,358 - train - INFO - Episode 4800/270000 | Reward: -4.65 | Length: 11.82 | Loss: 0.0000
+2025-03-05 17:48:11,982 - train - INFO - Episode 4900/270000 | Reward: -4.33 | Length: 12.15 | Loss: 0.0000
+2025-03-05 17:48:14,317 - train - INFO - Episode 5000/270000 | Reward: -3.99 | Length: 12.14 | Loss: 0.0000
+2025-03-05 17:48:26,555 - train - INFO - Evaluation at episode 5000: 2.00 reward, Win rate: 0.13
+2025-03-05 17:48:26,679 - train - INFO - New best model with win rate 0.13 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_5000
+2025-03-05 17:48:29,573 - train - INFO - Episode 5100/270000 | Reward: -4.02 | Length: 12.15 | Loss: 0.0000
+2025-03-05 17:48:32,307 - train - INFO - Episode 5200/270000 | Reward: -4.38 | Length: 12.07 | Loss: 0.0000
+2025-03-05 17:48:34,569 - train - INFO - Episode 5300/270000 | Reward: -4.04 | Length: 11.61 | Loss: 0.0000
+2025-03-05 17:48:37,203 - train - INFO - Episode 5400/270000 | Reward: -4.34 | Length: 12.19 | Loss: 0.0000
+2025-03-05 17:48:39,648 - train - INFO - Episode 5500/270000 | Reward: -4.43 | Length: 12.51 | Loss: 0.0000
+2025-03-05 17:48:51,615 - train - INFO - Evaluation at episode 5500: -5.00 reward, Win rate: 0.10
+2025-03-05 17:48:54,129 - train - INFO - Episode 5600/270000 | Reward: -4.38 | Length: 11.95 | Loss: 0.0000
+2025-03-05 17:48:56,897 - train - INFO - Episode 5700/270000 | Reward: -4.18 | Length: 12.60 | Loss: 0.0000
+2025-03-05 17:48:59,202 - train - INFO - Episode 5800/270000 | Reward: -4.27 | Length: 12.09 | Loss: 0.0000
+2025-03-05 17:49:01,855 - train - INFO - Episode 5900/270000 | Reward: -4.36 | Length: 12.44 | Loss: 0.0000
+2025-03-05 17:49:04,337 - train - INFO - Episode 6000/270000 | Reward: -4.11 | Length: 12.63 | Loss: 0.0000
+2025-03-05 17:49:16,393 - train - INFO - Evaluation at episode 6000: -5.00 reward, Win rate: 0.10
+2025-03-05 17:49:19,048 - train - INFO - Episode 6100/270000 | Reward: -4.12 | Length: 12.78 | Loss: 0.0000
+2025-03-05 17:49:21,795 - train - INFO - Episode 6200/270000 | Reward: -3.84 | Length: 12.70 | Loss: 0.0000
+2025-03-05 17:49:24,250 - train - INFO - Episode 6300/270000 | Reward: -3.48 | Length: 13.06 | Loss: 0.0000
+2025-03-05 17:49:26,920 - train - INFO - Episode 6400/270000 | Reward: -4.23 | Length: 12.69 | Loss: 0.0000
+2025-03-05 17:49:29,545 - train - INFO - Episode 6500/270000 | Reward: -4.15 | Length: 12.20 | Loss: 0.0000
+2025-03-05 17:49:41,662 - train - INFO - Evaluation at episode 6500: -5.00 reward, Win rate: 0.13
+2025-03-05 17:49:44,114 - train - INFO - Episode 6600/270000 | Reward: -3.63 | Length: 12.13 | Loss: 0.0000
+2025-03-05 17:49:46,827 - train - INFO - Episode 6700/270000 | Reward: -3.47 | Length: 12.40 | Loss: 0.0000
+2025-03-05 17:49:49,261 - train - INFO - Episode 6800/270000 | Reward: -3.72 | Length: 12.76 | Loss: 0.0000
+2025-03-05 17:49:51,941 - train - INFO - Episode 6900/270000 | Reward: -3.19 | Length: 12.69 | Loss: 0.0000
+2025-03-05 17:49:54,711 - train - INFO - Episode 7000/270000 | Reward: -3.52 | Length: 12.89 | Loss: 0.0000
+2025-03-05 17:50:07,142 - train - INFO - Evaluation at episode 7000: 3.00 reward, Win rate: 0.23
+2025-03-05 17:50:07,186 - train - INFO - New best model with win rate 0.23 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_7000
+2025-03-05 17:50:09,965 - train - INFO - Episode 7100/270000 | Reward: -3.98 | Length: 12.64 | Loss: 0.0000
+2025-03-05 17:50:12,797 - train - INFO - Episode 7200/270000 | Reward: -3.66 | Length: 13.15 | Loss: 0.0000
+2025-03-05 17:50:15,201 - train - INFO - Episode 7300/270000 | Reward: -3.98 | Length: 12.60 | Loss: 0.0000
+2025-03-05 17:50:17,879 - train - INFO - Episode 7400/270000 | Reward: -3.64 | Length: 12.64 | Loss: 0.0000
+2025-03-05 17:50:20,679 - train - INFO - Episode 7500/270000 | Reward: -3.97 | Length: 12.97 | Loss: 0.0000
+2025-03-05 17:50:33,066 - train - INFO - Evaluation at episode 7500: -5.00 reward, Win rate: 0.17
+2025-03-05 17:50:35,705 - train - INFO - Episode 7600/270000 | Reward: -3.46 | Length: 12.97 | Loss: 0.0000
+2025-03-05 17:50:38,435 - train - INFO - Episode 7700/270000 | Reward: -3.21 | Length: 12.90 | Loss: 0.0000
+2025-03-05 17:50:41,240 - train - INFO - Episode 7800/270000 | Reward: -3.45 | Length: 13.17 | Loss: 0.0000
+2025-03-05 17:50:43,673 - train - INFO - Episode 7900/270000 | Reward: -3.84 | Length: 12.90 | Loss: 0.0000
+2025-03-05 17:50:46,411 - train - INFO - Episode 8000/270000 | Reward: -2.78 | Length: 12.98 | Loss: 0.0000
+2025-03-05 17:50:59,999 - train - INFO - Evaluation at episode 8000: -5.00 reward, Win rate: 0.23
+2025-03-05 17:51:03,222 - train - INFO - Episode 8100/270000 | Reward: -3.26 | Length: 13.03 | Loss: 0.0000
+2025-03-05 17:51:05,668 - train - INFO - Episode 8200/270000 | Reward: -3.36 | Length: 12.98 | Loss: 0.0000
+2025-03-05 17:51:08,597 - train - INFO - Episode 8300/270000 | Reward: -2.51 | Length: 13.03 | Loss: 0.0000
+2025-03-05 17:51:11,281 - train - INFO - Episode 8400/270000 | Reward: -3.12 | Length: 13.19 | Loss: 0.0000
+2025-03-05 17:51:14,016 - train - INFO - Episode 8500/270000 | Reward: -2.31 | Length: 13.25 | Loss: 0.0000
+2025-03-05 17:51:26,948 - train - INFO - Evaluation at episode 8500: 2.00 reward, Win rate: 0.33
+2025-03-05 17:51:26,958 - train - INFO - New best model with win rate 0.33 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_8500
+2025-03-05 17:51:29,874 - train - INFO - Episode 8600/270000 | Reward: -2.92 | Length: 13.09 | Loss: 0.0000
+2025-03-05 17:51:32,380 - train - INFO - Episode 8700/270000 | Reward: -3.22 | Length: 13.14 | Loss: 0.0000
+2025-03-05 17:51:35,170 - train - INFO - Episode 8800/270000 | Reward: -2.93 | Length: 13.10 | Loss: 0.0000
+2025-03-05 17:51:38,055 - train - INFO - Episode 8900/270000 | Reward: -2.54 | Length: 13.55 | Loss: 0.0000
+2025-03-05 17:51:40,607 - train - INFO - Episode 9000/270000 | Reward: -2.54 | Length: 13.45 | Loss: 0.0000
+2025-03-05 17:51:53,777 - train - INFO - Evaluation at episode 9000: -5.00 reward, Win rate: 0.43
+2025-03-05 17:51:53,786 - train - INFO - New best model with win rate 0.43 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_9000
+2025-03-05 17:51:56,695 - train - INFO - Episode 9100/270000 | Reward: -2.88 | Length: 13.18 | Loss: 0.0000
+2025-03-05 17:51:59,603 - train - INFO - Episode 9200/270000 | Reward: -2.90 | Length: 13.33 | Loss: 0.0000
+2025-03-05 17:52:02,120 - train - INFO - Episode 9300/270000 | Reward: -2.38 | Length: 13.20 | Loss: 0.0000
+2025-03-05 17:52:04,863 - train - INFO - Episode 9400/270000 | Reward: -2.86 | Length: 12.72 | Loss: 0.0000
+2025-03-05 17:52:07,421 - train - INFO - Episode 9500/270000 | Reward: -2.77 | Length: 13.12 | Loss: 0.0000
+2025-03-05 17:52:20,627 - train - INFO - Evaluation at episode 9500: 2.00 reward, Win rate: 0.43
+2025-03-05 17:52:23,369 - train - INFO - Episode 9600/270000 | Reward: -2.49 | Length: 13.11 | Loss: 0.0000
+2025-03-05 17:52:26,256 - train - INFO - Episode 9700/270000 | Reward: -2.20 | Length: 13.57 | Loss: 0.0000
+2025-03-05 17:52:28,772 - train - INFO - Episode 9800/270000 | Reward: -2.18 | Length: 12.93 | Loss: 0.0000
+2025-03-05 17:52:31,676 - train - INFO - Episode 9900/270000 | Reward: -2.46 | Length: 13.48 | Loss: 0.0000
+2025-03-05 17:52:34,565 - train - INFO - Episode 10000/270000 | Reward: -2.17 | Length: 13.53 | Loss: 0.0000
+2025-03-05 17:52:47,729 - train - INFO - Evaluation at episode 10000: -5.00 reward, Win rate: 0.40
+2025-03-05 17:52:50,402 - train - INFO - Episode 10100/270000 | Reward: -2.43 | Length: 13.05 | Loss: 0.0000
+2025-03-05 17:52:53,234 - train - INFO - Episode 10200/270000 | Reward: -2.01 | Length: 13.47 | Loss: 0.0000
+2025-03-05 17:52:56,109 - train - INFO - Episode 10300/270000 | Reward: -2.77 | Length: 13.30 | Loss: 0.0000
+2025-03-05 17:52:58,639 - train - INFO - Episode 10400/270000 | Reward: -3.01 | Length: 13.27 | Loss: 0.0000
+2025-03-05 17:53:01,540 - train - INFO - Episode 10500/270000 | Reward: -1.97 | Length: 13.79 | Loss: 0.0000
+2025-03-05 17:53:14,751 - train - INFO - Evaluation at episode 10500: -5.00 reward, Win rate: 0.20
+2025-03-05 17:53:17,791 - train - INFO - Episode 10600/270000 | Reward: -2.52 | Length: 13.38 | Loss: 0.0000
+2025-03-05 17:53:20,359 - train - INFO - Episode 10700/270000 | Reward: -2.40 | Length: 13.39 | Loss: 0.0000
+2025-03-05 17:53:23,136 - train - INFO - Episode 10800/270000 | Reward: -2.38 | Length: 13.13 | Loss: 0.0000
+2025-03-05 17:53:26,098 - train - INFO - Episode 10900/270000 | Reward: -1.80 | Length: 13.53 | Loss: 0.0000
+2025-03-05 17:53:28,924 - train - INFO - Episode 11000/270000 | Reward: -2.09 | Length: 13.25 | Loss: 0.0000
+2025-03-05 17:53:42,978 - train - INFO - Evaluation at episode 11000: -5.00 reward, Win rate: 0.40
+2025-03-05 17:53:45,809 - train - INFO - Episode 11100/270000 | Reward: -2.46 | Length: 13.35 | Loss: 0.0000
+2025-03-05 17:53:48,706 - train - INFO - Episode 11200/270000 | Reward: -1.90 | Length: 13.49 | Loss: 0.0000
+2025-03-05 17:53:51,304 - train - INFO - Episode 11300/270000 | Reward: -2.70 | Length: 13.77 | Loss: 0.0000
+2025-03-05 17:53:54,152 - train - INFO - Episode 11400/270000 | Reward: -1.77 | Length: 13.37 | Loss: 0.0000
+2025-03-05 17:53:56,996 - train - INFO - Episode 11500/270000 | Reward: -2.54 | Length: 13.48 | Loss: 0.0000
+2025-03-05 17:54:09,854 - train - INFO - Evaluation at episode 11500: -5.00 reward, Win rate: 0.47
+2025-03-05 17:54:09,863 - train - INFO - New best model with win rate 0.47 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_11500
+2025-03-05 17:54:12,681 - train - INFO - Episode 11600/270000 | Reward: -1.68 | Length: 13.79 | Loss: 0.0000
+2025-03-05 17:54:15,523 - train - INFO - Episode 11700/270000 | Reward: -1.80 | Length: 13.49 | Loss: 0.0000
+2025-03-05 17:54:18,440 - train - INFO - Episode 11800/270000 | Reward: -1.88 | Length: 13.64 | Loss: 0.0000
+2025-03-05 17:54:21,009 - train - INFO - Episode 11900/270000 | Reward: -1.95 | Length: 13.42 | Loss: 0.0000
+2025-03-05 17:54:23,888 - train - INFO - Episode 12000/270000 | Reward: -1.62 | Length: 13.81 | Loss: 0.0000
+2025-03-05 17:54:37,046 - train - INFO - Evaluation at episode 12000: -5.00 reward, Win rate: 0.43
+2025-03-05 17:54:40,074 - train - INFO - Episode 12100/270000 | Reward: -2.16 | Length: 13.13 | Loss: 0.0000
+2025-03-05 17:54:42,596 - train - INFO - Episode 12200/270000 | Reward: -1.63 | Length: 13.71 | Loss: 0.0000
+2025-03-05 17:54:45,472 - train - INFO - Episode 12300/270000 | Reward: -2.35 | Length: 13.75 | Loss: 0.0000
+2025-03-05 17:54:48,393 - train - INFO - Episode 12400/270000 | Reward: -1.71 | Length: 13.53 | Loss: 0.0000
+2025-03-05 17:54:51,062 - train - INFO - Episode 12500/270000 | Reward: -1.42 | Length: 14.26 | Loss: 0.0000
+2025-03-05 17:55:04,452 - train - INFO - Evaluation at episode 12500: 5.00 reward, Win rate: 0.50
+2025-03-05 17:55:04,461 - train - INFO - New best model with win rate 0.50 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_12500
+2025-03-05 17:55:07,490 - train - INFO - Episode 12600/270000 | Reward: -2.00 | Length: 13.78 | Loss: 0.0000
+2025-03-05 17:55:10,487 - train - INFO - Episode 12700/270000 | Reward: -1.93 | Length: 13.82 | Loss: 0.0000
+2025-03-05 17:55:13,090 - train - INFO - Episode 12800/270000 | Reward: -1.66 | Length: 13.90 | Loss: 0.0000
+2025-03-05 17:55:16,134 - train - INFO - Episode 12900/270000 | Reward: -1.15 | Length: 14.14 | Loss: 0.0000
+2025-03-05 17:55:19,108 - train - INFO - Episode 13000/270000 | Reward: -2.13 | Length: 13.78 | Loss: 0.0000
+2025-03-05 17:55:32,142 - train - INFO - Evaluation at episode 13000: -5.00 reward, Win rate: 0.57
+2025-03-05 17:55:32,150 - train - INFO - New best model with win rate 0.57 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_13000
+2025-03-05 17:55:35,012 - train - INFO - Episode 13100/270000 | Reward: -1.53 | Length: 13.77 | Loss: 0.0000
+2025-03-05 17:55:37,901 - train - INFO - Episode 13200/270000 | Reward: -2.23 | Length: 13.43 | Loss: 0.0000
+2025-03-05 17:55:40,932 - train - INFO - Episode 13300/270000 | Reward: -1.79 | Length: 14.21 | Loss: 0.0000
+2025-03-05 17:55:43,473 - train - INFO - Episode 13400/270000 | Reward: -2.03 | Length: 13.38 | Loss: 0.0000
+2025-03-05 17:55:46,378 - train - INFO - Episode 13500/270000 | Reward: -1.44 | Length: 13.94 | Loss: 0.0000
+2025-03-05 17:55:59,628 - train - INFO - Evaluation at episode 13500: 3.00 reward, Win rate: 0.47
+2025-03-05 17:56:02,775 - train - INFO - Episode 13600/270000 | Reward: -0.99 | Length: 13.83 | Loss: 0.0000
+2025-03-05 17:56:05,367 - train - INFO - Episode 13700/270000 | Reward: -2.02 | Length: 13.65 | Loss: 0.0000
+2025-03-05 17:56:08,166 - train - INFO - Episode 13800/270000 | Reward: -1.55 | Length: 13.55 | Loss: 0.0000
+2025-03-05 17:56:11,179 - train - INFO - Episode 13900/270000 | Reward: -2.11 | Length: 13.84 | Loss: 0.0000
+2025-03-05 17:56:13,895 - train - INFO - Episode 14000/270000 | Reward: -1.04 | Length: 13.96 | Loss: 0.0000
+2025-03-05 17:56:27,186 - train - INFO - Evaluation at episode 14000: 2.00 reward, Win rate: 0.63
+2025-03-05 17:56:27,194 - train - INFO - New best model with win rate 0.63 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_14000
+2025-03-05 17:56:30,169 - train - INFO - Episode 14100/270000 | Reward: -0.97 | Length: 13.74 | Loss: 0.0000
+2025-03-05 17:56:33,184 - train - INFO - Episode 14200/270000 | Reward: -1.27 | Length: 13.74 | Loss: 0.0000
+2025-03-05 17:56:35,880 - train - INFO - Episode 14300/270000 | Reward: -1.70 | Length: 14.21 | Loss: 0.0000
+2025-03-05 17:56:38,784 - train - INFO - Episode 14400/270000 | Reward: -1.94 | Length: 13.87 | Loss: 0.0000
+2025-03-05 17:56:41,740 - train - INFO - Episode 14500/270000 | Reward: -0.98 | Length: 13.82 | Loss: 0.0000
+2025-03-05 17:56:55,297 - train - INFO - Evaluation at episode 14500: 1.00 reward, Win rate: 0.30
+2025-03-05 17:56:58,157 - train - INFO - Episode 14600/270000 | Reward: -1.50 | Length: 13.89 | Loss: 0.0000
+2025-03-05 17:57:01,066 - train - INFO - Episode 14700/270000 | Reward: -1.54 | Length: 13.77 | Loss: 0.0000
+2025-03-05 17:57:04,052 - train - INFO - Episode 14800/270000 | Reward: -1.85 | Length: 14.04 | Loss: 0.0000
+2025-03-05 17:57:06,789 - train - INFO - Episode 14900/270000 | Reward: -0.97 | Length: 13.91 | Loss: 0.0000
+2025-03-05 17:57:09,737 - train - INFO - Episode 15000/270000 | Reward: -1.20 | Length: 14.04 | Loss: 0.0000
+2025-03-05 17:57:23,332 - train - INFO - Evaluation at episode 15000: -5.00 reward, Win rate: 0.60
+2025-03-05 17:57:26,270 - train - INFO - Episode 15100/270000 | Reward: -0.85 | Length: 13.70 | Loss: 0.0000
+2025-03-05 17:57:28,932 - train - INFO - Episode 15200/270000 | Reward: -1.13 | Length: 13.73 | Loss: 0.0000
+2025-03-05 17:57:31,943 - train - INFO - Episode 15300/270000 | Reward: -1.72 | Length: 13.63 | Loss: 0.0000
+2025-03-05 17:57:34,948 - train - INFO - Episode 15400/270000 | Reward: -1.52 | Length: 14.05 | Loss: 0.0000
+2025-03-05 17:57:37,674 - train - INFO - Episode 15500/270000 | Reward: -1.49 | Length: 13.85 | Loss: 0.0000
+2025-03-05 17:57:50,930 - train - INFO - Evaluation at episode 15500: 5.00 reward, Win rate: 0.43
+2025-03-05 17:57:53,787 - train - INFO - Episode 15600/270000 | Reward: -1.47 | Length: 14.15 | Loss: 0.0000
+2025-03-05 17:57:56,635 - train - INFO - Episode 15700/270000 | Reward: -1.29 | Length: 14.13 | Loss: 0.0000
+2025-03-05 17:57:59,510 - train - INFO - Episode 15800/270000 | Reward: -0.84 | Length: 13.66 | Loss: 0.0000
+2025-03-05 17:58:02,086 - train - INFO - Episode 15900/270000 | Reward: -1.42 | Length: 14.21 | Loss: 0.0000
+2025-03-05 17:58:04,908 - train - INFO - Episode 16000/270000 | Reward: -1.84 | Length: 13.86 | Loss: 0.0000
+2025-03-05 17:58:18,044 - train - INFO - Evaluation at episode 16000: -5.00 reward, Win rate: 0.30
+2025-03-05 17:58:21,119 - train - INFO - Episode 16100/270000 | Reward: -1.50 | Length: 14.08 | Loss: 0.0000
+2025-03-05 17:58:23,794 - train - INFO - Episode 16200/270000 | Reward: -0.90 | Length: 14.27 | Loss: 0.0000
+2025-03-05 17:58:26,549 - train - INFO - Episode 16300/270000 | Reward: -0.49 | Length: 13.32 | Loss: 0.0000
+2025-03-05 17:58:29,386 - train - INFO - Episode 16400/270000 | Reward: -0.92 | Length: 13.91 | Loss: 0.0000
+2025-03-05 17:58:31,927 - train - INFO - Episode 16500/270000 | Reward: -1.32 | Length: 14.08 | Loss: 0.0000
+2025-03-05 17:58:45,207 - train - INFO - Evaluation at episode 16500: 2.00 reward, Win rate: 0.60
+2025-03-05 17:58:48,109 - train - INFO - Episode 16600/270000 | Reward: -0.06 | Length: 14.15 | Loss: 0.0000
+2025-03-05 17:58:50,977 - train - INFO - Episode 16700/270000 | Reward: -1.78 | Length: 14.08 | Loss: 0.0000
+2025-03-05 17:58:53,446 - train - INFO - Episode 16800/270000 | Reward: -1.18 | Length: 13.67 | Loss: 0.0000
+2025-03-05 17:58:56,226 - train - INFO - Episode 16900/270000 | Reward: -0.83 | Length: 13.76 | Loss: 0.0000
+2025-03-05 17:58:59,116 - train - INFO - Episode 17000/270000 | Reward: -0.99 | Length: 14.11 | Loss: 0.0000
+2025-03-05 17:59:12,258 - train - INFO - Evaluation at episode 17000: -5.00 reward, Win rate: 0.40
+2025-03-05 17:59:15,002 - train - INFO - Episode 17100/270000 | Reward: -1.40 | Length: 13.81 | Loss: 0.0000
+2025-03-05 17:59:17,864 - train - INFO - Episode 17200/270000 | Reward: -1.46 | Length: 14.14 | Loss: 0.0000
+2025-03-05 17:59:20,686 - train - INFO - Episode 17300/270000 | Reward: -1.04 | Length: 13.70 | Loss: 0.0000
+2025-03-05 17:59:23,307 - train - INFO - Episode 17400/270000 | Reward: -1.10 | Length: 14.04 | Loss: 0.0000
+2025-03-05 17:59:26,108 - train - INFO - Episode 17500/270000 | Reward: -0.52 | Length: 13.87 | Loss: 0.0000
+2025-03-05 17:59:39,288 - train - INFO - Evaluation at episode 17500: -5.00 reward, Win rate: 0.47
+2025-03-05 17:59:42,258 - train - INFO - Episode 17600/270000 | Reward: -0.58 | Length: 13.87 | Loss: 0.0000
+2025-03-05 17:59:44,875 - train - INFO - Episode 17700/270000 | Reward: -0.89 | Length: 14.12 | Loss: 0.0000
+2025-03-05 17:59:47,684 - train - INFO - Episode 17800/270000 | Reward: -0.47 | Length: 14.18 | Loss: 0.0000
+2025-03-05 17:59:50,574 - train - INFO - Episode 17900/270000 | Reward: -0.82 | Length: 14.01 | Loss: 0.0000
+2025-03-05 17:59:53,118 - train - INFO - Episode 18000/270000 | Reward: -0.11 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:00:06,363 - train - INFO - Evaluation at episode 18000: 3.00 reward, Win rate: 0.57
+2025-03-05 18:00:09,154 - train - INFO - Episode 18100/270000 | Reward: -0.96 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:00:12,026 - train - INFO - Episode 18200/270000 | Reward: -0.80 | Length: 13.98 | Loss: 0.0000
+2025-03-05 18:00:14,968 - train - INFO - Episode 18300/270000 | Reward: -0.54 | Length: 14.48 | Loss: 0.0000
+2025-03-05 18:00:17,515 - train - INFO - Episode 18400/270000 | Reward: -0.36 | Length: 13.98 | Loss: 0.0000
+2025-03-05 18:00:20,334 - train - INFO - Episode 18500/270000 | Reward: 0.01 | Length: 13.85 | Loss: 0.0000
+2025-03-05 18:00:33,507 - train - INFO - Evaluation at episode 18500: 3.00 reward, Win rate: 0.60
+2025-03-05 18:00:36,591 - train - INFO - Episode 18600/270000 | Reward: -1.23 | Length: 14.26 | Loss: 0.0000
+2025-03-05 18:00:39,138 - train - INFO - Episode 18700/270000 | Reward: -0.68 | Length: 13.89 | Loss: 0.0000
+2025-03-05 18:00:41,937 - train - INFO - Episode 18800/270000 | Reward: -0.20 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:00:44,823 - train - INFO - Episode 18900/270000 | Reward: -0.41 | Length: 13.87 | Loss: 0.0000
+2025-03-05 18:00:47,439 - train - INFO - Episode 19000/270000 | Reward: -0.32 | Length: 14.20 | Loss: 0.0000
+2025-03-05 18:01:00,691 - train - INFO - Evaluation at episode 19000: 2.00 reward, Win rate: 0.57
+2025-03-05 18:01:03,594 - train - INFO - Episode 19100/270000 | Reward: -0.11 | Length: 14.02 | Loss: 0.0000
+2025-03-05 18:01:06,512 - train - INFO - Episode 19200/270000 | Reward: 0.26 | Length: 13.86 | Loss: 0.0000
+2025-03-05 18:01:09,071 - train - INFO - Episode 19300/270000 | Reward: -0.56 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:01:11,911 - train - INFO - Episode 19400/270000 | Reward: 0.41 | Length: 13.96 | Loss: 0.0000
+2025-03-05 18:01:14,792 - train - INFO - Episode 19500/270000 | Reward: -0.86 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:01:27,819 - train - INFO - Evaluation at episode 19500: 3.00 reward, Win rate: 0.57
+2025-03-05 18:01:30,556 - train - INFO - Episode 19600/270000 | Reward: -0.51 | Length: 13.88 | Loss: 0.0000
+2025-03-05 18:01:33,488 - train - INFO - Episode 19700/270000 | Reward: -0.96 | Length: 14.17 | Loss: 0.0000
+2025-03-05 18:01:36,337 - train - INFO - Episode 19800/270000 | Reward: -0.38 | Length: 14.07 | Loss: 0.0000
+2025-03-05 18:01:38,942 - train - INFO - Episode 19900/270000 | Reward: -0.51 | Length: 14.14 | Loss: 0.0000
+2025-03-05 18:01:41,838 - train - INFO - Episode 20000/270000 | Reward: -0.14 | Length: 14.42 | Loss: 0.0000
+2025-03-05 18:01:55,099 - train - INFO - Evaluation at episode 20000: 3.00 reward, Win rate: 0.50
+2025-03-05 18:01:58,009 - train - INFO - Episode 20100/270000 | Reward: -0.29 | Length: 13.93 | Loss: 0.0000
+2025-03-05 18:02:00,895 - train - INFO - Episode 20200/270000 | Reward: -0.18 | Length: 13.91 | Loss: 0.0000
+2025-03-05 18:02:03,433 - train - INFO - Episode 20300/270000 | Reward: 0.16 | Length: 14.02 | Loss: 0.0000
+2025-03-05 18:02:06,335 - train - INFO - Episode 20400/270000 | Reward: 0.08 | Length: 14.19 | Loss: 0.0000
+2025-03-05 18:02:09,319 - train - INFO - Episode 20500/270000 | Reward: 0.67 | Length: 14.39 | Loss: 0.0000
+2025-03-05 18:02:22,538 - train - INFO - Evaluation at episode 20500: -5.00 reward, Win rate: 0.50
+2025-03-05 18:02:25,313 - train - INFO - Episode 20600/270000 | Reward: -0.39 | Length: 14.04 | Loss: 0.0000
+2025-03-05 18:02:28,237 - train - INFO - Episode 20700/270000 | Reward: 0.11 | Length: 14.12 | Loss: 0.0000
+2025-03-05 18:02:31,160 - train - INFO - Episode 20800/270000 | Reward: -0.05 | Length: 14.21 | Loss: 0.0000
+2025-03-05 18:02:33,680 - train - INFO - Episode 20900/270000 | Reward: -0.22 | Length: 13.95 | Loss: 0.0000
+2025-03-05 18:02:36,582 - train - INFO - Episode 21000/270000 | Reward: -0.11 | Length: 14.29 | Loss: 0.0000
+2025-03-05 18:02:49,702 - train - INFO - Evaluation at episode 21000: -5.00 reward, Win rate: 0.60
+2025-03-05 18:02:52,585 - train - INFO - Episode 21100/270000 | Reward: 0.12 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:02:55,116 - train - INFO - Episode 21200/270000 | Reward: 0.31 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:02:57,981 - train - INFO - Episode 21300/270000 | Reward: -0.24 | Length: 14.05 | Loss: 0.0000
+2025-03-05 18:03:00,877 - train - INFO - Episode 21400/270000 | Reward: -0.34 | Length: 14.28 | Loss: 0.0000
+2025-03-05 18:03:03,364 - train - INFO - Episode 21500/270000 | Reward: -0.20 | Length: 13.45 | Loss: 0.0000
+2025-03-05 18:03:16,531 - train - INFO - Evaluation at episode 21500: -5.00 reward, Win rate: 0.60
+2025-03-05 18:03:19,253 - train - INFO - Episode 21600/270000 | Reward: 0.11 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:03:22,112 - train - INFO - Episode 21700/270000 | Reward: -0.30 | Length: 13.71 | Loss: 0.0000
+2025-03-05 18:03:24,721 - train - INFO - Episode 21800/270000 | Reward: -0.65 | Length: 14.06 | Loss: 0.0000
+2025-03-05 18:03:27,455 - train - INFO - Episode 21900/270000 | Reward: 0.56 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:03:30,301 - train - INFO - Episode 22000/270000 | Reward: -0.26 | Length: 13.88 | Loss: 0.0000
+2025-03-05 18:03:43,363 - train - INFO - Evaluation at episode 22000: -5.00 reward, Win rate: 0.67
+2025-03-05 18:03:43,371 - train - INFO - New best model with win rate 0.67 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_22000
+2025-03-05 18:03:46,101 - train - INFO - Episode 22100/270000 | Reward: 0.12 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:03:48,887 - train - INFO - Episode 22200/270000 | Reward: 0.39 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:03:51,776 - train - INFO - Episode 22300/270000 | Reward: 0.15 | Length: 13.74 | Loss: 0.0000
+2025-03-05 18:03:54,327 - train - INFO - Episode 22400/270000 | Reward: -0.27 | Length: 13.81 | Loss: 0.0000
+2025-03-05 18:03:57,148 - train - INFO - Episode 22500/270000 | Reward: 0.18 | Length: 14.06 | Loss: 0.0000
+2025-03-05 18:04:10,101 - train - INFO - Evaluation at episode 22500: 3.00 reward, Win rate: 0.73
+2025-03-05 18:04:10,109 - train - INFO - New best model with win rate 0.73 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_22500
+2025-03-05 18:04:13,303 - train - INFO - Episode 22600/270000 | Reward: 0.44 | Length: 14.21 | Loss: 0.0000
+2025-03-05 18:04:16,351 - train - INFO - Episode 22700/270000 | Reward: 0.19 | Length: 14.12 | Loss: 0.0000
+2025-03-05 18:04:18,883 - train - INFO - Episode 22800/270000 | Reward: -0.09 | Length: 13.89 | Loss: 0.0000
+2025-03-05 18:04:21,750 - train - INFO - Episode 22900/270000 | Reward: 0.83 | Length: 13.64 | Loss: 0.0000
+2025-03-05 18:04:24,819 - train - INFO - Episode 23000/270000 | Reward: 0.44 | Length: 13.93 | Loss: 0.0000
+2025-03-05 18:04:38,256 - train - INFO - Evaluation at episode 23000: 4.00 reward, Win rate: 0.73
+2025-03-05 18:04:41,122 - train - INFO - Episode 23100/270000 | Reward: 0.55 | Length: 13.94 | Loss: 0.0000
+2025-03-05 18:04:44,156 - train - INFO - Episode 23200/270000 | Reward: 0.57 | Length: 13.98 | Loss: 0.0000
+2025-03-05 18:04:47,106 - train - INFO - Episode 23300/270000 | Reward: 0.66 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:04:49,775 - train - INFO - Episode 23400/270000 | Reward: 0.31 | Length: 13.98 | Loss: 0.0000
+2025-03-05 18:04:52,672 - train - INFO - Episode 23500/270000 | Reward: -0.69 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:05:05,916 - train - INFO - Evaluation at episode 23500: -5.00 reward, Win rate: 0.70
+2025-03-05 18:05:09,013 - train - INFO - Episode 23600/270000 | Reward: 0.67 | Length: 13.56 | Loss: 0.0000
+2025-03-05 18:05:11,633 - train - INFO - Episode 23700/270000 | Reward: 1.13 | Length: 13.77 | Loss: 0.0000
+2025-03-05 18:05:14,513 - train - INFO - Episode 23800/270000 | Reward: 0.61 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:05:17,480 - train - INFO - Episode 23900/270000 | Reward: 0.80 | Length: 13.61 | Loss: 0.0000
+2025-03-05 18:05:20,109 - train - INFO - Episode 24000/270000 | Reward: 0.49 | Length: 13.74 | Loss: 0.0000
+2025-03-05 18:05:33,406 - train - INFO - Evaluation at episode 24000: 3.00 reward, Win rate: 0.67
+2025-03-05 18:05:36,333 - train - INFO - Episode 24100/270000 | Reward: 1.21 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:05:39,423 - train - INFO - Episode 24200/270000 | Reward: 0.66 | Length: 13.99 | Loss: 0.0000
+2025-03-05 18:05:41,955 - train - INFO - Episode 24300/270000 | Reward: 0.73 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:05:44,825 - train - INFO - Episode 24400/270000 | Reward: 0.43 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:05:47,762 - train - INFO - Episode 24500/270000 | Reward: 0.52 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:06:00,735 - train - INFO - Evaluation at episode 24500: -5.00 reward, Win rate: 0.70
+2025-03-05 18:06:03,515 - train - INFO - Episode 24600/270000 | Reward: 0.64 | Length: 13.66 | Loss: 0.0000
+2025-03-05 18:06:06,494 - train - INFO - Episode 24700/270000 | Reward: 0.80 | Length: 13.71 | Loss: 0.0000
+2025-03-05 18:06:09,415 - train - INFO - Episode 24800/270000 | Reward: 0.90 | Length: 13.44 | Loss: 0.0000
+2025-03-05 18:06:11,851 - train - INFO - Episode 24900/270000 | Reward: 0.82 | Length: 13.25 | Loss: 0.0000
+2025-03-05 18:06:14,731 - train - INFO - Episode 25000/270000 | Reward: 0.34 | Length: 13.62 | Loss: 0.0000
+2025-03-05 18:06:27,938 - train - INFO - Evaluation at episode 25000: -5.00 reward, Win rate: 0.63
+2025-03-05 18:06:31,042 - train - INFO - Episode 25100/270000 | Reward: -0.15 | Length: 13.86 | Loss: 0.0000
+2025-03-05 18:06:33,650 - train - INFO - Episode 25200/270000 | Reward: 0.81 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:06:36,608 - train - INFO - Episode 25300/270000 | Reward: 0.72 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:06:39,461 - train - INFO - Episode 25400/270000 | Reward: 0.35 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:06:41,953 - train - INFO - Episode 25500/270000 | Reward: 0.64 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:06:55,087 - train - INFO - Evaluation at episode 25500: 2.00 reward, Win rate: 0.73
+2025-03-05 18:06:58,041 - train - INFO - Episode 25600/270000 | Reward: 0.74 | Length: 13.54 | Loss: 0.0000
+2025-03-05 18:07:01,082 - train - INFO - Episode 25700/270000 | Reward: 0.45 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:07:03,769 - train - INFO - Episode 25800/270000 | Reward: 0.84 | Length: 13.81 | Loss: 0.0000
+2025-03-05 18:07:06,695 - train - INFO - Episode 25900/270000 | Reward: 0.58 | Length: 13.70 | Loss: 0.0000
+2025-03-05 18:07:09,668 - train - INFO - Episode 26000/270000 | Reward: 1.33 | Length: 13.70 | Loss: 0.0000
+2025-03-05 18:07:22,722 - train - INFO - Evaluation at episode 26000: 2.00 reward, Win rate: 0.73
+2025-03-05 18:07:25,486 - train - INFO - Episode 26100/270000 | Reward: 0.46 | Length: 13.57 | Loss: 0.0000
+2025-03-05 18:07:28,510 - train - INFO - Episode 26200/270000 | Reward: 0.25 | Length: 13.79 | Loss: 0.0000
+2025-03-05 18:07:31,538 - train - INFO - Episode 26300/270000 | Reward: 0.97 | Length: 13.70 | Loss: 0.0000
+2025-03-05 18:07:34,199 - train - INFO - Episode 26400/270000 | Reward: 0.03 | Length: 13.90 | Loss: 0.0000
+2025-03-05 18:07:36,997 - train - INFO - Episode 26500/270000 | Reward: 1.20 | Length: 13.17 | Loss: 0.0000
+2025-03-05 18:07:50,153 - train - INFO - Evaluation at episode 26500: 4.00 reward, Win rate: 0.83
+2025-03-05 18:07:50,190 - train - INFO - New best model with win rate 0.83 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_26500
+2025-03-05 18:07:53,278 - train - INFO - Episode 26600/270000 | Reward: 0.74 | Length: 13.94 | Loss: 0.0000
+2025-03-05 18:07:55,778 - train - INFO - Episode 26700/270000 | Reward: 0.94 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:07:58,526 - train - INFO - Episode 26800/270000 | Reward: 1.35 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:08:01,420 - train - INFO - Episode 26900/270000 | Reward: 0.74 | Length: 13.79 | Loss: 0.0000
+2025-03-05 18:08:03,893 - train - INFO - Episode 27000/270000 | Reward: 1.56 | Length: 13.44 | Loss: 0.0000
+2025-03-05 18:08:16,892 - train - INFO - Evaluation at episode 27000: -5.00 reward, Win rate: 0.73
+2025-03-05 18:08:19,785 - train - INFO - Episode 27100/270000 | Reward: 0.94 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:08:22,679 - train - INFO - Episode 27200/270000 | Reward: 0.98 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:08:25,142 - train - INFO - Episode 27300/270000 | Reward: 1.09 | Length: 13.59 | Loss: 0.0000
+2025-03-05 18:08:27,967 - train - INFO - Episode 27400/270000 | Reward: 1.28 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:08:30,862 - train - INFO - Episode 27500/270000 | Reward: 0.86 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:08:43,526 - train - INFO - Evaluation at episode 27500: -5.00 reward, Win rate: 0.73
+2025-03-05 18:08:46,207 - train - INFO - Episode 27600/270000 | Reward: 1.52 | Length: 13.62 | Loss: 0.0000
+2025-03-05 18:08:49,108 - train - INFO - Episode 27700/270000 | Reward: 0.52 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:08:51,644 - train - INFO - Episode 27800/270000 | Reward: 0.45 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:08:54,363 - train - INFO - Episode 27900/270000 | Reward: 0.49 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:08:57,189 - train - INFO - Episode 28000/270000 | Reward: 0.72 | Length: 13.62 | Loss: 0.0000
+2025-03-05 18:09:09,863 - train - INFO - Evaluation at episode 28000: 2.00 reward, Win rate: 0.77
+2025-03-05 18:09:12,471 - train - INFO - Episode 28100/270000 | Reward: 1.26 | Length: 13.35 | Loss: 0.0000
+2025-03-05 18:09:15,282 - train - INFO - Episode 28200/270000 | Reward: 0.50 | Length: 13.61 | Loss: 0.0000
+2025-03-05 18:09:18,153 - train - INFO - Episode 28300/270000 | Reward: 0.32 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:09:20,646 - train - INFO - Episode 28400/270000 | Reward: 1.04 | Length: 13.34 | Loss: 0.0000
+2025-03-05 18:09:23,298 - train - INFO - Episode 28500/270000 | Reward: 0.86 | Length: 13.25 | Loss: 0.0000
+2025-03-05 18:09:35,857 - train - INFO - Evaluation at episode 28500: -5.00 reward, Win rate: 0.80
+2025-03-05 18:09:38,789 - train - INFO - Episode 28600/270000 | Reward: 1.00 | Length: 13.26 | Loss: 0.0000
+2025-03-05 18:09:41,528 - train - INFO - Episode 28700/270000 | Reward: 0.92 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:09:44,290 - train - INFO - Episode 28800/270000 | Reward: 1.20 | Length: 13.27 | Loss: 0.0000
+2025-03-05 18:09:47,088 - train - INFO - Episode 28900/270000 | Reward: 1.62 | Length: 13.17 | Loss: 0.0000
+2025-03-05 18:09:49,577 - train - INFO - Episode 29000/270000 | Reward: 0.73 | Length: 13.46 | Loss: 0.0000
+2025-03-05 18:10:02,342 - train - INFO - Evaluation at episode 29000: -5.00 reward, Win rate: 0.73
+2025-03-05 18:10:05,120 - train - INFO - Episode 29100/270000 | Reward: 0.87 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:10:07,930 - train - INFO - Episode 29200/270000 | Reward: 1.37 | Length: 13.40 | Loss: 0.0000
+2025-03-05 18:10:10,453 - train - INFO - Episode 29300/270000 | Reward: 0.95 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:10:13,252 - train - INFO - Episode 29400/270000 | Reward: 0.61 | Length: 13.61 | Loss: 0.0000
+2025-03-05 18:10:16,022 - train - INFO - Episode 29500/270000 | Reward: 1.55 | Length: 13.24 | Loss: 0.0000
+2025-03-05 18:10:28,684 - train - INFO - Evaluation at episode 29500: -5.00 reward, Win rate: 0.60
+2025-03-05 18:10:31,383 - train - INFO - Episode 29600/270000 | Reward: 1.08 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:10:34,099 - train - INFO - Episode 29700/270000 | Reward: 0.69 | Length: 13.14 | Loss: 0.0000
+2025-03-05 18:10:36,906 - train - INFO - Episode 29800/270000 | Reward: 0.69 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:10:39,420 - train - INFO - Episode 29900/270000 | Reward: 0.74 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:10:42,179 - train - INFO - Episode 30000/270000 | Reward: 1.63 | Length: 13.33 | Loss: 0.0000
+2025-03-05 18:10:54,723 - train - INFO - Evaluation at episode 30000: 1.00 reward, Win rate: 0.83
+2025-03-05 18:10:57,703 - train - INFO - Episode 30100/270000 | Reward: 0.77 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:11:00,224 - train - INFO - Episode 30200/270000 | Reward: 1.01 | Length: 13.79 | Loss: 0.0000
+2025-03-05 18:11:03,027 - train - INFO - Episode 30300/270000 | Reward: 1.10 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:11:05,862 - train - INFO - Episode 30400/270000 | Reward: 0.66 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:11:08,421 - train - INFO - Episode 30500/270000 | Reward: 1.04 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:11:21,184 - train - INFO - Evaluation at episode 30500: -5.00 reward, Win rate: 0.67
+2025-03-05 18:11:24,032 - train - INFO - Episode 30600/270000 | Reward: 1.51 | Length: 13.54 | Loss: 0.0000
+2025-03-05 18:11:26,840 - train - INFO - Episode 30700/270000 | Reward: 1.06 | Length: 13.16 | Loss: 0.0000
+2025-03-05 18:11:29,277 - train - INFO - Episode 30800/270000 | Reward: 0.11 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:11:32,094 - train - INFO - Episode 30900/270000 | Reward: 0.30 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:11:34,919 - train - INFO - Episode 31000/270000 | Reward: 0.47 | Length: 13.55 | Loss: 0.0000
+2025-03-05 18:11:47,701 - train - INFO - Evaluation at episode 31000: 3.00 reward, Win rate: 0.60
+2025-03-05 18:11:50,347 - train - INFO - Episode 31100/270000 | Reward: 0.88 | Length: 13.39 | Loss: 0.0000
+2025-03-05 18:11:53,145 - train - INFO - Episode 31200/270000 | Reward: 1.05 | Length: 13.32 | Loss: 0.0000
+2025-03-05 18:11:55,692 - train - INFO - Episode 31300/270000 | Reward: 0.59 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:11:58,475 - train - INFO - Episode 31400/270000 | Reward: 0.78 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:12:01,259 - train - INFO - Episode 31500/270000 | Reward: 0.91 | Length: 13.24 | Loss: 0.0000
+2025-03-05 18:12:14,135 - train - INFO - Evaluation at episode 31500: 5.00 reward, Win rate: 0.63
+2025-03-05 18:12:16,801 - train - INFO - Episode 31600/270000 | Reward: 1.10 | Length: 13.56 | Loss: 0.0000
+2025-03-05 18:12:19,658 - train - INFO - Episode 31700/270000 | Reward: 0.99 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:12:22,540 - train - INFO - Episode 31800/270000 | Reward: 1.02 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:12:25,125 - train - INFO - Episode 31900/270000 | Reward: 1.02 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:12:27,973 - train - INFO - Episode 32000/270000 | Reward: 1.17 | Length: 13.55 | Loss: 0.0000
+2025-03-05 18:12:40,953 - train - INFO - Evaluation at episode 32000: -5.00 reward, Win rate: 0.67
+2025-03-05 18:12:43,958 - train - INFO - Episode 32100/270000 | Reward: 0.70 | Length: 13.93 | Loss: 0.0000
+2025-03-05 18:12:46,543 - train - INFO - Episode 32200/270000 | Reward: 0.89 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:12:49,373 - train - INFO - Episode 32300/270000 | Reward: 0.87 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:12:52,324 - train - INFO - Episode 32400/270000 | Reward: 1.33 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:12:54,843 - train - INFO - Episode 32500/270000 | Reward: 1.03 | Length: 13.11 | Loss: 0.0000
+2025-03-05 18:13:07,903 - train - INFO - Evaluation at episode 32500: -5.00 reward, Win rate: 0.67
+2025-03-05 18:13:10,751 - train - INFO - Episode 32600/270000 | Reward: 1.18 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:13:13,638 - train - INFO - Episode 32700/270000 | Reward: 1.42 | Length: 13.62 | Loss: 0.0000
+2025-03-05 18:13:16,169 - train - INFO - Episode 32800/270000 | Reward: 1.28 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:13:19,007 - train - INFO - Episode 32900/270000 | Reward: 1.12 | Length: 13.54 | Loss: 0.0000
+2025-03-05 18:13:21,920 - train - INFO - Episode 33000/270000 | Reward: 0.52 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:13:34,857 - train - INFO - Evaluation at episode 33000: 2.00 reward, Win rate: 0.83
+2025-03-05 18:13:37,541 - train - INFO - Episode 33100/270000 | Reward: 0.73 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:13:40,371 - train - INFO - Episode 33200/270000 | Reward: 0.55 | Length: 13.66 | Loss: 0.0000
+2025-03-05 18:13:43,120 - train - INFO - Episode 33300/270000 | Reward: 1.27 | Length: 12.93 | Loss: 0.0000
+2025-03-05 18:13:45,683 - train - INFO - Episode 33400/270000 | Reward: 1.06 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:13:48,547 - train - INFO - Episode 33500/270000 | Reward: 1.49 | Length: 13.57 | Loss: 0.0000
+2025-03-05 18:14:01,425 - train - INFO - Evaluation at episode 33500: 5.00 reward, Win rate: 0.80
+2025-03-05 18:14:04,415 - train - INFO - Episode 33600/270000 | Reward: 0.94 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:14:06,932 - train - INFO - Episode 33700/270000 | Reward: 0.84 | Length: 13.46 | Loss: 0.0000
+2025-03-05 18:14:09,711 - train - INFO - Episode 33800/270000 | Reward: 1.03 | Length: 13.21 | Loss: 0.0000
+2025-03-05 18:14:12,568 - train - INFO - Episode 33900/270000 | Reward: 1.11 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:14:15,107 - train - INFO - Episode 34000/270000 | Reward: 0.65 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:14:28,115 - train - INFO - Evaluation at episode 34000: 3.00 reward, Win rate: 0.77
+2025-03-05 18:14:31,058 - train - INFO - Episode 34100/270000 | Reward: 0.44 | Length: 13.89 | Loss: 0.0000
+2025-03-05 18:14:33,900 - train - INFO - Episode 34200/270000 | Reward: 0.87 | Length: 13.31 | Loss: 0.0000
+2025-03-05 18:14:36,367 - train - INFO - Episode 34300/270000 | Reward: 1.57 | Length: 13.24 | Loss: 0.0000
+2025-03-05 18:14:39,146 - train - INFO - Episode 34400/270000 | Reward: 1.23 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:14:41,988 - train - INFO - Episode 34500/270000 | Reward: 0.72 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:14:54,917 - train - INFO - Evaluation at episode 34500: 1.00 reward, Win rate: 0.83
+2025-03-05 18:14:57,634 - train - INFO - Episode 34600/270000 | Reward: 0.35 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:15:00,554 - train - INFO - Episode 34700/270000 | Reward: 0.67 | Length: 13.61 | Loss: 0.0000
+2025-03-05 18:15:03,410 - train - INFO - Episode 34800/270000 | Reward: 0.97 | Length: 13.39 | Loss: 0.0000
+2025-03-05 18:15:05,900 - train - INFO - Episode 34900/270000 | Reward: 1.20 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:15:08,770 - train - INFO - Episode 35000/270000 | Reward: 1.02 | Length: 13.89 | Loss: 0.0000
+2025-03-05 18:15:21,790 - train - INFO - Evaluation at episode 35000: 2.00 reward, Win rate: 0.77
+2025-03-05 18:15:24,670 - train - INFO - Episode 35100/270000 | Reward: 0.80 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:15:27,125 - train - INFO - Episode 35200/270000 | Reward: 0.94 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:15:29,993 - train - INFO - Episode 35300/270000 | Reward: 1.25 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:15:32,821 - train - INFO - Episode 35400/270000 | Reward: 1.06 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:15:35,299 - train - INFO - Episode 35500/270000 | Reward: 0.44 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:15:48,209 - train - INFO - Evaluation at episode 35500: -5.00 reward, Win rate: 0.70
+2025-03-05 18:15:50,984 - train - INFO - Episode 35600/270000 | Reward: 0.67 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:15:53,872 - train - INFO - Episode 35700/270000 | Reward: 0.39 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:15:56,355 - train - INFO - Episode 35800/270000 | Reward: 0.75 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:15:59,166 - train - INFO - Episode 35900/270000 | Reward: 1.16 | Length: 13.69 | Loss: 0.0000
+2025-03-05 18:16:02,039 - train - INFO - Episode 36000/270000 | Reward: 0.81 | Length: 13.76 | Loss: 0.0000
+2025-03-05 18:16:14,840 - train - INFO - Evaluation at episode 36000: 3.00 reward, Win rate: 0.83
+2025-03-05 18:16:17,504 - train - INFO - Episode 36100/270000 | Reward: 1.07 | Length: 13.56 | Loss: 0.0000
+2025-03-05 18:16:20,371 - train - INFO - Episode 36200/270000 | Reward: 1.41 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:16:23,325 - train - INFO - Episode 36300/270000 | Reward: 0.58 | Length: 13.87 | Loss: 0.0000
+2025-03-05 18:16:25,797 - train - INFO - Episode 36400/270000 | Reward: 1.25 | Length: 13.69 | Loss: 0.0000
+2025-03-05 18:16:28,558 - train - INFO - Episode 36500/270000 | Reward: 1.51 | Length: 13.56 | Loss: 0.0000
+2025-03-05 18:16:41,410 - train - INFO - Evaluation at episode 36500: 2.00 reward, Win rate: 0.83
+2025-03-05 18:16:44,429 - train - INFO - Episode 36600/270000 | Reward: 0.66 | Length: 13.70 | Loss: 0.0000
+2025-03-05 18:16:46,893 - train - INFO - Episode 36700/270000 | Reward: 1.10 | Length: 13.59 | Loss: 0.0000
+2025-03-05 18:16:49,706 - train - INFO - Episode 36800/270000 | Reward: 0.84 | Length: 13.54 | Loss: 0.0000
+2025-03-05 18:16:52,574 - train - INFO - Episode 36900/270000 | Reward: 0.83 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:16:54,989 - train - INFO - Episode 37000/270000 | Reward: 1.38 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:17:07,989 - train - INFO - Evaluation at episode 37000: -5.00 reward, Win rate: 0.63
+2025-03-05 18:17:10,933 - train - INFO - Episode 37100/270000 | Reward: 1.03 | Length: 13.93 | Loss: 0.0000
+2025-03-05 18:17:13,758 - train - INFO - Episode 37200/270000 | Reward: 0.83 | Length: 13.69 | Loss: 0.0000
+2025-03-05 18:17:16,306 - train - INFO - Episode 37300/270000 | Reward: 0.98 | Length: 14.08 | Loss: 0.0000
+2025-03-05 18:17:19,040 - train - INFO - Episode 37400/270000 | Reward: 1.41 | Length: 13.28 | Loss: 0.0000
+2025-03-05 18:17:21,852 - train - INFO - Episode 37500/270000 | Reward: 0.88 | Length: 13.74 | Loss: 0.0000
+2025-03-05 18:17:34,513 - train - INFO - Evaluation at episode 37500: -5.00 reward, Win rate: 0.70
+2025-03-05 18:17:37,194 - train - INFO - Episode 37600/270000 | Reward: 1.32 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:17:40,086 - train - INFO - Episode 37700/270000 | Reward: 0.90 | Length: 13.88 | Loss: 0.0000
+2025-03-05 18:17:42,900 - train - INFO - Episode 37800/270000 | Reward: 1.21 | Length: 13.66 | Loss: 0.0000
+2025-03-05 18:17:45,446 - train - INFO - Episode 37900/270000 | Reward: 0.41 | Length: 13.92 | Loss: 0.0000
+2025-03-05 18:17:48,280 - train - INFO - Episode 38000/270000 | Reward: 0.92 | Length: 13.93 | Loss: 0.0000
+2025-03-05 18:18:01,248 - train - INFO - Evaluation at episode 38000: 4.00 reward, Win rate: 0.60
+2025-03-05 18:18:04,234 - train - INFO - Episode 38100/270000 | Reward: 0.75 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:18:06,657 - train - INFO - Episode 38200/270000 | Reward: 1.45 | Length: 13.18 | Loss: 0.0000
+2025-03-05 18:18:09,459 - train - INFO - Episode 38300/270000 | Reward: 1.07 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:18:12,345 - train - INFO - Episode 38400/270000 | Reward: 0.50 | Length: 13.83 | Loss: 0.0000
+2025-03-05 18:18:14,848 - train - INFO - Episode 38500/270000 | Reward: 0.83 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:18:27,788 - train - INFO - Evaluation at episode 38500: 4.00 reward, Win rate: 0.70
+2025-03-05 18:18:30,681 - train - INFO - Episode 38600/270000 | Reward: 1.39 | Length: 13.75 | Loss: 0.0000
+2025-03-05 18:18:33,513 - train - INFO - Episode 38700/270000 | Reward: 0.84 | Length: 13.45 | Loss: 0.0000
+2025-03-05 18:18:35,906 - train - INFO - Episode 38800/270000 | Reward: 2.28 | Length: 13.20 | Loss: 0.0000
+2025-03-05 18:18:38,710 - train - INFO - Episode 38900/270000 | Reward: 0.90 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:18:41,514 - train - INFO - Episode 39000/270000 | Reward: 1.62 | Length: 13.52 | Loss: 0.0000
+2025-03-05 18:18:54,222 - train - INFO - Evaluation at episode 39000: 2.00 reward, Win rate: 0.73
+2025-03-05 18:18:56,979 - train - INFO - Episode 39100/270000 | Reward: 0.62 | Length: 13.91 | Loss: 0.0000
+2025-03-05 18:18:59,896 - train - INFO - Episode 39200/270000 | Reward: 1.05 | Length: 13.86 | Loss: 0.0000
+2025-03-05 18:19:02,696 - train - INFO - Episode 39300/270000 | Reward: 1.66 | Length: 13.25 | Loss: 0.0000
+2025-03-05 18:19:05,127 - train - INFO - Episode 39400/270000 | Reward: 1.00 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:19:07,914 - train - INFO - Episode 39500/270000 | Reward: 1.29 | Length: 13.31 | Loss: 0.0000
+2025-03-05 18:19:20,675 - train - INFO - Evaluation at episode 39500: 5.00 reward, Win rate: 0.80
+2025-03-05 18:19:23,287 - train - INFO - Episode 39600/270000 | Reward: 1.81 | Length: 13.22 | Loss: 0.0000
+2025-03-05 18:19:26,044 - train - INFO - Episode 39700/270000 | Reward: 1.35 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:19:28,844 - train - INFO - Episode 39800/270000 | Reward: 1.64 | Length: 13.26 | Loss: 0.0000
+2025-03-05 18:19:31,358 - train - INFO - Episode 39900/270000 | Reward: 0.73 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:19:34,135 - train - INFO - Episode 40000/270000 | Reward: 1.53 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:19:46,938 - train - INFO - Evaluation at episode 40000: 5.00 reward, Win rate: 0.70
+2025-03-05 18:19:49,833 - train - INFO - Episode 40100/270000 | Reward: 1.18 | Length: 13.78 | Loss: 0.0000
+2025-03-05 18:19:52,422 - train - INFO - Episode 40200/270000 | Reward: 0.90 | Length: 14.02 | Loss: 0.0000
+2025-03-05 18:19:55,193 - train - INFO - Episode 40300/270000 | Reward: 1.71 | Length: 13.43 | Loss: 0.0000
+2025-03-05 18:19:57,991 - train - INFO - Episode 40400/270000 | Reward: 1.24 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:20:00,443 - train - INFO - Episode 40500/270000 | Reward: 0.90 | Length: 13.30 | Loss: 0.0000
+2025-03-05 18:20:13,464 - train - INFO - Evaluation at episode 40500: 3.00 reward, Win rate: 0.87
+2025-03-05 18:20:13,472 - train - INFO - New best model with win rate 0.87 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_40500
+2025-03-05 18:20:16,246 - train - INFO - Episode 40600/270000 | Reward: 1.49 | Length: 13.16 | Loss: 0.0000
+2025-03-05 18:20:19,032 - train - INFO - Episode 40700/270000 | Reward: 0.93 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:20:21,466 - train - INFO - Episode 40800/270000 | Reward: 1.75 | Length: 13.09 | Loss: 0.0000
+2025-03-05 18:20:24,275 - train - INFO - Episode 40900/270000 | Reward: 0.92 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:20:27,219 - train - INFO - Episode 41000/270000 | Reward: 1.24 | Length: 13.44 | Loss: 0.0000
+2025-03-05 18:20:40,581 - train - INFO - Evaluation at episode 41000: 4.00 reward, Win rate: 0.70
+2025-03-05 18:20:43,446 - train - INFO - Episode 41100/270000 | Reward: 1.56 | Length: 13.67 | Loss: 0.0000
+2025-03-05 18:20:46,503 - train - INFO - Episode 41200/270000 | Reward: 1.98 | Length: 13.45 | Loss: 0.0000
+2025-03-05 18:20:49,504 - train - INFO - Episode 41300/270000 | Reward: 1.56 | Length: 13.66 | Loss: 0.0000
+2025-03-05 18:20:52,081 - train - INFO - Episode 41400/270000 | Reward: 1.11 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:20:55,224 - train - INFO - Episode 41500/270000 | Reward: 1.47 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:21:08,873 - train - INFO - Evaluation at episode 41500: -5.00 reward, Win rate: 0.73
+2025-03-05 18:21:11,950 - train - INFO - Episode 41600/270000 | Reward: 1.25 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:21:14,718 - train - INFO - Episode 41700/270000 | Reward: 1.25 | Length: 13.92 | Loss: 0.0000
+2025-03-05 18:21:17,653 - train - INFO - Episode 41800/270000 | Reward: 1.31 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:21:20,538 - train - INFO - Episode 41900/270000 | Reward: 1.55 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:21:23,252 - train - INFO - Episode 42000/270000 | Reward: 0.67 | Length: 13.87 | Loss: 0.0000
+2025-03-05 18:21:36,671 - train - INFO - Evaluation at episode 42000: -5.00 reward, Win rate: 0.70
+2025-03-05 18:21:39,587 - train - INFO - Episode 42100/270000 | Reward: 1.14 | Length: 13.74 | Loss: 0.0000
+2025-03-05 18:21:42,593 - train - INFO - Episode 42200/270000 | Reward: 1.18 | Length: 13.31 | Loss: 0.0000
+2025-03-05 18:21:45,269 - train - INFO - Episode 42300/270000 | Reward: 1.24 | Length: 13.59 | Loss: 0.0000
+2025-03-05 18:21:48,173 - train - INFO - Episode 42400/270000 | Reward: 1.17 | Length: 13.73 | Loss: 0.0000
+2025-03-05 18:21:51,198 - train - INFO - Episode 42500/270000 | Reward: 0.91 | Length: 13.43 | Loss: 0.0000
+2025-03-05 18:22:04,409 - train - INFO - Evaluation at episode 42500: 4.00 reward, Win rate: 0.73
+2025-03-05 18:22:07,207 - train - INFO - Episode 42600/270000 | Reward: 1.73 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:22:10,050 - train - INFO - Episode 42700/270000 | Reward: 1.36 | Length: 13.16 | Loss: 0.0000
+2025-03-05 18:22:13,064 - train - INFO - Episode 42800/270000 | Reward: 1.36 | Length: 13.67 | Loss: 0.0000
+2025-03-05 18:22:15,643 - train - INFO - Episode 42900/270000 | Reward: 0.85 | Length: 13.75 | Loss: 0.0000
+2025-03-05 18:22:18,513 - train - INFO - Episode 43000/270000 | Reward: 1.09 | Length: 13.71 | Loss: 0.0000
+2025-03-05 18:22:32,102 - train - INFO - Evaluation at episode 43000: 3.00 reward, Win rate: 0.83
+2025-03-05 18:22:35,085 - train - INFO - Episode 43100/270000 | Reward: 1.71 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:22:37,623 - train - INFO - Episode 43200/270000 | Reward: 1.21 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:22:40,567 - train - INFO - Episode 43300/270000 | Reward: 1.76 | Length: 13.62 | Loss: 0.0000
+2025-03-05 18:22:43,470 - train - INFO - Episode 43400/270000 | Reward: 1.49 | Length: 13.42 | Loss: 0.0000
+2025-03-05 18:22:45,992 - train - INFO - Episode 43500/270000 | Reward: 1.43 | Length: 13.48 | Loss: 0.0000
+2025-03-05 18:22:59,184 - train - INFO - Evaluation at episode 43500: -5.00 reward, Win rate: 0.63
+2025-03-05 18:23:02,126 - train - INFO - Episode 43600/270000 | Reward: 1.34 | Length: 13.64 | Loss: 0.0000
+2025-03-05 18:23:04,988 - train - INFO - Episode 43700/270000 | Reward: 1.22 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:23:07,577 - train - INFO - Episode 43800/270000 | Reward: 1.75 | Length: 13.33 | Loss: 0.0000
+2025-03-05 18:23:10,425 - train - INFO - Episode 43900/270000 | Reward: 1.74 | Length: 13.69 | Loss: 0.0000
+2025-03-05 18:23:13,311 - train - INFO - Episode 44000/270000 | Reward: 0.95 | Length: 13.38 | Loss: 0.0000
+2025-03-05 18:23:26,500 - train - INFO - Evaluation at episode 44000: -5.00 reward, Win rate: 0.70
+2025-03-05 18:23:29,298 - train - INFO - Episode 44100/270000 | Reward: 1.74 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:23:32,188 - train - INFO - Episode 44200/270000 | Reward: 1.20 | Length: 13.29 | Loss: 0.0000
+2025-03-05 18:23:35,257 - train - INFO - Episode 44300/270000 | Reward: 1.77 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:23:37,821 - train - INFO - Episode 44400/270000 | Reward: 1.47 | Length: 13.27 | Loss: 0.0000
+2025-03-05 18:23:40,744 - train - INFO - Episode 44500/270000 | Reward: 0.61 | Length: 13.74 | Loss: 0.0000
+2025-03-05 18:23:54,202 - train - INFO - Evaluation at episode 44500: 2.00 reward, Win rate: 0.57
+2025-03-05 18:23:57,000 - train - INFO - Episode 44600/270000 | Reward: 1.54 | Length: 13.44 | Loss: 0.0000
+2025-03-05 18:23:59,768 - train - INFO - Episode 44700/270000 | Reward: 1.97 | Length: 13.07 | Loss: 0.0000
+2025-03-05 18:24:02,772 - train - INFO - Episode 44800/270000 | Reward: 1.15 | Length: 13.67 | Loss: 0.0000
+2025-03-05 18:24:05,582 - train - INFO - Episode 44900/270000 | Reward: 1.32 | Length: 13.78 | Loss: 0.0000
+2025-03-05 18:24:08,517 - train - INFO - Episode 45000/270000 | Reward: 1.95 | Length: 13.85 | Loss: 0.0000
+2025-03-05 18:24:21,896 - train - INFO - Evaluation at episode 45000: 3.00 reward, Win rate: 0.67
+2025-03-05 18:24:24,866 - train - INFO - Episode 45100/270000 | Reward: 1.67 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:24:27,483 - train - INFO - Episode 45200/270000 | Reward: 1.56 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:24:30,450 - train - INFO - Episode 45300/270000 | Reward: 0.80 | Length: 13.94 | Loss: 0.0000
+2025-03-05 18:24:33,411 - train - INFO - Episode 45400/270000 | Reward: 1.62 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:24:35,871 - train - INFO - Episode 45500/270000 | Reward: 1.02 | Length: 13.07 | Loss: 0.0000
+2025-03-05 18:24:48,968 - train - INFO - Evaluation at episode 45500: 3.00 reward, Win rate: 0.80
+2025-03-05 18:24:51,902 - train - INFO - Episode 45600/270000 | Reward: 1.64 | Length: 13.54 | Loss: 0.0000
+2025-03-05 18:24:54,819 - train - INFO - Episode 45700/270000 | Reward: 1.39 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:24:57,448 - train - INFO - Episode 45800/270000 | Reward: 0.53 | Length: 13.61 | Loss: 0.0000
+2025-03-05 18:25:00,305 - train - INFO - Episode 45900/270000 | Reward: 1.39 | Length: 13.46 | Loss: 0.0000
+2025-03-05 18:25:03,331 - train - INFO - Episode 46000/270000 | Reward: 1.36 | Length: 13.17 | Loss: 0.0000
+2025-03-05 18:25:16,580 - train - INFO - Evaluation at episode 46000: 2.00 reward, Win rate: 0.83
+2025-03-05 18:25:19,395 - train - INFO - Episode 46100/270000 | Reward: 1.63 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:25:22,258 - train - INFO - Episode 46200/270000 | Reward: 1.29 | Length: 13.42 | Loss: 0.0000
+2025-03-05 18:25:25,215 - train - INFO - Episode 46300/270000 | Reward: 1.30 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:25:27,860 - train - INFO - Episode 46400/270000 | Reward: 1.55 | Length: 13.47 | Loss: 0.0000
+2025-03-05 18:25:30,677 - train - INFO - Episode 46500/270000 | Reward: 2.12 | Length: 13.43 | Loss: 0.0000
+2025-03-05 18:25:43,847 - train - INFO - Evaluation at episode 46500: 5.00 reward, Win rate: 0.67
+2025-03-05 18:25:46,867 - train - INFO - Episode 46600/270000 | Reward: 1.22 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:25:49,538 - train - INFO - Episode 46700/270000 | Reward: 1.17 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:25:52,396 - train - INFO - Episode 46800/270000 | Reward: 1.77 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:25:55,289 - train - INFO - Episode 46900/270000 | Reward: 1.60 | Length: 13.27 | Loss: 0.0000
+2025-03-05 18:25:57,944 - train - INFO - Episode 47000/270000 | Reward: 1.46 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:26:11,272 - train - INFO - Evaluation at episode 47000: 2.00 reward, Win rate: 0.73
+2025-03-05 18:26:14,327 - train - INFO - Episode 47100/270000 | Reward: 1.40 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:26:17,327 - train - INFO - Episode 47200/270000 | Reward: 2.00 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:26:19,915 - train - INFO - Episode 47300/270000 | Reward: 1.44 | Length: 13.71 | Loss: 0.0000
+2025-03-05 18:26:22,764 - train - INFO - Episode 47400/270000 | Reward: 1.63 | Length: 13.60 | Loss: 0.0000
+2025-03-05 18:26:25,742 - train - INFO - Episode 47500/270000 | Reward: 1.58 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:26:38,813 - train - INFO - Evaluation at episode 47500: 5.00 reward, Win rate: 0.83
+2025-03-05 18:26:41,616 - train - INFO - Episode 47600/270000 | Reward: 1.23 | Length: 13.39 | Loss: 0.0000
+2025-03-05 18:26:44,640 - train - INFO - Episode 47700/270000 | Reward: 1.10 | Length: 13.97 | Loss: 0.0000
+2025-03-05 18:26:47,596 - train - INFO - Episode 47800/270000 | Reward: 1.26 | Length: 13.55 | Loss: 0.0000
+2025-03-05 18:26:50,126 - train - INFO - Episode 47900/270000 | Reward: 1.45 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:26:53,050 - train - INFO - Episode 48000/270000 | Reward: 1.07 | Length: 13.72 | Loss: 0.0000
+2025-03-05 18:27:06,428 - train - INFO - Evaluation at episode 48000: 2.00 reward, Win rate: 0.77
+2025-03-05 18:27:09,486 - train - INFO - Episode 48100/270000 | Reward: 1.19 | Length: 13.78 | Loss: 0.0000
+2025-03-05 18:27:12,084 - train - INFO - Episode 48200/270000 | Reward: 1.22 | Length: 13.50 | Loss: 0.0000
+2025-03-05 18:27:15,010 - train - INFO - Episode 48300/270000 | Reward: 1.36 | Length: 13.80 | Loss: 0.0000
+2025-03-05 18:27:17,828 - train - INFO - Episode 48400/270000 | Reward: 1.60 | Length: 13.12 | Loss: 0.0000
+2025-03-05 18:27:20,440 - train - INFO - Episode 48500/270000 | Reward: 1.60 | Length: 13.41 | Loss: 0.0000
+2025-03-05 18:27:33,840 - train - INFO - Evaluation at episode 48500: -5.00 reward, Win rate: 0.73
+2025-03-05 18:27:36,761 - train - INFO - Episode 48600/270000 | Reward: 1.72 | Length: 13.37 | Loss: 0.0000
+2025-03-05 18:27:39,671 - train - INFO - Episode 48700/270000 | Reward: 1.58 | Length: 13.36 | Loss: 0.0000
+2025-03-05 18:27:42,211 - train - INFO - Episode 48800/270000 | Reward: 1.93 | Length: 13.29 | Loss: 0.0000
+2025-03-05 18:27:45,061 - train - INFO - Episode 48900/270000 | Reward: 1.40 | Length: 13.58 | Loss: 0.0000
+2025-03-05 18:27:48,008 - train - INFO - Episode 49000/270000 | Reward: 2.02 | Length: 13.39 | Loss: 0.0000
+2025-03-05 18:28:01,046 - train - INFO - Evaluation at episode 49000: 3.00 reward, Win rate: 0.77
+2025-03-05 18:28:03,838 - train - INFO - Episode 49100/270000 | Reward: 1.82 | Length: 13.53 | Loss: 0.0000
+2025-03-05 18:28:06,864 - train - INFO - Episode 49200/270000 | Reward: 1.45 | Length: 13.80 | Loss: 0.0000
+2025-03-05 18:28:09,904 - train - INFO - Episode 49300/270000 | Reward: 1.36 | Length: 13.64 | Loss: 0.0000
+2025-03-05 18:28:12,442 - train - INFO - Episode 49400/270000 | Reward: 1.51 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:28:15,218 - train - INFO - Episode 49500/270000 | Reward: 1.95 | Length: 13.00 | Loss: 0.0000
+2025-03-05 18:28:28,190 - train - INFO - Evaluation at episode 49500: 3.00 reward, Win rate: 0.80
+2025-03-05 18:28:30,966 - train - INFO - Episode 49600/270000 | Reward: 1.27 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:28:33,813 - train - INFO - Episode 49700/270000 | Reward: 1.10 | Length: 13.35 | Loss: 0.0000
+2025-03-05 18:28:36,771 - train - INFO - Episode 49800/270000 | Reward: 1.50 | Length: 13.63 | Loss: 0.0000
+2025-03-05 18:28:39,371 - train - INFO - Episode 49900/270000 | Reward: 1.81 | Length: 13.36 | Loss: 0.0000
+2025-03-05 18:28:42,186 - train - INFO - Episode 50000/270000 | Reward: 1.63 | Length: 13.59 | Loss: 0.0000
+2025-03-05 18:28:42,198 - train - INFO - Saved checkpoint to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\agent_episode_50000
+2025-03-05 18:28:55,369 - train - INFO - Evaluation at episode 50000: -5.00 reward, Win rate: 0.77
+2025-03-05 18:28:58,314 - train - INFO - Episode 50100/270000 | Reward: 0.97 | Length: 13.68 | Loss: 0.0000
+2025-03-05 18:29:00,974 - train - INFO - Episode 50200/270000 | Reward: 1.28 | Length: 13.83 | Loss: 0.0000
+2025-03-05 18:29:03,916 - train - INFO - Episode 50300/270000 | Reward: 1.05 | Length: 13.48 | Loss: 0.0000
+2025-03-05 18:29:07,015 - train - INFO - Episode 50400/270000 | Reward: 1.39 | Length: 13.82 | Loss: 0.0000
+2025-03-05 18:29:09,655 - train - INFO - Episode 50500/270000 | Reward: 1.85 | Length: 13.43 | Loss: 0.0000
+2025-03-05 18:29:23,001 - train - INFO - Evaluation at episode 50500: 3.00 reward, Win rate: 0.87
+2025-03-05 18:29:25,903 - train - INFO - Episode 50600/270000 | Reward: 1.31 | Length: 13.40 | Loss: 0.0000
+2025-03-05 18:29:28,780 - train - INFO - Episode 50700/270000 | Reward: 1.19 | Length: 13.34 | Loss: 0.0000
+2025-03-05 18:29:31,388 - train - INFO - Episode 50800/270000 | Reward: 1.51 | Length: 13.28 | Loss: 0.0000
+2025-03-05 18:29:34,237 - train - INFO - Episode 50900/270000 | Reward: 1.37 | Length: 13.15 | Loss: 0.0000
+2025-03-05 18:29:37,078 - train - INFO - Episode 51000/270000 | Reward: 1.72 | Length: 13.28 | Loss: 0.0000
+2025-03-05 18:29:50,212 - train - INFO - Evaluation at episode 51000: -5.00 reward, Win rate: 0.77
+2025-03-05 18:29:53,054 - train - INFO - Episode 51100/270000 | Reward: 1.71 | Length: 13.49 | Loss: 0.0000
+2025-03-05 18:29:55,891 - train - INFO - Episode 51200/270000 | Reward: 1.21 | Length: 13.51 | Loss: 0.0000
+2025-03-05 18:29:58,832 - train - INFO - Episode 51300/270000 | Reward: 1.64 | Length: 13.18 | Loss: 0.0000
+2025-03-05 18:30:01,477 - train - INFO - Episode 51400/270000 | Reward: 2.38 | Length: 13.08 | Loss: 0.0000
+2025-03-05 18:30:04,415 - train - INFO - Episode 51500/270000 | Reward: 1.80 | Length: 13.65 | Loss: 0.0000
+2025-03-05 18:30:17,658 - train - INFO - Evaluation at episode 51500: 3.00 reward, Win rate: 0.93
+2025-03-05 18:30:17,666 - train - INFO - New best model with win rate 0.93 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\level_2_conservative\best_model_episode_51500
+2025-03-05 18:30:17,666 - train - INFO - Win rate 0.93 is above threshold 0.90 (1/1)
+2025-03-05 18:30:17,667 - train - INFO - Early stopping triggered at episode 51500 with win rate 0.93
+2025-03-05 18:30:17,674 - train - INFO - Training completed!
+2025-03-05 18:30:17,674 - train - INFO - Loading best model with win rate 0.93 for final evaluation
+2025-03-05 18:30:42,928 - train - INFO - Final evaluation: 1.50 reward

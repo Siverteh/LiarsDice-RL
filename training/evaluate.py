@@ -30,6 +30,7 @@ def evaluate_agent(
     epsilon: float = 0.05,
     seed: Optional[int] = None,
     verbose: bool = False,
+    randomize_positions: bool = True,
     render_every: Optional[int] = None
 ) -> Dict[str, Any]:
     """
@@ -56,7 +57,8 @@ def evaluate_agent(
         num_dice=num_dice,
         dice_faces=dice_faces,
         seed=seed,
-        rule_agent_types=[opponent_type]
+        rule_agent_types=[opponent_type],
+        randomize_positions=randomize_positions
     )
     
     # Set exploration rate for agents that use epsilon (e.g., DQN)
@@ -157,6 +159,7 @@ def evaluate_against_curriculum(
     dice_faces: int = 6,
     epsilon: float = 0.05,
     seed: Optional[int] = None,
+    randomize_positions: bool = True,
     verbose: bool = True,
     render_every: Optional[int] = None
 ) -> Dict[str, Any]:
@@ -189,6 +192,7 @@ def evaluate_against_curriculum(
             dice_faces=dice_faces,
             epsilon=epsilon,
             seed=seed,
+            randomize_positions=randomize_positions,
             verbose=verbose,
             render_every=render_every
         )

@@ -48,21 +48,21 @@ CONFIG_PRESETS = {
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'curriculum_episodes': 250000,
+        'curriculum_episodes':1500000,
         'self_play_episodes': 15000,
-        'network_size': [1024, 512, 256, 128, 64],  # Very large
-        'learning_rate': 0.0002,
+        'network_size': [512, 256, 128, 64],
+        'learning_rate': 0.0003,
         'win_rate_threshold': 0.9
     },
     # 4 players, 5 dice, complex game
     'advanced': {
         'num_players': 4,
         'num_dice': 5,
-        'curriculum_episodes': 200000,
+        'curriculum_episodes': 6000000,
         'self_play_episodes': 30000,
-        'network_size': [1024, 512, 256, 128],
-        'learning_rate': 0.0002,
-        'win_rate_threshold': 0.65
+        'network_size': [2048, 1024, 512, 256, 128],
+        'learning_rate': 0.0003,
+        'win_rate_threshold': 0.9
     }
 }
 
@@ -80,10 +80,12 @@ def train_curriculum(
     num_players: Optional[int] = None,
     num_dice: Optional[int] = None,
     dice_faces: int = 6,
+    randomize_positions: bool = True,
+    position_randomization_schedule: Optional[Dict[str, float]] = None,
     
     # Training schedule
     curriculum_episodes: Optional[int] = None,
-    curriculum_distribution: Dict[str, float] = None,  # Maps level names to percentages
+    curriculum_distribution: Dict[str, float] = None,
     enable_remedial: bool = True,
     
     # Agent configuration
@@ -96,54 +98,16 @@ def train_curriculum(
     evaluation_frequency: int = 500,
     enable_early_stopping: bool = True,
     win_rate_threshold: Optional[float] = None,
-    early_stopping_patience: int = 3,
+    early_stopping_patience: int = 1,
     
     # Exploration settings
     initial_epsilon: float = 1.0,
     min_epsilon: float = 0.1,
-    epsilon_decay_per_level: float = 0.15  # How much to reduce epsilon per level
+    epsilon_decay_per_level: float = 0.15
 ) -> Tuple[RLAgent, Dict[str, Any]]:
     """
     Train an agent using curriculum learning with progressively more difficult opponents.
     Self-play functionality has been implemented separately.
-    
-    Args:
-        agent_type: Type of agent to train ('dqn' or 'ppo')
-        preset: Configuration preset ('basic', 'standard', or 'advanced')
-        results_path: Directory to save results, checkpoints, and logs
-        seed: Random seed for reproducibility
-        device: Device to run on ('cpu', 'cuda', or 'auto')
-        render_training: Whether to render gameplay during training
-        
-        # Game settings
-        num_players: Number of players in the game (overrides preset if specified)
-        num_dice: Number of dice per player (overrides preset if specified)
-        dice_faces: Number of faces on each die
-        
-        # Training schedule
-        curriculum_episodes: Total episodes for curriculum phase (overrides preset if specified)
-        curriculum_distribution: Custom distribution of episodes across levels (default: progressive)
-        enable_remedial: Whether to run remedial training for weak areas
-        
-        # Agent configuration
-        learning_rate: Learning rate for agent (overrides preset if specified)
-        network_size: Neural network architecture (overrides preset if specified)
-        custom_agent_config: Additional agent-specific parameters
-        
-        # Training control
-        checkpoint_frequency: How often to save checkpoints (in episodes)
-        evaluation_frequency: How often to evaluate the agent (in episodes)
-        enable_early_stopping: Whether to stop training early on a level if win rate is high
-        win_rate_threshold: Win rate threshold for early stopping (overrides preset if specified)
-        early_stopping_patience: Number of evaluations above threshold to trigger early stopping
-        
-        # Exploration settings
-        initial_epsilon: Starting exploration rate (for DQN)
-        min_epsilon: Minimum exploration rate
-        epsilon_decay_per_level: How much to reduce epsilon per curriculum level
-        
-    Returns:
-        Tuple of (trained_agent, training_results)
     """
     # Apply preset configuration
     preset_config = CONFIG_PRESETS[preset]
@@ -155,6 +119,22 @@ def train_curriculum(
     _win_rate_threshold = win_rate_threshold if win_rate_threshold is not None else preset_config['win_rate_threshold']
     _learning_rate = learning_rate if learning_rate is not None else preset_config['learning_rate']
     _network_size = network_size if network_size is not None else preset_config['network_size']
+
+    
+    # Default progressive position randomization if not provided
+    if position_randomization_schedule is None:
+        position_randomization_schedule = {
+            'random': 0.0,          # No randomization for easiest opponents
+            'naive': 0.0,
+            'conservative': 0.25,   # 25% randomization
+            'bluff_punisher': 0.5,  # 50% randomization
+            'anti_exploitation': 0.5,
+            'aggressive': 0.75,     # 75% randomization
+            'strategic': 0.75,
+            'adaptive': 1.0,        # Full randomization for hardest opponents
+            'counter_strategy': 1.0,
+            'optimal': 1.0
+        }
     
     # Set up paths for results
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -192,7 +172,8 @@ def train_curriculum(
         num_players=_num_players,
         num_dice=_num_dice,
         dice_faces=dice_faces,
-        seed=seed
+        seed=seed,
+        randomize_positions=False  # Start with no randomization for dimension determination
     )
     
     obs_shape = env.get_observation_shape()
@@ -200,30 +181,83 @@ def train_curriculum(
     action_dim = env.get_action_dim()
     logger.info(f"Observation dimension: {obs_dim}, Action dimension: {action_dim}")
     
-    # Create agent configuration
-    agent_config = {
-        'learning_rate': _learning_rate,
-        'hidden_dims': _network_size,
-        'device': device
-    }
-    
-    # Add agent-specific parameters
-    if agent_type.lower() == 'dqn':
-        agent_config.update({
+    # Create agent configuration with improved PPO parameters
+    if agent_type.lower() == 'ppo':
+        # Preset configs for different game complexities
+        if preset == 'standard':  # 2 players, 5 dice (standard game)
+            ppo_config = {
+                'learning_rate': 0.0001,        # Lower learning rate for stability
+                'min_learning_rate': 5e-6,      # Lower minimum LR
+                'gamma': 0.99,                 
+                'gae_lambda': 0.97,            
+                'policy_clip': 0.1,             # Reduced clipping for smoother updates
+                'value_coef': 0.8,              # Higher value coefficient
+                'entropy_coef': 0.15,           # Higher entropy for better exploration
+                'entropy_min': 0.02,            # Higher minimum entropy
+                'entropy_decay_steps': 300000,  # Much slower entropy decay
+                'ppo_epochs': 10,               # More PPO epochs per update
+                'batch_size': 256,              # Larger batch size
+                'update_frequency': 2048,       
+                'max_grad_norm': 0.3,           # Lower gradient clipping
+                'total_training_steps': 3000000 
+            }
+        elif preset == 'advanced':  # 4 players, 5 dice (complex game)
+            ppo_config = {
+                'learning_rate': 0.0001,        
+                'min_learning_rate': 5e-6,      
+                'gamma': 0.99,                 
+                'gae_lambda': 0.97,            
+                'policy_clip': 0.1,             
+                'value_coef': 0.8,             
+                'entropy_coef': 0.18,           # Even higher for complex environment
+                'entropy_min': 0.03,            # Higher minimum for complex game
+                'entropy_decay_steps': 500000,  # Much slower decay for 6M episodes
+                'ppo_epochs': 12,               # Even more epochs for complex environment
+                'batch_size': 256,              
+                'update_frequency': 2048,       
+                'max_grad_norm': 0.3,           
+                'total_training_steps': 6000000
+            }
+        else:  # Basic preset
+            ppo_config = {
+                'learning_rate': 0.0001,        
+                'min_learning_rate': 5e-6,     
+                'gamma': 0.99,                 
+                'gae_lambda': 0.95,            
+                'policy_clip': 0.15,            
+                'value_coef': 0.7,             
+                'entropy_coef': 0.1,          
+                'entropy_min': 0.01,          
+                'entropy_decay_steps': 50000,  
+                'ppo_epochs': 8,               
+                'batch_size': 128,              
+                'update_frequency': 1024,      
+                'max_grad_norm': 0.4,           
+                'total_training_steps': 500000
+            }
+            
+        agent_config = ppo_config
+    else:
+        # For DQN
+        agent_config = {
+            'learning_rate': _learning_rate,
+            'hidden_dims': _network_size,
+            'device': device,
             'epsilon_start': initial_epsilon,
             'epsilon_end': min_epsilon,
             'epsilon_decay': 0.99995  # Slower decay for more stable learning
-        })
-    elif agent_type.lower() == 'ppo':
-        agent_config.update({
-            'entropy_coef': 0.04,  # Higher entropy for more exploration
-            'update_frequency': 2048,  # Update less frequently for more stable learning
-            'gae_lambda': 0.95  # Standard GAE parameter
-        })
+        }
     
+    ppo_config['hidden_dims'] = _network_size
+
+    # Store original entropy coefficient for PPO resets
+    original_entropy_coef = agent_config.get('entropy_coef', 0.0) if agent_type.lower() == 'ppo' else 0.0
     # Apply any custom agent config
     if custom_agent_config:
         agent_config.update(custom_agent_config)
+        # Update original entropy if it was customized
+        if agent_type.lower() == 'ppo' and 'entropy_coef' in custom_agent_config:
+            original_entropy_coef = custom_agent_config['entropy_coef']
     
     # Create agent
     agent = create_agent(
@@ -241,8 +275,8 @@ def train_curriculum(
     if curriculum_distribution is None:
         # Default progressive distribution (more episodes for harder opponents)
         curriculum_distribution = {
-            'random': 0.02,          # 2% (reduced from 3% since it's quick)
-            'naive': 0.02,           # 2% (reduced from 3% since it's quick)
+            'random': 0.01,          # 1% (reduced from 3% since it's quick)
+            'naive': 0.03,           # 3% (reduced from 3% since it's quick)
             'conservative': 0.18,    # 18% (slightly reduced to make room)
             'bluff_punisher': 0.20,  # 20% (increased to focus on anti-bluff training)
             'anti_exploitation': 0.15, # 15% (keep the same)
@@ -273,10 +307,8 @@ def train_curriculum(
     # Track training progress and models
     all_results = {}
     best_models = {}
-    # NOTE: We'll still track best_overall_model during training for checkpointing,
-    # but we'll choose the final best model by evaluating all candidate models against all opponents
-    best_overall_winrate_during_training = 0.0
-    best_overall_model_during_training = None
+    best_overall_model = None
+    best_overall_winrate = 0.0
     current_epsilon = initial_epsilon
     
     # Store all candidate models for final evaluation
@@ -298,14 +330,42 @@ def train_curriculum(
                 
             logger.info(f"Setting epsilon to {current_epsilon:.2f} for level {level_name}")
             agent.epsilon = current_epsilon
+        
+        # Reset/Boost entropy for PPO when facing new opponent level
+        if agent_type.lower() == 'ppo' and hasattr(agent, 'entropy_coef'):
+            # Calculate entropy boost based on level index and environment complexity
+            if level_idx == 0:
+                # First level - use the original high entropy
+                reset_entropy = original_entropy_coef
+            else:
+                # Later levels - boost entropy but not higher than original
+                # More complex opponents need more exploration
+                current_entropy = agent.entropy_coef
+                complexity_factor = min(1.0, 0.5 + (level_idx / len(CURRICULUM_LEVELS)))
+                # Boost more for harder opponents but don't exceed original
+                reset_entropy = min(original_entropy_coef, 
+                                   current_entropy * (1.5 + complexity_factor))
+                                   
+                # Ensure entropy never drops below minimum threshold
+                entropy_min = agent_config.get('entropy_min', 0.005)
+                reset_entropy = max(reset_entropy, entropy_min * 2)
+                
+            # Apply the entropy reset
+            agent.entropy_coef = reset_entropy
+            logger.info(f"Reset entropy coefficient to {reset_entropy:.5f} for level {level_name}")
+        
+        # Get randomization probability for this level
+        randomize_prob = position_randomization_schedule.get(level_name, 1.0 if randomize_positions else 0.0)
+        logger.info(f"Using position randomization probability of {randomize_prob:.2f} for {level_name}")
             
-        # Create environment with current opponent
+        # Create environment with current opponent and appropriate randomization
         env = LiarsDiceEnvWrapper(
             num_players=_num_players,
             num_dice=_num_dice,
             dice_faces=dice_faces,
             seed=seed,
-            rule_agent_types=[level_name]
+            rule_agent_types=[level_name] * (_num_players - 1),
+            randomize_positions=randomize_prob  # Pass the probability
         )
         
         # Make sure action mapping is set
@@ -323,33 +383,39 @@ def train_curriculum(
         best_level_model_path = None
         above_threshold_count = 0
         
-        # Define callback for early stopping and model saving
+        # Define callback for early stopping, model saving, and metrics tracking
         def checkpoint_callback(episode, data, current_agent):
-            nonlocal best_level_winrate, best_level_model_path, best_overall_winrate_during_training, best_overall_model_during_training
+            nonlocal best_level_winrate, best_level_model_path
+            nonlocal best_overall_model, best_overall_winrate
             nonlocal above_threshold_count
             
             if 'last_win_rate' in data:
                 current_winrate = data['last_win_rate']
                 
+                # Log win rate and average reward during important checkpoints
+                if 'last_avg_reward' in data:
+                    logger.info(f"Episode {episode}: Win rate: {current_winrate:.2f}, " + 
+                               f"Avg reward: {data['last_avg_reward']:.2f}")
+                
                 # Update best model for this level if better
                 if current_winrate > best_level_winrate:
                     best_level_winrate = current_winrate
-                    best_level_model_path = os.path.join(checkpoint_dir, f"best_{level_name}")
+                    best_level_model_path = os.path.join(checkpoint_dir, f"best_{level_name}_model")
                     current_agent.save(best_level_model_path)
                     logger.info(f"New best model for {level_name}: {current_winrate:.2f} win rate")
                 
-                # Update best overall model during training (still needed for checkpointing)
-                if current_winrate > best_overall_winrate_during_training:
-                    best_overall_winrate_during_training = current_winrate
-                    best_overall_model_during_training = os.path.join(checkpoint_dir, "best_during_training")
-                    current_agent.save(best_overall_model_during_training)
-                    logger.info(f"New best model during training: {current_winrate:.2f} win rate")
+                # Update best overall model
+                if current_winrate > best_overall_winrate:
+                    best_overall_winrate = current_winrate
+                    best_overall_model = os.path.join(checkpoint_dir, "best_overall_model")
+                    current_agent.save(best_overall_model)
+                    logger.info(f"New best overall model: {current_winrate:.2f} win rate")
                 
                 # Check for early stopping
                 if enable_early_stopping and current_winrate >= _win_rate_threshold:
                     above_threshold_count += 1
                     logger.info(f"Win rate {current_winrate:.2f} above threshold {_win_rate_threshold:.2f} "
-                               f"({above_threshold_count}/{early_stopping_patience})")
+                              f"({above_threshold_count}/{early_stopping_patience})")
                     if above_threshold_count >= early_stopping_patience:
                         return True  # Signal to stop training
                 else:
@@ -379,6 +445,15 @@ def train_curriculum(
         
         level_duration = time.time() - level_start_time
         
+        # Get best model info from train_agent results if available
+        if 'best_win_rate' in level_results and level_results['best_win_rate'] > best_level_winrate:
+            best_level_winrate = level_results['best_win_rate']
+            logger.info(f"Updated best win rate from training results: {best_level_winrate:.2f}")
+            
+        if 'best_model_path' in level_results and level_results['best_model_path']:
+            best_level_model_path = level_results['best_model_path']
+            logger.info(f"Using best model path from training results: {best_level_model_path}")
+        
         # Store best model info
         best_models[level_name] = {
             "path": best_level_model_path,
@@ -396,6 +471,118 @@ def train_curriculum(
         
         # Track results
         all_results[level_name] = level_results
+        
+        # Generate training progress graphs
+        level_dir = os.path.join(log_dir, f"level_{level_idx}_{level_name}")
+        try:
+            # Plot training metrics - rewards and episode lengths
+            if 'rewards' in level_results and len(level_results['rewards']) > 0:
+                plt.figure(figsize=(12, 10))
+                
+                # Plot 1: Average rewards
+                plt.subplot(2, 1, 1)
+                rewards = level_results['rewards']
+                reward_episodes = [i * level_results.get('log_interval', 100) for i in range(len(rewards))]
+                
+                plt.plot(reward_episodes, rewards, 'b-', linewidth=2)
+                plt.grid(True, alpha=0.3)
+                plt.xlabel('Episode')
+                plt.ylabel('Average Reward')
+                plt.title(f'Reward Progress vs {level_name.capitalize()} Opponent')
+                
+                # Add moving average for trend line
+                if len(rewards) > 5:
+                    window_size = min(5, len(rewards)//5)
+                    moving_avg = [sum(rewards[i:i+window_size])/window_size 
+                                 for i in range(len(rewards)-window_size+1)]
+                    ma_episodes = reward_episodes[:len(moving_avg)]
+                    plt.plot(ma_episodes, moving_avg, 'r-', linewidth=1.5, alpha=0.7, 
+                            label=f'{window_size}-episode moving average')
+                    plt.legend()
+                
+                # Plot 2: Win rate over time
+                plt.subplot(2, 1, 2)
+                if 'win_rates' in level_results and len(level_results['win_rates']) > 0:
+                    win_rates = level_results['win_rates']
+                    eval_points = [i * evaluation_frequency for i in range(len(win_rates))]
+                    
+                    plt.plot(eval_points, win_rates, 'g-', linewidth=2)
+                    plt.axhline(y=_win_rate_threshold, color='r', linestyle='--', 
+                              label=f'Threshold ({_win_rate_threshold})')
+                    plt.grid(True, alpha=0.3)
+                    plt.xlabel('Episode')
+                    plt.ylabel('Win Rate')
+                    plt.title(f'Win Rate vs {level_name.capitalize()} Opponent')
+                    plt.legend()
+                    
+                    # Add best win rate annotation
+                    if best_level_winrate > 0 and win_rates:
+                        max_idx = win_rates.index(max(win_rates))
+                        max_x = eval_points[max_idx]
+                        plt.annotate(f'Best: {max(win_rates):.2f}', 
+                                    xy=(max_x, max(win_rates)),
+                                    xytext=(max_x+evaluation_frequency*0.2, max(win_rates)+0.05),
+                                    arrowprops=dict(facecolor='black', shrink=0.05, width=1.5),
+                                    fontsize=10)
+                
+                plt.tight_layout()
+                plt.savefig(os.path.join(level_dir, f"{level_name}_training_progress.png"))
+                plt.close()
+                
+                # Create a dedicated win rate chart
+                if 'win_rates' in level_results and len(level_results['win_rates']) > 0:
+                    plt.figure(figsize=(10, 6))
+                    win_rates = level_results['win_rates']
+                    eval_points = [i * evaluation_frequency for i in range(len(win_rates))]
+                    
+                    # Plot win rate with larger figure
+                    plt.plot(eval_points, win_rates, 'g-', linewidth=2.5, label='Win Rate')
+                    
+                    # Add horizontal threshold line
+                    plt.axhline(y=_win_rate_threshold, color='r', linestyle='--', 
+                              label=f'Threshold ({_win_rate_threshold})')
+                    
+                    # Add win rate at key points (start, middle, end)
+                    if len(win_rates) > 2:
+                        # Mark start point
+                        plt.plot(eval_points[0], win_rates[0], 'bo', markersize=8)
+                        plt.annotate(f'Start: {win_rates[0]:.2f}', 
+                                    xy=(eval_points[0], win_rates[0]),
+                                    xytext=(eval_points[0]+evaluation_frequency*0.1, win_rates[0]-0.08),
+                                    fontsize=9)
+                        
+                        # Mark end point
+                        plt.plot(eval_points[-1], win_rates[-1], 'go', markersize=8)
+                        plt.annotate(f'End: {win_rates[-1]:.2f}', 
+                                    xy=(eval_points[-1], win_rates[-1]),
+                                    xytext=(eval_points[-1]-evaluation_frequency*0.3, win_rates[-1]+0.08),
+                                    fontsize=9)
+                        
+                        # Mark best point
+                        max_idx = win_rates.index(max(win_rates))
+                        plt.plot(eval_points[max_idx], win_rates[max_idx], 'ro', markersize=8)
+                        plt.annotate(f'Best: {win_rates[max_idx]:.2f}', 
+                                    xy=(eval_points[max_idx], win_rates[max_idx]),
+                                    xytext=(eval_points[max_idx]+evaluation_frequency*0.1, win_rates[max_idx]+0.08),
+                                    arrowprops=dict(facecolor='black', shrink=0.05, width=1),
+                                    fontsize=10)
+                    
+                    # Add more formatting
+                    plt.grid(True, alpha=0.3)
+                    plt.xlabel('Episode', fontsize=12)
+                    plt.ylabel('Win Rate', fontsize=12)
+                    plt.title(f'Win Rate Progress vs {level_name.capitalize()} Opponent', fontsize=14)
+                    plt.legend(fontsize=10)
+                    plt.ylim(0, 1.1)  # Set y axis from 0 to 1.1 for clarity
+                    
+                    plt.tight_layout()
+                    plt.savefig(os.path.join(level_dir, f"{level_name}_win_rate_chart.png"))
+                    plt.close()
+            
+            logger.info(f"Generated training progress graphs for {level_name} level")
+        except Exception as e:
+            logger.error(f"Error generating graphs for {level_name}: {e}")
+
         
         # Log level completion
         logger.info(f"Completed training against {level_name}")
@@ -416,7 +603,7 @@ def train_curriculum(
                     num_dice=_num_dice,
                     dice_faces=dice_faces,
                     seed=seed,
-                    rule_agent_types=[prev_level]
+                    rule_agent_types=[prev_level] * (_num_players - 1)
                 )
                 
                 # Set action mapping for evaluation
@@ -445,17 +632,17 @@ def train_curriculum(
     agent.save(current_model_path)
     candidate_models["final_agent"] = current_model_path
     
-    # Add the best model from training as a candidate
-    if best_overall_model_during_training:
-        candidate_models["best_during_training"] = best_overall_model_during_training
+    # Add the best model as a candidate
+    if best_overall_model:
+        candidate_models["best_overall_model"] = best_overall_model
     
     # First find the best overall model by evaluating all candidates against all opponents
     logger.info("\n=== First Evaluation: Finding Best Overall Model ===")
     logger.info(f"Found {len(candidate_models)} candidate models to evaluate")
     
     # Initialize variables to track the true best overall model
-    best_overall_model = None
-    best_overall_winrate = 0.0
+    final_best_model = None
+    final_best_winrate = 0.0
     model_evaluation_results = {}
     
     # Define evaluation function to get consistent results
@@ -463,15 +650,20 @@ def train_curriculum(
         # Load the model to evaluate
         agent.load(model_path)
         
+        # Reset entropy to a low value for evaluation
+        if agent_type.lower() == 'ppo' and hasattr(agent, 'entropy_coef'):
+            agent.entropy_coef = agent_config.get('entropy_min', 0.005)
+        
         # Evaluate against all curriculum levels
         eval_results = evaluate_against_curriculum(
             agent=agent,
-            num_episodes_per_level=500,  # Use sufficient episodes for stable results
+            num_episodes_per_level=1000,  # Use sufficient episodes for stable results
             num_players=_num_players,
             num_dice=_num_dice,
             dice_faces=dice_faces,
             epsilon=0.05,  # Low exploration for evaluation
             seed=seed,
+            randomize_positions=randomize_positions,
             verbose=False  # Suppress detailed output
         )
         
@@ -493,26 +685,26 @@ def train_curriculum(
             logger.info(f"  {model_name}: Overall win rate = {overall_winrate:.4f}")
             
             # Check if this is the best model so far
-            if overall_winrate > best_overall_winrate:
-                best_overall_winrate = overall_winrate
-                best_overall_model = model_path
+            if overall_winrate > final_best_winrate:
+                final_best_winrate = overall_winrate
+                final_best_model = model_path
                 logger.info(f"  New best overall model: {model_name} with {overall_winrate:.4f} win rate")
                 
         except Exception as e:
             logger.error(f"Error evaluating model {model_name}: {e}")
     
-    if not best_overall_model:
+    if not final_best_model:
         logger.warning("No valid best model found! Using the latest model.")
-        best_overall_model = current_model_path
-        best_overall_winrate = 0.0
+        final_best_model = current_model_path
+        final_best_winrate = 0.0
     
     # Now we have the true best overall model, load it for remedial training
-    logger.info(f"\nBest overall model selected: with overall win rate: {best_overall_winrate:.4f}")
-    agent.load(best_overall_model)
+    logger.info(f"\nBest overall model selected: with overall win rate: {final_best_winrate:.4f}")
+    agent.load(final_best_model)
     
     # Save detailed evaluation of the best model before remedial training
     pre_remedial_evaluation = model_evaluation_results.get(
-        next(name for name, info in model_evaluation_results.items() if info['path'] == best_overall_model),
+        next(name for name, info in model_evaluation_results.items() if info['path'] == final_best_model),
         {'detailed_results': None}
     )['detailed_results']
     
@@ -525,7 +717,7 @@ def train_curriculum(
             eval_results = pre_remedial_evaluation
         else:
             # Re-evaluate if we don't have the results
-            _, eval_results = evaluate_model_against_all_opponents(best_overall_model)
+            _, eval_results = evaluate_model_against_all_opponents(final_best_model)
         
         # Identify levels that need remedial training (below win threshold)
         remedial_levels = []
@@ -546,11 +738,18 @@ def train_curriculum(
             for level_name in remedial_levels:
                 logger.info(f"Starting remedial training against {level_name}")
                 
-                # Set moderate exploration for remedial training (DQN only)
+                # Set moderate exploration for remedial training
                 if agent_type.lower() == 'dqn':
                     remedial_epsilon = 0.3
                     logger.info(f"Setting epsilon to {remedial_epsilon:.2f} for remedial training")
                     agent.epsilon = remedial_epsilon
+                
+                # Boost entropy for PPO remedial training
+                if agent_type.lower() == 'ppo' and hasattr(agent, 'entropy_coef'):
+                    # Set higher entropy for remedial training
+                    remedial_entropy = original_entropy_coef * 0.8  # 80% of original
+                    agent.entropy_coef = remedial_entropy
+                    logger.info(f"Boosted entropy to {remedial_entropy:.5f} for remedial training")
                 
                 # Create remedial environment
                 remedial_env = LiarsDiceEnvWrapper(
@@ -558,7 +757,7 @@ def train_curriculum(
                     num_dice=_num_dice,
                     dice_faces=dice_faces,
                     seed=seed,
-                    rule_agent_types=[level_name]
+                    rule_agent_types=[level_name] * (_num_players - 1)
                 )
                 
                 # Set action mapping
@@ -625,52 +824,40 @@ def train_curriculum(
             logger.info("\n=== Evaluating Remedial-Trained Model ===")
             post_remedial_winrate, post_remedial_results = evaluate_model_against_all_opponents(current_model_path)
             
-            logger.info(f"Pre-remedial overall win rate: {best_overall_winrate:.4f}")
+            logger.info(f"Pre-remedial overall win rate: {final_best_winrate:.4f}")
             logger.info(f"Post-remedial overall win rate: {post_remedial_winrate:.4f}")
             
             # Only keep the remedial-trained model if it improved the overall win rate
-            if post_remedial_winrate > best_overall_winrate:
+            if post_remedial_winrate > final_best_winrate:
                 logger.info("Remedial training improved overall performance - keeping remedial model")
-                best_overall_model = current_model_path
-                best_overall_winrate = post_remedial_winrate
+                final_best_model = current_model_path
+                final_best_winrate = post_remedial_winrate
             else:
                 logger.info("Remedial training did not improve overall performance - reverting to pre-remedial model")
                 agent.load(pre_remedial_best_model)  # Revert to the pre-remedial model
         else:
             logger.info("No levels need remedial training - all already above threshold!")
     
-    # Add the current agent state as a candidate
-    current_model_path = os.path.join(checkpoint_dir, "final_agent")
-    agent.save(current_model_path)
-    candidate_models["final_agent"] = current_model_path
-    
-    # Add the best model from training as a candidate
-    if best_overall_model_during_training:
-        candidate_models["best_during_training"] = best_overall_model_during_training
-    
-    # Final evaluation after potential remedial training
-    logger.info("\n=== Final Evaluation of Best Overall Model ===")
-    final_eval_results = evaluate_against_curriculum(
-        agent=agent,
-        num_episodes_per_level=250,  # More episodes for final evaluation
-        num_players=_num_players,
-        num_dice=_num_dice,
-        dice_faces=dice_faces,
-        epsilon=0.05,  # Low exploration for evaluation
-        seed=seed,
-        verbose=True
-    )
-    
     # Save the final best model with a descriptive name
-    best_model_copy = os.path.join(checkpoint_dir, f"best_overall_{best_overall_winrate:.4f}")
+    best_model_copy = os.path.join(checkpoint_dir, f"best_overall_{final_best_winrate:.4f}")
     agent.save(best_model_copy)
     logger.info(f"Saved best overall model to {best_model_copy}")
     
     # Final evaluation using the best model
     logger.info("\n=== Final Evaluation of Best Model ===")
+    
+    # Ensure we're using the best overall model for final evaluation
+    if final_best_model:
+        logger.info(f"Loading best overall model with win rate {final_best_winrate:.4f} for final evaluation")
+        agent.load(final_best_model)
+    
+    # Set low entropy for final evaluation
+    if agent_type.lower() == 'ppo' and hasattr(agent, 'entropy_coef'):
+        agent.entropy_coef = agent_config.get('entropy_min', 0.005)
+    
     final_eval_results = evaluate_against_curriculum(
         agent=agent,
-        num_episodes_per_level=250,  # More episodes for final evaluation
+        num_episodes_per_level=1000,  # More episodes for final evaluation
         num_players=_num_players,
         num_dice=_num_dice,
         dice_faces=dice_faces,
@@ -684,6 +871,85 @@ def train_curriculum(
     visualize_evaluation_results(final_eval_results, save_path=vis_path)
     logger.info(f"Saved final evaluation visualization to {vis_path}")
     
+    # Create additional comprehensive visualization
+    try:
+        plt.figure(figsize=(12, 8))
+        
+        # Extract win rates for each level
+        levels = [level for level in CURRICULUM_LEVELS if level in final_eval_results]
+        win_rates = [final_eval_results[level]['win_rate'] for level in levels]
+        
+        # Create bar chart
+        bars = plt.bar(range(len(levels)), win_rates, color='skyblue')
+        
+        # Add threshold line
+        plt.axhline(y=_win_rate_threshold, color='r', linestyle='--', 
+                   label=f'Threshold ({_win_rate_threshold:.2f})')
+        
+        # Add data labels on top of bars
+        for i, bar in enumerate(bars):
+            height = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2., height + 0.02,
+                    f'{height:.2f}', ha='center', va='bottom')
+        
+        # Format plot
+        plt.xlabel('Opponent Level')
+        plt.ylabel('Win Rate')
+        plt.title('Final Agent Performance Across All Opponent Levels')
+        plt.xticks(range(len(levels)), [l.capitalize() for l in levels], rotation=45)
+        plt.ylim(0, 1.1)  # 0 to 110% to make room for labels
+        plt.grid(axis='y', alpha=0.3)
+        plt.legend()
+        plt.tight_layout()
+        
+        # Save figure
+        comprehensive_vis_path = os.path.join(log_dir, "comprehensive_evaluation.png")
+        plt.savefig(comprehensive_vis_path)
+        plt.close()
+        
+        # Create win rate progression graph across curriculum
+        if all_results:
+            plt.figure(figsize=(12, 6))
+            
+            # Extract max win rates for each curriculum level
+            curriculum_levels = []
+            best_win_rates = []
+            
+            for level in CURRICULUM_LEVELS:
+                if level in all_results and 'win_rates' in all_results[level]:
+                    curriculum_levels.append(level)
+                    level_win_rates = all_results[level]['win_rates']
+                    if level_win_rates:
+                        best_win_rates.append(max(level_win_rates))
+                    else:
+                        best_win_rates.append(0)
+            
+            # Plot progression
+            plt.plot(range(len(curriculum_levels)), best_win_rates, 'bo-', linewidth=2, markersize=8)
+            
+            # Add threshold line
+            plt.axhline(y=_win_rate_threshold, color='r', linestyle='--', 
+                      label=f'Threshold ({_win_rate_threshold:.2f})')
+            
+            # Format plot
+            plt.xlabel('Curriculum Level')
+            plt.ylabel('Best Win Rate')
+            plt.title('Training Progress Across Curriculum Levels')
+            plt.xticks(range(len(curriculum_levels)), [l.capitalize() for l in curriculum_levels], rotation=45)
+            plt.ylim(0, 1.1)
+            plt.grid(True, alpha=0.3)
+            plt.legend()
+            plt.tight_layout()
+            
+            # Save figure
+            progress_vis_path = os.path.join(log_dir, "curriculum_progress.png")
+            plt.savefig(progress_vis_path)
+            plt.close()
+            
+            logger.info(f"Created additional visualization charts at {log_dir}")
+    except Exception as e:
+        logger.error(f"Error creating comprehensive visualizations: {e}")
+    
     # Save combined training data
     combined_results = {
         'curriculum_distribution': episode_distribution,
@@ -692,8 +958,8 @@ def train_curriculum(
         'best_models': best_models,
         'model_evaluation_results': model_evaluation_results,
         'best_overall_model': {
-            'path': best_overall_model,
-            'win_rate': best_overall_winrate
+            'path': final_best_model,
+            'win_rate': final_best_winrate
         },
         'parameters': {
             'agent_type': agent_type,
@@ -754,7 +1020,7 @@ if __name__ == "__main__":
                         help='Type of agent to train')
     parser.add_argument('--preset', type=str, default='standard', choices=['basic', 'standard', 'advanced'],
                         help='Configuration preset to use')
-    parser.add_argument('--path', type=str, default='results/curriculum_learning/ppo_5dice_better_ppo', help='Base path for results')
+    parser.add_argument('--path', type=str, default='final_new_results/curriculum_learning/ppo_5dice_2person', help='Base path for results')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--render', action='store_true', help='Enable rendering during training')
     parser.add_argument('--no-remedial', action='store_true', help='Disable remedial training')
@@ -772,4 +1038,5 @@ if __name__ == "__main__":
         enable_remedial=not args.no_remedial,
         enable_early_stopping=not args.no_early_stopping,
         evaluation_frequency=500,
+        checkpoint_frequency=50000
     )

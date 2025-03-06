@@ -331,7 +331,7 @@ class NaiveAgent(RuleAgent):
         current_bid = observation['current_bid']
         
         # Beginner mistake: occasional random action (5% chance)
-        if random.random() < 0.05:
+        if random.random() <= 0.1:
             return random.choice(valid_actions)
         
         # Check for challenge actions
@@ -402,65 +402,55 @@ class NaiveAgent(RuleAgent):
 
 class ConservativeAgent(RuleAgent):
     """
-    Conservative agent that mimics a cautious human player.
+    Conservative agent that mimics a cautious human player, but simplified for easier learning.
     
     This agent:
     - Makes "safe" bids based primarily on their own dice
-    - Rarely bluffs, and when does, stays close to known values
-    - Is quick to challenge when bids seem even slightly unlikely
-    - Gets more conservative as they lose dice
+    - Rarely bluffs
+    - Challenges when bids seem unlikely but less aggressively
+    - More consistent and predictable than the original version
     """
     
-    def __init__(self, dice_faces: int = 6, challenge_threshold: float = 0.4):
+    def __init__(self, dice_faces: int = 6, challenge_threshold: float = 0.35):
         """
         Initialize the conservative agent.
         
         Args:
             dice_faces: Number of faces on each die
-            challenge_threshold: Probability threshold for challenging
+            challenge_threshold: Probability threshold for challenging (higher = less challenges)
         """
         super().__init__(agent_type='conservative', dice_faces=dice_faces)
         self.challenge_threshold = challenge_threshold
     
     def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Select an action with a cautious human approach.
+        Select an action with a cautious human approach, but simplified.
         
         Strategy:
         - Mostly bid values in own hand
-        - Challenge when uncertain (even moderate doubt)
-        - Very small bid increases
-        - Gets more conservative with fewer dice
+        - Challenge when uncertain but less aggressively
+        - Consistent small bid increases
         """
         analysis = self.analyze_game_state(observation)
         current_bid = observation['current_bid']
         
-        # Get our dice count - be more conservative with fewer dice
-        dice_counts = observation['dice_counts']
-        own_dice_count = dice_counts[self.player_id]
-        
-        # Adjust challenge threshold based on dice count
-        adjusted_threshold = self.challenge_threshold
-        if own_dice_count == 1:  # Last die
-            adjusted_threshold = self.challenge_threshold * 1.5  # Much more likely to challenge
-        
-        # Check for challenge actions
+        # Check for challenge actions - simplified challenge logic
         challenge_actions = [a for a in valid_actions if a['type'] == 'challenge']
         if challenge_actions and current_bid is not None:
             bid_quantity, bid_value = current_bid
             
-            # Cautious players challenge more easily
-            own_count = analysis['own_value_counts'].get(bid_value, 0)
-            total_dice = analysis['total_dice']
-            
-            # Challenge if the probability seems low to them
+            # Simple probability check for challenging
             probability = analysis['probabilities'].get(bid_value, 1.0)
-            if probability < adjusted_threshold:
+            
+            # Challenge if below threshold (no adjustments for dice count)
+            if probability < self.challenge_threshold:
                 return challenge_actions[0]
             
-            # Also challenge if bid quantity is close to total dice
-            if bid_quantity > total_dice * 0.6:
+            # Also challenge if bid quantity is very close to total dice
+            total_dice = analysis['total_dice']
+            if bid_quantity > total_dice * 0.7:
                 # And we don't have many of this value
+                own_count = analysis['own_value_counts'].get(bid_value, 0)
                 if own_count < bid_quantity * 0.3:
                     return challenge_actions[0]
         
@@ -471,47 +461,45 @@ class ConservativeAgent(RuleAgent):
             # If no valid bids, must challenge
             return challenge_actions[0]
         
-        # First bid strategy
+        # First bid strategy - simplified
         if current_bid is None:
-            # Conservative players bid what they're sure of
+            # Conservative players bid what they have
             own_value_counts = analysis['own_value_counts']
             if own_value_counts:
                 # Bid the most common value in our dice
                 best_value = max(own_value_counts.items(), key=lambda x: x[1])[0]
                 best_count = own_value_counts[best_value]
                 
-                # Usually bid exactly what we have or less
+                # Bid exactly what we have (not less)
                 bid_quantity = best_count
                 
-                # Find matching bid or closest under
-                matching_bids = [a for a in bid_actions if a['value'] == best_value and a['quantity'] <= bid_quantity]
+                # Find matching bid
+                matching_bids = [a for a in bid_actions if a['value'] == best_value]
                 if matching_bids:
-                    return max(matching_bids, key=lambda a: a['quantity'])
+                    return min(matching_bids, key=lambda a: abs(a['quantity'] - bid_quantity))
             
             # If no good option, bid the lowest quantity
             return min(bid_actions, key=lambda a: a['quantity'])
         
-        # Subsequent bid strategy - very cautious increases
+        # Subsequent bid strategy - more consistent
         bid_quantity, bid_value = current_bid
         
-        # Check if we have the current bid value
+        # Try to raise quantity by 1 if we have this value
         own_count = analysis['own_value_counts'].get(bid_value, 0)
-        
         if own_count > 0:
-            # Small increase if we have this value
             for action in bid_actions:
                 if action['value'] == bid_value and action['quantity'] == bid_quantity + 1:
                     return action
         
-        # Look for values we actually have
+        # Try to switch to a value we have 
         for value, count in analysis['own_value_counts'].items():
             if count > 0 and value > bid_value:
-                # Try to switch to this value at same quantity
+                # Switch to this value at same quantity
                 for action in bid_actions:
                     if action['value'] == value and action['quantity'] == bid_quantity:
                         return action
         
-        # If forced, make smallest valid bid
+        # If we must increase, do it as conservatively as possible
         return min(bid_actions, key=lambda a: (a['quantity'], a['value']))
 
 
@@ -3199,38 +3187,40 @@ class AntiExploitationAgent(RuleAgent):
     
 class BluffPunisherAgent(RuleAgent):
     """
-    BluffPunisher agent that specifically targets and punishes bluffing behavior.
+    BluffCatcher agent that detects and punishes bluffing behavior generally.
     
     This agent:
-    - Has a strong bias toward challenging suspicious bids, especially 6's
+    - Has a strong bias toward challenging suspicious bids
     - Makes conservative bids based on its own dice
-    - Remembers past bids to identify patterns of bluffing
+    - Learns and adapts to bluffing patterns for all values
     - Becomes more aggressive in punishing bluffs as the game progresses
     """
     
-    def __init__(self, dice_faces: int = 6, six_challenge_threshold: float = 0.6):
+    def __init__(self, dice_faces: int = 6, base_challenge_threshold: float = 0.45):
         """
-        Initialize the BluffPunisher agent.
+        Initialize the BluffCatcher agent.
         
         Args:
             dice_faces: Number of faces on each die
-            six_challenge_threshold: Higher threshold specifically for 6's (0-1)
+            base_challenge_threshold: Base threshold for challenging (0-1)
         """
         super().__init__(agent_type='bluff_punisher', dice_faces=dice_faces)
-        self.general_challenge_threshold = 0.45  # More aggressive than most agents
-        self.six_challenge_threshold = six_challenge_threshold  # Even more aggressive for 6's
+        self.base_challenge_threshold = base_challenge_threshold
         
         # Track bidding patterns
         self.bid_history = []
         self.value_frequency = {i: 0 for i in range(1, dice_faces + 1)}
         self.bluff_score = {i: 0.5 for i in range(1, dice_faces + 1)}  # Starting belief about each value
         
+        # Track player behavior
+        self.player_bluff_tendency = {}  # Maps player_id to bluff tendency
+        
         # Game state tracking
         self.round_num = 0
         
     def select_action(self, observation: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Select an action that punishes bluffing, especially with 6's.
+        Select an action that detects and punishes bluffing.
         
         Args:
             observation: Current game observation
@@ -3256,25 +3246,11 @@ class BluffPunisherAgent(RuleAgent):
             # Calculate probability of bid being valid
             probability = analysis['probabilities'].get(bid_value, 1.0)
             
-            # Adjust threshold based on game state and bid value
+            # Adjust threshold based on game state and bluff history
             adjusted_threshold = self._get_challenge_threshold(bid_value, observation)
             
-            # Update bid history and bluff score if needed
+            # Update bid history and bluff score
             self._update_bid_tracking(current_bid, observation)
-            
-            # Special handling for 6's
-            if bid_value == 6:
-                # More likely to challenge 6's, especially if they appear frequently
-                frequency_factor = self.value_frequency.get(6, 0) / max(1, sum(self.value_frequency.values()))
-                
-                # Become even more aggressive against 6's if they're frequent
-                if frequency_factor > 0.3:  # If more than 30% of bids are 6's
-                    adjusted_threshold += 0.15
-                    
-                # In late game or critical situations, be extra skeptical of 6's
-                dice_counts = observation['dice_counts']
-                if min(dice_counts) == 1 or self.round_num > 5:
-                    adjusted_threshold += 0.1
             
             # Challenge if probability is below adjusted threshold
             if probability < adjusted_threshold:
@@ -3293,7 +3269,7 @@ class BluffPunisherAgent(RuleAgent):
     
     def _get_challenge_threshold(self, bid_value: int, observation: Dict[str, Any]) -> float:
         """
-        Get challenge threshold adjusted for specific values and game state.
+        Get challenge threshold adjusted for game state and bluff history.
         
         Args:
             bid_value: Value of the current bid
@@ -3303,10 +3279,7 @@ class BluffPunisherAgent(RuleAgent):
             Adjusted challenge threshold
         """
         # Start with base threshold
-        if bid_value == 6:
-            threshold = self.six_challenge_threshold
-        else:
-            threshold = self.general_challenge_threshold
+        threshold = self.base_challenge_threshold
             
         # Adjust based on game phase
         dice_counts = observation['dice_counts']
@@ -3321,10 +3294,24 @@ class BluffPunisherAgent(RuleAgent):
         # More aggressive when opponent is down to last die
         if min(dice_counts) == 1 and dice_counts[self.player_id] > 1:
             threshold += 0.15
+        
+        # Adjust based on how commonly this value is bid
+        value_count = self.value_frequency.get(bid_value, 0)
+        total_bids = sum(self.value_frequency.values())
+        if total_bids > 0:
+            frequency = value_count / total_bids
+            # If a value is bid unusually frequently, be more suspicious
+            if frequency > 0.25:  # More than 25% of bids are this value
+                threshold += 0.1 * min(frequency * 2, 1.0)
             
         # Use bluff score to adjust threshold if we have data
         if self.bluff_score.get(bid_value, 0.5) > 0.6:  # We suspect this value is often bluffed
-            threshold += 0.1
+            threshold += 0.1 * (self.bluff_score[bid_value] - 0.5) * 2  # Scale with confidence
+            
+        # Adjust based on bid quantity relative to total dice
+        bid_quantity, _ = observation['current_bid']
+        if bid_quantity > total_dice * 0.5:  # High quantity bid
+            threshold += 0.05 * min((bid_quantity / total_dice) * 2, 1.0)
             
         return threshold
     
@@ -3344,8 +3331,16 @@ class BluffPunisherAgent(RuleAgent):
         # Update value frequency
         self.value_frequency[bid_value] = self.value_frequency.get(bid_value, 0) + 1
         
-        # Look for challenge results in history to update bluff scores
+        # Identify last bidder
+        last_bidder = None
         history = observation.get('history', [])
+        if history:
+            for entry in reversed(history):
+                if entry['action']['type'] == 'bid':
+                    last_bidder = entry['player']
+                    break
+        
+        # Look for challenge results in history to update bluff scores
         if history:
             for entry in reversed(history):
                 if entry['action']['type'] == 'challenge':
@@ -3362,11 +3357,23 @@ class BluffPunisherAgent(RuleAgent):
                         else:  # It was not a bluff
                             # Decrease bluff score (less likely to be bluffed)
                             self.bluff_score[challenged_value] = max(0.0, old_score - 0.1)
+                        
+                        # Update player bluff tendency
+                        if last_bidder is not None:
+                            if last_bidder not in self.player_bluff_tendency:
+                                self.player_bluff_tendency[last_bidder] = 0.5
+                            
+                            if challenge_success:  # Player was bluffing
+                                self.player_bluff_tendency[last_bidder] = min(
+                                    1.0, self.player_bluff_tendency[last_bidder] + 0.1)
+                            else:  # Player was honest
+                                self.player_bluff_tendency[last_bidder] = max(
+                                    0.0, self.player_bluff_tendency[last_bidder] - 0.05)
                     break  # Only look at most recent challenge
     
     def _select_initial_bid(self, analysis: Dict[str, Any], bid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Select initial bid - very conservative approach.
+        Select initial bid - conservative approach.
         
         Args:
             analysis: Results from analyze_game_state
@@ -3421,11 +3428,11 @@ class BluffPunisherAgent(RuleAgent):
         target_value = bid_value
         target_quantity = bid_quantity + 1
         
-        # Avoid increasing 6's if possible
-        if bid_value == 6:
-            # Try to switch to a different value we have
+        # Check if current value has high bluff score
+        if self.bluff_score.get(bid_value, 0.5) > 0.6:
+            # Try to switch to a value we actually have
             for value, count in sorted(own_value_counts.items(), key=lambda x: (x[1], x[0]), reverse=True):
-                if count > 0 and value != 6:
+                if count > 0 and value > bid_value:
                     valid_actions = [a for a in bid_actions if a['value'] == value]
                     if valid_actions:
                         return min(valid_actions, key=lambda a: a['quantity'])

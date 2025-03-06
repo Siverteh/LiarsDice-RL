@@ -17,7 +17,7 @@ from agents.base_agent import RLAgent
 
 
 class ActorCritic(nn.Module):
-    """Enhanced neural network for PPO actor-critic architecture."""
+    """Neural network for PPO actor-critic architecture."""
     
     def __init__(self, input_dim: int, output_dim: int, hidden_dims: List[int]):
         super(ActorCritic, self).__init__()
@@ -32,9 +32,17 @@ class ActorCritic(nn.Module):
             self.feature_network.add_module(f"relu{i}", nn.ReLU())
             prev_dim = dim
         
-        # Actor head (policy network)
+        # Position-specific processing layer
+        # Assuming the first 5 features correspond to position-related information
+        self.position_embedding = nn.Sequential(
+            nn.Linear(5, 32),  # Process position features
+            nn.LayerNorm(32),
+            nn.ReLU()
+        )
+        
+        # Actor head (policy network) with position information
         self.actor = nn.Sequential(
-            nn.Linear(prev_dim, hidden_dims[-1]),
+            nn.Linear(prev_dim + 32, hidden_dims[-1]),  # +32 for position embedding
             nn.LayerNorm(hidden_dims[-1]),
             nn.ReLU(),
             nn.Linear(hidden_dims[-1], output_dim)
@@ -43,9 +51,9 @@ class ActorCritic(nn.Module):
         # Log softmax layer
         self.log_softmax = nn.LogSoftmax(dim=-1)
         
-        # Critic head (value network)
+        # Critic head (value network) with position information
         self.critic = nn.Sequential(
-            nn.Linear(prev_dim, hidden_dims[-1]),
+            nn.Linear(prev_dim + 32, hidden_dims[-1]),  # +32 for position embedding
             nn.LayerNorm(hidden_dims[-1]),
             nn.ReLU(),
             nn.Linear(hidden_dims[-1], 1)
@@ -64,11 +72,21 @@ class ActorCritic(nn.Module):
         if x.dim() == 1:
             x = x.unsqueeze(0)  # Add batch dimension for single sample
             
+        # Extract position features (assuming first 5 elements are position-related)
+        position_features = x[:, :5]
+        position_embedding = self.position_embedding(position_features)
+        
+        # Process rest of features
         features = self.feature_network(x)
-        logits = self.actor(features)
+        
+        # Combine position embedding with general features
+        combined_features = torch.cat([features, position_embedding], dim=1)
+        
+        # Pass through actor and critic heads
+        logits = self.actor(combined_features)
         log_probs = self.log_softmax(logits)
         action_probs = torch.exp(log_probs)
-        state_value = self.critic(features)
+        state_value = self.critic(combined_features)
         
         return action_probs, state_value
     
@@ -87,8 +105,18 @@ class ActorCritic(nn.Module):
         if x.dim() == 1:
             x = x.unsqueeze(0)  # Add batch dimension for single sample
             
+        # Extract position features
+        position_features = x[:, :5]
+        position_embedding = self.position_embedding(position_features)
+        
+        # Process rest of features
         features = self.feature_network(x)
-        logits = self.actor(features)
+        
+        # Combine position embedding with general features
+        combined_features = torch.cat([features, position_embedding], dim=1)
+        
+        # Get actor and critic outputs
+        logits = self.actor(combined_features)
         
         # Apply action mask if provided
         if mask is not None:
@@ -103,7 +131,7 @@ class ActorCritic(nn.Module):
         action_log_probs = log_probs.gather(1, action.unsqueeze(1)).squeeze(1)
         
         # Compute state values
-        state_value = self.critic(features).squeeze(-1)
+        state_value = self.critic(combined_features).squeeze(-1)
         
         # Compute entropy
         if mask is not None:
@@ -281,9 +309,9 @@ class PPOAgent(RLAgent):
         gae_lambda: float = 0.95,
         policy_clip: float = 0.2,
         value_coef: float = 0.5,
-        entropy_coef: float = 0.02,
-        entropy_min: float = 0.002,
-        entropy_decay_steps: int = 100000,
+        entropy_coef: float = 0.08,
+        entropy_min: float = 0.01,
+        entropy_decay_steps: int = 200000,
         ppo_epochs: int = 4,
         batch_size: int = 64,
         hidden_dims: List[int] = [256, 128, 64],
@@ -338,6 +366,8 @@ class PPOAgent(RLAgent):
         self.update_frequency = update_frequency
         self.max_grad_norm = max_grad_norm
         self.total_training_steps = total_training_steps
+
+        print(hidden_dims)
         
         # Initialize actor-critic network
         self.actor_critic = ActorCritic(obs_dim, action_dim, hidden_dims).to(self.device)
@@ -567,6 +597,11 @@ class PPOAgent(RLAgent):
         critic_loss_total = 0
         entropy_total = 0
         
+        # Settings for gradient accumulation
+        accumulation_steps = 4  # Accumulate over 4 mini-batches
+        accumulated_gradients = 0
+        accumulated_loss = 0
+        
         for _ in range(self.ppo_epochs):
             # Generate mini-batches
             for batch_indices in self.memory.generate_batches():
@@ -604,18 +639,32 @@ class PPOAgent(RLAgent):
                 # Compute total loss with adaptive entropy coefficient
                 loss = actor_loss + self.value_coef * value_loss - self.current_entropy_coef * entropy
                 
-                # Update networks
-                self.optimizer.zero_grad()
-                loss.backward()
-                # Clip gradients to prevent exploding gradients
-                nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
-                self.optimizer.step()
+                # Scale loss for gradient accumulation
+                scaled_loss = loss / accumulation_steps
+                scaled_loss.backward()
                 
                 # Track losses
-                total_loss += loss.item()
                 actor_loss_total += actor_loss.item()
                 critic_loss_total += value_loss.item()
                 entropy_total += entropy.item()
+                total_loss += loss.item()
+                
+                accumulated_loss += loss.item()
+                accumulated_gradients += 1
+                
+                # Only update after accumulating gradients
+                if accumulated_gradients % accumulation_steps == 0:
+                    # Clip gradients to prevent exploding gradients
+                    nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
+                    self.optimizer.step()
+                    self.optimizer.zero_grad()
+                    accumulated_gradients = 0
+        
+        # Handle any remaining gradients
+        if accumulated_gradients > 0:
+            nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
+            self.optimizer.step()
+            self.optimizer.zero_grad()
         
         # Clear memory after update
         self.memory.clear()

@@ -1,0 +1,20 @@
+2025-03-05 17:33:57,719 - curriculum - INFO - Starting curriculum learning for Liar's Dice with ppo agent
+2025-03-05 17:33:57,719 - curriculum - INFO - Game setup: 2 players, 5 dice, 6 faces
+2025-03-05 17:33:57,720 - curriculum - INFO - Curriculum: 1500000 episodes
+2025-03-05 17:33:57,790 - curriculum - INFO - Using device: cuda
+2025-03-05 17:33:57,813 - curriculum - INFO - Observation dimension: 52, Action dimension: 61
+2025-03-05 17:33:58,858 - curriculum - INFO - Created ppo agent with 61 actions
+2025-03-05 17:33:58,858 - curriculum - INFO - Curriculum schedule:
+2025-03-05 17:33:58,858 - curriculum - INFO -   random: 15000 episodes (1.0%)
+2025-03-05 17:33:58,858 - curriculum - INFO -   naive: 45000 episodes (3.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   conservative: 270000 episodes (18.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   bluff_punisher: 300000 episodes (20.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   anti_exploitation: 225000 episodes (15.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   aggressive: 45000 episodes (3.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   strategic: 180000 episodes (12.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   adaptive: 180000 episodes (12.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   counter_strategy: 180000 episodes (12.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO -   optimal: 60000 episodes (4.0%)
+2025-03-05 17:33:58,859 - curriculum - INFO - 
+=== Training against random (15000 episodes) ===
+2025-03-05 17:33:58,859 - curriculum - INFO - Using position randomization probability of 0.00 for random

@@ -1,0 +1,14 @@
+2025-03-05 23:45:47,774 - train - INFO - Starting training for 3000 episodes with agent type: PPOAgent
+2025-03-05 23:45:47,783 - train - INFO - Agent config: {'obs_dim': 52, 'action_dim': 61, 'hidden_dims': [256, 128, 64], 'learning_rate': 0.0001, 'min_learning_rate': 3e-05, 'gamma': 0.99, 'gae_lambda': 0.97, 'policy_clip': 0.1, 'value_coef': 0.8, 'entropy_coef': 0.002, 'batch_size': 256, 'update_frequency': 2048, 'max_grad_norm': 0.5, 'update_counter': 318, 'step_counter': 1856, 'total_training_steps': 1000000, 'current_lr': 4.89499352851864e-05, 'device': 'cuda', 'memory_size': 2010, 'avg_policy_loss': 0.0, 'avg_value_loss': 0.0, 'avg_entropy': 0.0, 'avg_reward': 7.060800000000001}
+2025-03-05 23:45:49,971 - train - INFO - Episode 100/3000 | Reward: 4.83 | Length: 7.90 | Loss: 0.0000
+2025-03-05 23:45:51,477 - train - INFO - Episode 200/3000 | Reward: 4.74 | Length: 7.81 | Loss: 0.0000
+2025-03-05 23:45:53,303 - train - INFO - Episode 300/3000 | Reward: 4.75 | Length: 7.97 | Loss: 0.0000
+2025-03-05 23:45:54,692 - train - INFO - Episode 400/3000 | Reward: 4.79 | Length: 7.69 | Loss: 0.0000
+2025-03-05 23:45:56,206 - train - INFO - Episode 500/3000 | Reward: 4.62 | Length: 8.12 | Loss: 0.0000
+2025-03-05 23:46:03,884 - train - INFO - Evaluation at episode 500: 5.00 reward, Win rate: 1.00
+2025-03-05 23:46:03,893 - train - INFO - New best model with win rate 1.00 saved to new_results/curriculum_learning/ppo_5dice_2person\ppo_standard_2p5d_20250305_173542\checkpoints\remedial_random\best_model_episode_500
+2025-03-05 23:46:03,893 - train - INFO - Win rate 1.00 is above threshold 0.90 (1/2)
+2025-03-05 23:46:03,903 - train - INFO - Training stopped early by callback at episode 500
+2025-03-05 23:46:03,903 - train - INFO - Training completed!
+2025-03-05 23:46:03,904 - train - INFO - Loading best model with win rate 1.00 for final evaluation
+2025-03-05 23:46:18,911 - train - INFO - Final evaluation: 4.73 reward
