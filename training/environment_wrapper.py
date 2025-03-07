@@ -10,28 +10,13 @@ from typing import List, Dict, Tuple, Any, Optional
 from environment.game import LiarsDiceGame
 from environment.state import ObservationEncoder
 from agents.rule_agent import RuleAgent, create_agent
+from typing import Union
 
 
 class LiarsDiceEnvWrapper:
     """
     Wrapper for the Liar's Dice environment to standardize
     the interface for reinforcement learning training.
-    
-    This wrapper provides:
-    - Action space conversion between DQN outputs and game actions
-    - Observation preprocessing
-    - Environment reset and step methods
-    - Support for playing against rule-based agents
-    - Support for self-play (using RL agent as opponent)
-    
-    Attributes:
-        game: The underlying Liar's Dice game
-        observation_encoder: Encoder for observations
-        num_players: Number of players in the game
-        action_mapping: Mapping from action indices to game actions
-        rule_agents: Dict of rule-based opponents, if any
-        rl_opponent: RL agent used as opponent (for self-play)
-        active_player_id: Index of the learning agent in the game
     """
     
     def __init__(
@@ -41,7 +26,8 @@ class LiarsDiceEnvWrapper:
         dice_faces: int = 6,
         seed: Optional[int] = None,
         rule_agent_types: Optional[List[str]] = None,
-        rl_agent_as_opponent: Optional[Any] = None
+        rl_agent_as_opponent: Optional[Any] = None,
+        randomize_positions: Union[bool, float] = False  # Changed to accept probability
     ):
         """
         Initialize the environment wrapper.
@@ -54,6 +40,7 @@ class LiarsDiceEnvWrapper:
             rule_agent_types: List of rule agent types for opponents
                 (if None, environment expects actions for all players)
             rl_agent_as_opponent: RL agent to use as opponent (for self-play)
+            randomize_positions: Bool for full randomization or float for probability of randomization
         """
         self.game = LiarsDiceGame(
             num_players=num_players,
@@ -82,10 +69,23 @@ class LiarsDiceEnvWrapper:
         self.action_mapping = self._generate_action_mapping()
         self.action_dim = len(self.action_mapping)
         
+        # Set up position randomization with probability
+        if isinstance(randomize_positions, bool):
+            self.randomize_positions = randomize_positions
+            self.randomize_prob = 1.0 if randomize_positions else 0.0
+        else:
+            self.randomize_positions = randomize_positions > 0.0
+            self.randomize_prob = float(randomize_positions)
+            
+        if self.randomize_positions:
+            self.position_rng = np.random.RandomState(seed)
+        
+        # Default: first player is the learning agent
+        self.active_player_id = 0  
+        
         # Set up rule-based agents if specified
         self.rule_agents = {}
         self.rl_opponent = None
-        self.active_player_id = 0  # Default: first player is the learning agent
         
         # Set up RL agent as opponent if specified (for self-play)
         if rl_agent_as_opponent is not None:
@@ -111,13 +111,119 @@ class LiarsDiceEnvWrapper:
         
         Args:
             seed: Optional random seed
-            
+                
         Returns:
             Encoded observation for the active player
         """
+        # Handle seed update if provided
+        if seed is not None and self.randomize_positions:
+            self.position_rng = np.random.RandomState(seed)
+        
+        # Apply randomization with probability
+        if self.randomize_positions and (self.position_rng.random() < self.randomize_prob):
+            new_active = self.position_rng.randint(0, self.num_players)
+            self._randomize_player_positions(new_active)
+        else:
+            # Ensure we reset to position 0 if not randomizing this time
+            if self.active_player_id != 0:
+                self._randomize_player_positions(0)
+        
+        # Reset the game
         observations = self.game.reset(seed=seed)
+        
+        # If it's not the active player's turn initially, we need to take actions
+        # for opponent agents until it's the active player's turn
+        current_player = self.game.current_player
+        done = False
+        
+        # Take actions for opponents until it's the active player's turn or game is done
+        while not done and current_player != self.active_player_id:
+            if current_player in self.rule_agents:
+                agent = self.rule_agents[current_player]
+                valid_actions = self.game.get_valid_actions(current_player)
+                agent_action = agent.select_action(observations[current_player], valid_actions)
+                observations, _, done, _ = self.game.step(agent_action)
+            elif self.rl_opponent is not None:
+                # Get observation for RL opponent
+                opponent_obs = self.observation_encoder.encode(observations[current_player])
+                
+                # Get action from RL opponent
+                valid_actions = self.get_valid_actions_for_player(current_player)
+                
+                opponent_action_idx = self.rl_opponent.select_action(
+                    opponent_obs, 
+                    [self.action_mapping[idx] for idx in valid_actions], 
+                    training=False
+                )
+                
+                # Find the action in the valid actions list
+                opponent_action = None
+                for idx, valid_action in enumerate([self.action_mapping[i] for i in valid_actions]):
+                    if self._actions_equal(opponent_action_idx, valid_action):
+                        opponent_action = valid_action
+                        break
+                
+                if opponent_action is None:
+                    raise ValueError(f"Selected action {opponent_action_idx} not found in valid actions")
+                
+                # Execute opponent action
+                observations, _, done, _ = self.game.step(opponent_action)
+            else:
+                raise RuntimeError(f"No agent defined for player {current_player}")
+            
+            # Update current player
+            current_player = self.game.current_player
+        
+        # Return encoded observation for the active player
         encoded_obs = self.observation_encoder.encode(observations[self.active_player_id])
         return encoded_obs
+        
+    def _randomize_player_positions(self, new_active_id: int):
+        """
+        Randomize player positions by setting a new active player ID and
+        reassigning rule agents to other positions.
+        
+        Args:
+            new_active_id: The new player ID for the active (learning) agent
+        """
+        if new_active_id == self.active_player_id:
+            return  # Nothing to change
+            
+        # Store the current rule agent types before reassigning
+        agent_types = []
+        if self.rule_agents:
+            for player_id in sorted(self.rule_agents.keys()):
+                agent = self.rule_agents[player_id]
+                if hasattr(agent, 'agent_type'):
+                    agent_types.append(agent.agent_type)
+                else:
+                    # Fallback if agent_type not available
+                    agent_types.append(agent.__class__.__name__)
+        
+        # Update active player ID
+        self.active_player_id = new_active_id
+        
+        # Reassign rule agents to all positions except the new active player
+        if agent_types:
+            self.rule_agents = {}  # Clear existing agents
+            agent_idx = 0
+            
+            for player_id in range(self.num_players):
+                if player_id != self.active_player_id:
+                    if agent_idx < len(agent_types):
+                        agent_type = agent_types[agent_idx]
+                        agent = create_agent(agent_type, dice_faces=self.dice_faces)
+                        agent.set_player_id(player_id, self.num_players)
+                        self.rule_agents[player_id] = agent
+                        agent_idx += 1
+        
+        # Handle RL opponent if used for self-play
+        if self.rl_opponent is not None and hasattr(self.rl_opponent, 'set_player_id'):
+            # Find a position for the RL opponent that's not the active player
+            for player_id in range(self.num_players):
+                if player_id != self.active_player_id:
+                    self.rl_opponent.set_player_id(player_id, self.num_players)
+                    break
     
     def step(self, action_idx: int) -> Tuple[np.ndarray, float, bool, Dict[str, Any]]:
         """
@@ -138,25 +244,33 @@ class LiarsDiceEnvWrapper:
         # Execute the action in the game
         observations, rewards, done, info = self.game.step(game_action)
         
+        # Add position and game information to info dict for reward shaping
+        info['active_player_id'] = self.active_player_id
+        info['num_players'] = self.num_players
+        info['num_dice'] = self.num_dice
+        info['dice_faces'] = self.dice_faces
+        
         # Handle opponent turns (rule agents or RL agent)
         current_player = self.game.current_player
         
         # Keep taking opponent actions until it's the active player's turn or game is done
         while not done and current_player != self.active_player_id:
-            # First check if we're doing self-play with an RL opponent
-            if self.rl_opponent is not None and current_player == 1:
-                # Get encoded observation for the RL opponent
+            if current_player in self.rule_agents:
+                agent = self.rule_agents[current_player]
+                valid_actions = self.game.get_valid_actions(current_player)
+                agent_action = agent.select_action(observations[current_player], valid_actions)
+                observations, rewards, done, info = self.game.step(agent_action)
+            elif self.rl_opponent is not None:
+                # Handle RL opponent action
                 opponent_obs = self.observation_encoder.encode(observations[current_player])
-                
-                # Get action from RL opponent
                 valid_actions = self.get_valid_actions_for_player(current_player)
+                opponent_action_idx = self.rl_opponent.select_action(
+                    opponent_obs, 
+                    [self.action_mapping[idx] for idx in valid_actions], 
+                    training=False
+                )
                 
-                # Use training=False instead of evaluation=True to be compatible with your agent implementation
-                opponent_action_idx = self.rl_opponent.select_action(opponent_obs, 
-                                                                    [self.action_mapping[idx] for idx in valid_actions], 
-                                                                    training=False)
-                
-                # Find the index of the selected action
+                # Find the action in the valid actions list
                 opponent_action = None
                 for idx, valid_action in enumerate([self.action_mapping[i] for i in valid_actions]):
                     if self._actions_equal(opponent_action_idx, valid_action):
@@ -168,18 +282,17 @@ class LiarsDiceEnvWrapper:
                 
                 # Execute opponent action
                 observations, rewards, done, info = self.game.step(opponent_action)
-            # Next check if we have a rule agent for this player
-            elif current_player in self.rule_agents:
-                agent = self.rule_agents[current_player]
-                valid_actions = self.game.get_valid_actions(current_player)
-                agent_action = agent.select_action(observations[current_player], valid_actions)
-                observations, rewards, done, info = self.game.step(agent_action)
             else:
-                # If we get here, there's no agent defined for the current player
                 raise RuntimeError(f"No agent defined for player {current_player}")
             
             # Update current player
             current_player = self.game.current_player
+            
+            # Add position info again after opponent actions
+            info['active_player_id'] = self.active_player_id
+            info['num_players'] = self.num_players
+            info['num_dice'] = self.num_dice
+            info['dice_faces'] = self.dice_faces
         
         # Return the observation, reward, done flag, and info for the active player
         encoded_obs = self.observation_encoder.encode(observations[self.active_player_id])

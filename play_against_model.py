@@ -141,13 +141,13 @@ def print_game_state(game: LiarsDiceGame, human_player: int, show_all: bool = Fa
     print_dice(dice_values)
     
     # Show AI's dice if show_all is True (for debugging)
-    if show_all:
-        ai_player = 1 - human_player  # Assuming 2-player game
-        print(f"\n{Colors.YELLOW}AI's Dice (Debug Mode):{Colors.RESET}")
-        ai_dice = [int(d) for d in game.dice[ai_player, :game.dice_counts[ai_player]]]
-        print_dice(ai_dice)
-        dice_str = ", ".join(str(d) for d in ai_dice)
-        print(f"AI's dice: [{dice_str}]")
+    #if show_all:
+    #    ai_player = 1 - human_player  # Assuming 2-player game
+    #    print(f"\n{Colors.YELLOW}AI's Dice (Debug Mode):{Colors.RESET}")
+    #    ai_dice = [int(d) for d in game.dice[ai_player, :game.dice_counts[ai_player]]]
+    #    print_dice(ai_dice)
+    #    dice_str = ", ".join(str(d) for d in ai_dice)
+    #    print(f"AI's dice: [{dice_str}]")
     
     # Count total number of each value if debug mode
     if show_all and game.current_bid is not None:
@@ -349,15 +349,12 @@ def play_against_model(
             if try_set_epsilon is not None:
                 agent.epsilon = 0.0
                 
-        elif agent_type.lower() == 'ppo':
+        # Create the appropriate agent based on agent_type
+        if agent_type.lower() == 'ppo':
             agent = PPOAgent(
                 obs_dim=obs_dim,
                 action_dim=action_dim,
-                hidden_dims=network_size if isinstance(network_size, list) else 
-                        [1024, 512, 256, 128, 64] if network_size == 'very large' else 
-                        [512, 256, 128, 64] if network_size == 'large' else 
-                        [256, 128, 64] if network_size == 'medium' else 
-                        [128, 64],
+                hidden_dims=[256, 128, 64],  # Force using this smaller network size
                 device=device
             )
         else:

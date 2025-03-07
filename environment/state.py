@@ -19,6 +19,7 @@ class ObservationEncoder:
     - One-hot encoding of dice and game state
     - Feature extraction for history and bidding patterns
     - Normalization of numerical features
+    - Explicit relative position encoding for improved position-dependent strategies
     
     Attributes:
         num_players (int): Number of players in the game
@@ -50,8 +51,11 @@ class ObservationEncoder:
         # Current bid (quantity, value) - both normalized
         bid_shape = 2
         
-        # Player position indicators
-        position_shape = 3  # current player, previous player, own player ID
+        # Relative position features (new)
+        relative_position_shape = 5  # The 5 new relative position features
+        
+        # Original player position indicators (one-hot encoded)
+        position_shape = 3 * num_players  # current player, previous player, own player ID
         
         # Round information
         round_shape = 1  # round number (normalized)
@@ -62,7 +66,7 @@ class ObservationEncoder:
         # Total observation shape
         self.observation_shape = (
             dice_shape + dice_counts_shape + bid_shape + 
-            position_shape + round_shape + history_shape,
+            relative_position_shape + position_shape + round_shape + history_shape,
         )
     
     def encode(self, observation: Dict[str, Any]) -> np.ndarray:
@@ -107,8 +111,42 @@ class ObservationEncoder:
             encoded.append(value / self.dice_faces)
         else:
             encoded.extend([0, 0])  # No current bid
+            
+        # ---- START OF NEW RELATIVE POSITION ENCODING ----
         
-        # Encode player positions (one-hot)
+        # 1. Steps from me to the current player (clockwise)
+        if current_player >= 0:
+            steps_to_current = (current_player - player_id) % self.num_players
+            # Normalize by number of players
+            encoded.append(steps_to_current / self.num_players)
+        else:
+            encoded.append(0)  # Default if no current player
+        
+        # 2. Steps from me to the previous player (clockwise)
+        if previous_player >= 0:
+            steps_to_previous = (previous_player - player_id) % self.num_players
+            # Normalize by number of players
+            encoded.append(steps_to_previous / self.num_players)
+        else:
+            encoded.append(0)  # Default if no previous player
+        
+        # 3. Am I the player who made the last bid? (binary)
+        encoded.append(1.0 if player_id == previous_player else 0.0)
+        
+        # 4. Am I the player who needs to act now? (binary)
+        encoded.append(1.0 if player_id == current_player else 0.0)
+        
+        # 5. Steps from previous to current player (useful for understanding game flow)
+        if previous_player >= 0 and current_player >= 0:
+            steps_previous_to_current = (current_player - previous_player) % self.num_players
+            # Normalize by number of players
+            encoded.append(steps_previous_to_current / self.num_players)
+        else:
+            encoded.append(0)  # Default if either player is not defined
+        
+        # ---- END OF NEW RELATIVE POSITION ENCODING ----
+        
+        # Original player position encoding (one-hot)
         current_player_encoding = np.zeros(self.num_players)
         if current_player >= 0:
             current_player_encoding[current_player] = 1
@@ -158,7 +196,6 @@ class ObservationEncoder:
             Tuple describing the observation shape
         """
         return self.observation_shape
-
 
 class StateEncoder:
     """
