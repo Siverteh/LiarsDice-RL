@@ -8,8 +8,9 @@ that all conform to the RLAgent interface.
 from typing import Dict, Any, List, Optional
 
 from agents.base_agent import RLAgent
-from agents.dqn_agent import DQNAgent  # Import your actual DQN implementation
+from agents.dqn_agent import DQNAgent
 from agents.ppo_agent import PPOAgent
+from agents.crf_agent import CRFAgent  # Import the new CRF agent
 
 
 def create_agent(
@@ -23,7 +24,7 @@ def create_agent(
     Create a reinforcement learning agent of the specified type.
     
     Args:
-        agent_type: Type of agent to create ('dqn', 'ppo', etc.)
+        agent_type: Type of agent to create ('dqn', 'ppo', 'crf', etc.)
         obs_dim: Dimension of the observation space
         action_dim: Dimension of the action space
         config: Dictionary of configuration parameters
@@ -44,6 +45,8 @@ def create_agent(
         return create_dqn_agent(obs_dim, action_dim, full_config)
     elif agent_type.lower() == 'ppo':
         return create_ppo_agent(obs_dim, action_dim, full_config)
+    elif agent_type.lower() == 'crf':  # Add case for CRF agent
+        return create_crf_agent(obs_dim, action_dim, full_config)
     else:
         raise ValueError(f"Unknown agent type: {agent_type}")
 
@@ -126,3 +129,39 @@ def create_ppo_agent(
     
     # Create and return PPO agent with parameters it accepts
     return PPOAgent(**kwargs)
+
+
+def create_crf_agent(
+    obs_dim: int,
+    action_dim: int,
+    config: Dict[str, Any]
+) -> CRFAgent:
+    """
+    Create a CRF agent with the specified configuration.
+    
+    Args:
+        obs_dim: Dimension of the observation space
+        action_dim: Dimension of the action space
+        config: Dictionary of configuration parameters
+        
+    Returns:
+        A configured CRF agent
+    """
+    # Extract parameters for CRF agent
+    kwargs = {
+        'obs_dim': obs_dim,
+        'action_dim': action_dim,
+        'feature_engineering': config.get('feature_engineering', 'advanced'),
+        'c1': config.get('c1', 0.1),  # L1 regularization
+        'c2': config.get('c2', 0.1),  # L2 regularization
+        'max_iterations': config.get('max_iterations', 100),
+        'buffer_size': config.get('buffer_size', 10000),
+        'update_frequency': config.get('update_frequency', 500),
+        'initial_exploration': config.get('initial_exploration', 1.0),
+        'final_exploration': config.get('final_exploration', 0.1),
+        'exploration_decay': config.get('exploration_decay', 100000),
+        'device': config.get('device', 'auto')
+    }
+    
+    # Create and return CRF agent
+    return CRFAgent(**kwargs)

@@ -16,7 +16,7 @@ from tqdm import tqdm
 from agents.base_agent import RLAgent
 from .environment_wrapper import LiarsDiceEnvWrapper
 from .utils import setup_logger, save_training_data
-from agents.rule_agent import CURRICULUM_LEVELS
+from agents.rule_agent_old import CURRICULUM_LEVELS
 
 
 def train_episode(

@@ -18,7 +18,7 @@ from collections import deque
 
 from agents.base_agent import RLAgent
 from agents.agent_factory import create_agent
-from agents.rule_agent import CURRICULUM_LEVELS, create_agent as create_rule_agent
+from agents.evaluation_agents import CURRICULUM_LEVELS, create_agent as create_rule_agent
 from environment.game import LiarsDiceGame
 from environment.state import ObservationEncoder
 from training.environment_wrapper import LiarsDiceEnvWrapper
@@ -32,44 +32,84 @@ from training.utils import (
 )
 
 
-# Configuration presets for different game setups
+# Enhanced Config Presets for LSTM-PPO
 CONFIG_PRESETS = {
     # 2 players, 3 dice, good for initial learning
     'basic': {
         'num_players': 2,
         'num_dice': 3,
-        'curriculum_episodes': 100000,
+        'curriculum_episodes': 150000,  # More episodes for LSTM learning
         'self_play_episodes': 10000,
-        'network_size': [256, 128, 64],
-        'learning_rate': 0.0005,
-        'win_rate_threshold': 0.75
+        'network_size': [128, 64, 32],  # Smaller network before LSTM
+        'learning_rate': 0.0003,
+        'win_rate_threshold': 0.72,     # Slightly lower threshold for LSTM
+        # LSTM-specific parameters
+        'lstm_hidden_size': 64,
+        'lstm_layers': 1,
+        'sequence_length': 8
     },
     # 2 players, 5 dice, standard game
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'curriculum_episodes':1500000,
+        'curriculum_episodes': 2000000,  # More episodes for complex patterns
         'self_play_episodes': 15000,
         'network_size': [512, 256, 128, 64],
-        'learning_rate': 0.0003,
-        'win_rate_threshold': 0.9
+        'learning_rate': 0.0002,
+        'win_rate_threshold': 0.85,
+        # LSTM-specific parameters
+        'lstm_hidden_size': 128,
+        'lstm_layers': 1,
+        'sequence_length': 10
     },
     # 4 players, 5 dice, complex game
     'advanced': {
         'num_players': 4,
         'num_dice': 5,
-        'curriculum_episodes': 6000000,
+        'curriculum_episodes': 7000000,  # Much more for complex game
         'self_play_episodes': 30000,
-        'network_size': [2048, 1024, 512, 256, 128],
-        'learning_rate': 0.0003,
-        'win_rate_threshold': 0.9
+        'network_size': [1024, 512, 256, 128],
+        'learning_rate': 0.0001,
+        'win_rate_threshold': 0.7,       # Lower threshold for complex game
+        # LSTM-specific parameters
+        'lstm_hidden_size': 256,
+        'lstm_layers': 2,
+        'sequence_length': 12
     }
+}
+
+# Optimized curriculum distribution for LSTM agent
+DEFAULT_CURRICULUM_DISTRIBUTION = {
+    'random': 0.02,           # 2%  - Very little time on simplest opponents
+    'naive': 0.03,            # 3%  - Still simple pattern recognition
+    'conservative': 0.12,     # 12% - Important for basic strategy learning 
+    'bluff_punisher': 0.18,   # 18% - More time on this key strategy
+    'anti_exploitation': 0.15,# 15% - Important for adapting to opponents
+    'aggressive': 0.05,       # 5%  - Learn to handle aggressive play
+    'strategic': 0.15,        # 15% - Complex patterns to learn
+    'adaptive': 0.15,         # 15% - Critical for LSTM to learn adaptation
+    'counter_strategy': 0.10, # 10% - Learn counter-strategies
+    'optimal': 0.05           # 5%  - Challenge with optimal play
+}
+
+# Optimized position randomization schedule for LSTM
+DEFAULT_POSITION_RANDOMIZATION = {
+    'random': 0.0,            # No randomization for easiest opponents
+    'naive': 0.0,             # No randomization for easier opponents
+    'conservative': 0.2,      # 20% randomization
+    'bluff_punisher': 0.3,    # 30% randomization
+    'anti_exploitation': 0.4, # 40% randomization
+    'aggressive': 0.5,        # 50% randomization
+    'strategic': 0.7,         # 70% randomization
+    'adaptive': 0.8,          # 80% randomization for adaptive opponents
+    'counter_strategy': 0.9,  # 90% randomization for counter-strategy
+    'optimal': 1.0            # Full randomization for optimal play
 }
 
 
 def train_curriculum(
     # Base settings
-    agent_type: str = 'dqn',
+    agent_type: str = 'ppo',  # Default to PPO for LSTM
     preset: str = 'basic',
     results_path: str = 'results',
     seed: Optional[int] = None,
@@ -93,21 +133,28 @@ def train_curriculum(
     network_size: Optional[List[int]] = None,
     custom_agent_config: Optional[Dict[str, Any]] = None,
     
+    # LSTM-specific parameters
+    lstm_hidden_size: Optional[int] = None,
+    lstm_layers: Optional[int] = None,
+    sequence_length: Optional[int] = None,
+    use_gru: bool = False,
+    
     # Training control
-    checkpoint_frequency: int = 1000,
-    evaluation_frequency: int = 500,
+    checkpoint_frequency: int = 10000,  # More frequent checkpoints for LSTM
+    evaluation_frequency: int = 5000,   # More frequent evaluations
     enable_early_stopping: bool = True,
     win_rate_threshold: Optional[float] = None,
-    early_stopping_patience: int = 1,
+    early_stopping_patience: int = 2,   # More patience for LSTM convergence
     
     # Exploration settings
     initial_epsilon: float = 1.0,
-    min_epsilon: float = 0.1,
-    epsilon_decay_per_level: float = 0.15
+    min_epsilon: float = 0.05,          # Lower minimum exploration
+    epsilon_decay_per_level: float = 0.2 # Faster decay per level
 ) -> Tuple[RLAgent, Dict[str, Any]]:
     """
-    Train an agent using curriculum learning with progressively more difficult opponents.
-    Self-play functionality has been implemented separately.
+    Train an LSTM-enhanced PPO agent using curriculum learning with progressively more difficult opponents.
+    
+    This version is optimized for recurrent networks (LSTM/GRU) to learn opponent patterns and strategies.
     """
     # Apply preset configuration
     preset_config = CONFIG_PRESETS[preset]
@@ -119,26 +166,23 @@ def train_curriculum(
     _win_rate_threshold = win_rate_threshold if win_rate_threshold is not None else preset_config['win_rate_threshold']
     _learning_rate = learning_rate if learning_rate is not None else preset_config['learning_rate']
     _network_size = network_size if network_size is not None else preset_config['network_size']
-
+    
+    # LSTM parameters
+    _lstm_hidden_size = lstm_hidden_size if lstm_hidden_size is not None else preset_config.get('lstm_hidden_size', 128)
+    _lstm_layers = lstm_layers if lstm_layers is not None else preset_config.get('lstm_layers', 1)
+    _sequence_length = sequence_length if sequence_length is not None else preset_config.get('sequence_length', 8)
+    
+    # Use optimized curriculum distribution if not provided
+    if curriculum_distribution is None:
+        curriculum_distribution = DEFAULT_CURRICULUM_DISTRIBUTION
     
     # Default progressive position randomization if not provided
     if position_randomization_schedule is None:
-        position_randomization_schedule = {
-            'random': 0.0,          # No randomization for easiest opponents
-            'naive': 0.0,
-            'conservative': 0.25,   # 25% randomization
-            'bluff_punisher': 0.5,  # 50% randomization
-            'anti_exploitation': 0.5,
-            'aggressive': 0.75,     # 75% randomization
-            'strategic': 0.75,
-            'adaptive': 1.0,        # Full randomization for hardest opponents
-            'counter_strategy': 1.0,
-            'optimal': 1.0
-        }
+        position_randomization_schedule = DEFAULT_POSITION_RANDOMIZATION
     
     # Set up paths for results
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_name = f"{agent_type}_{preset}_{_num_players}p{_num_dice}d_{timestamp}"
+    run_name = f"lstm_{agent_type}_{preset}_{_num_players}p{_num_dice}d_{timestamp}"
     base_path = os.path.join(results_path, run_name)
     checkpoint_dir = os.path.join(base_path, 'checkpoints')
     log_dir = os.path.join(base_path, 'logs')
@@ -150,9 +194,10 @@ def train_curriculum(
     
     # Set up logging
     logger = setup_logger('curriculum', os.path.join(log_dir, 'curriculum.log'))
-    logger.info(f"Starting curriculum learning for Liar's Dice with {agent_type} agent")
+    logger.info(f"Starting curriculum learning for Liar's Dice with LSTM-{agent_type} agent")
     logger.info(f"Game setup: {_num_players} players, {_num_dice} dice, {dice_faces} faces")
     logger.info(f"Curriculum: {_curriculum_episodes} episodes")
+    logger.info(f"LSTM config: hidden_size={_lstm_hidden_size}, layers={_lstm_layers}, sequence_length={_sequence_length}")
     
     # Resolve device
     if device == 'auto':
@@ -181,83 +226,115 @@ def train_curriculum(
     action_dim = env.get_action_dim()
     logger.info(f"Observation dimension: {obs_dim}, Action dimension: {action_dim}")
     
-    # Create agent configuration with improved PPO parameters
+    # Create agent configuration with LSTM-PPO parameters
     if agent_type.lower() == 'ppo':
         # Preset configs for different game complexities
         if preset == 'standard':  # 2 players, 5 dice (standard game)
             ppo_config = {
-                'learning_rate': 0.0001,        # Lower learning rate for stability
-                'min_learning_rate': 5e-6,      # Lower minimum LR
-                'gamma': 0.99,                 
-                'gae_lambda': 0.97,            
-                'policy_clip': 0.1,             # Reduced clipping for smoother updates
-                'value_coef': 0.8,              # Higher value coefficient
-                'entropy_coef': 0.15,           # Higher entropy for better exploration
-                'entropy_min': 0.02,            # Higher minimum entropy
-                'entropy_decay_steps': 300000,  # Much slower entropy decay
-                'ppo_epochs': 10,               # More PPO epochs per update
-                'batch_size': 256,              # Larger batch size
-                'update_frequency': 2048,       
-                'max_grad_norm': 0.3,           # Lower gradient clipping
-                'total_training_steps': 3000000 
+                # Network architecture
+                'hidden_dims': _network_size,
+                'lstm_hidden_size': _lstm_hidden_size,
+                'lstm_layers': _lstm_layers,
+                'use_gru': use_gru,
+                'sequence_length': _sequence_length,
+                
+                # Training parameters
+                'learning_rate': _learning_rate,
+                'min_learning_rate': 3e-5,
+                'gamma': 0.99,
+                'gae_lambda': 0.97,
+                'policy_clip': 0.15,
+                'value_coef': 0.5,
+                'entropy_coef': 0.15,
+                'entropy_min': 0.025,
+                'entropy_decay_steps': 300000,
+                'ppo_epochs': 6,
+                'batch_size': 32,  # Smaller batch size for LSTM
+                'update_frequency': 2048,
+                'max_grad_norm': 0.5,
+                'gradient_accumulation_steps': 4,  # Gradient accumulation for stability
+                'reset_hidden_on_done': True,  # Reset LSTM state at episode end
+                'total_training_steps': 2000000
             }
         elif preset == 'advanced':  # 4 players, 5 dice (complex game)
             ppo_config = {
-                'learning_rate': 0.0001,        
-                'min_learning_rate': 5e-6,      
-                'gamma': 0.99,                 
-                'gae_lambda': 0.97,            
-                'policy_clip': 0.1,             
-                'value_coef': 0.8,             
-                'entropy_coef': 0.18,           # Even higher for complex environment
-                'entropy_min': 0.03,            # Higher minimum for complex game
-                'entropy_decay_steps': 500000,  # Much slower decay for 6M episodes
-                'ppo_epochs': 12,               # Even more epochs for complex environment
-                'batch_size': 256,              
-                'update_frequency': 2048,       
-                'max_grad_norm': 0.3,           
-                'total_training_steps': 6000000
+                # Network architecture
+                'hidden_dims': _network_size,
+                'lstm_hidden_size': _lstm_hidden_size,
+                'lstm_layers': _lstm_layers,
+                'use_gru': use_gru,
+                'sequence_length': _sequence_length,
+                
+                # Training parameters
+                'learning_rate': _learning_rate,
+                'min_learning_rate': 1e-5,
+                'gamma': 0.995,
+                'gae_lambda': 0.97,
+                'policy_clip': 0.1,
+                'value_coef': 0.5,
+                'entropy_coef': 0.2,
+                'entropy_min': 0.04,
+                'entropy_decay_steps': 500000,
+                'ppo_epochs': 4,
+                'batch_size': 24,
+                'update_frequency': 4096,
+                'max_grad_norm': 0.4,
+                'gradient_accumulation_steps': 8,
+                'reset_hidden_on_done': True,
+                'total_training_steps': 7000000
             }
         else:  # Basic preset
             ppo_config = {
-                'learning_rate': 0.0001,        
-                'min_learning_rate': 5e-6,     
-                'gamma': 0.99,                 
-                'gae_lambda': 0.95,            
-                'policy_clip': 0.15,            
-                'value_coef': 0.7,             
-                'entropy_coef': 0.1,          
-                'entropy_min': 0.01,          
-                'entropy_decay_steps': 50000,  
-                'ppo_epochs': 8,               
-                'batch_size': 128,              
-                'update_frequency': 1024,      
-                'max_grad_norm': 0.4,           
+                # Network architecture
+                'hidden_dims': _network_size,
+                'lstm_hidden_size': _lstm_hidden_size,
+                'lstm_layers': _lstm_layers,
+                'use_gru': use_gru,
+                'sequence_length': _sequence_length,
+                
+                # Training parameters
+                'learning_rate': _learning_rate,
+                'min_learning_rate': 5e-5,
+                'gamma': 0.99,
+                'gae_lambda': 0.95,
+                'policy_clip': 0.1,
+                'value_coef': 0.7,
+                'entropy_coef': 0.12,
+                'entropy_min': 0.03,
+                'entropy_decay_steps': 80000,
+                'ppo_epochs': 8,
+                'batch_size': 32,
+                'update_frequency': 1024,
+                'max_grad_norm': 0.3,
+                'gradient_accumulation_steps': 2,
+                'reset_hidden_on_done': True,
                 'total_training_steps': 500000
             }
             
         agent_config = ppo_config
     else:
-        # For DQN
+        # For DQN (although LSTM is designed for PPO)
         agent_config = {
             'learning_rate': _learning_rate,
             'hidden_dims': _network_size,
             'device': device,
             'epsilon_start': initial_epsilon,
             'epsilon_end': min_epsilon,
-            'epsilon_decay': 0.99995  # Slower decay for more stable learning
+            'epsilon_decay': 0.99995
         }
     
-    ppo_config['hidden_dims'] = _network_size
-
     # Store original entropy coefficient for PPO resets
     original_entropy_coef = agent_config.get('entropy_coef', 0.0) if agent_type.lower() == 'ppo' else 0.0
+    
     # Apply any custom agent config
     if custom_agent_config:
         agent_config.update(custom_agent_config)
         # Update original entropy if it was customized
         if agent_type.lower() == 'ppo' and 'entropy_coef' in custom_agent_config:
             original_entropy_coef = custom_agent_config['entropy_coef']
+    
+    # Log the final agent configuration
+    logger.info(f"Agent configuration: {agent_config}")
     
     # Create agent
     agent = create_agent(
@@ -1037,6 +1114,6 @@ if __name__ == "__main__":
         render_training=args.render,
         enable_remedial=not args.no_remedial,
         enable_early_stopping=not args.no_early_stopping,
-        evaluation_frequency=500,
+        evaluation_frequency=50,
         checkpoint_frequency=50000
     )

@@ -441,25 +441,26 @@ class DQNAgent(RLAgent):
         self.q_network.load_state_dict(torch.load(
             os.path.join(path, 'q_network.pth'),
             map_location=self.device,
-            weights_only=True
+            weights_only=False
         ))
         self.target_network.load_state_dict(torch.load(
             os.path.join(path, 'target_network.pth'),
             map_location=self.device,
-            weights_only=True
+            weights_only=False
         ))
         
         # Load optimizer state
         self.optimizer.load_state_dict(torch.load(
             os.path.join(path, 'optimizer.pth'),
             map_location=self.device,
-            weights_only=True
+            weights_only=False
         ))
         
         # Load other parameters - can't use weights_only here since this is a dictionary
         params = torch.load(
             os.path.join(path, 'parameters.pth'),
-            map_location=self.device
+            map_location=self.device,
+            weights_only=True
         )
         self.epsilon = params['epsilon']
         self.update_counter = params['update_counter']

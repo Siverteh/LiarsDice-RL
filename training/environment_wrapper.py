@@ -9,7 +9,7 @@ import numpy as np
 from typing import List, Dict, Tuple, Any, Optional
 from environment.game import LiarsDiceGame
 from environment.state import ObservationEncoder
-from agents.rule_agent import RuleAgent, create_agent
+from agents.evaluation_agents import create_agent
 from typing import Union
 
 

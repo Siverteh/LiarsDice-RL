@@ -366,8 +366,6 @@ class PPOAgent(RLAgent):
         self.update_frequency = update_frequency
         self.max_grad_norm = max_grad_norm
         self.total_training_steps = total_training_steps
-
-        print(hidden_dims)
         
         # Initialize actor-critic network
         self.actor_critic = ActorCritic(obs_dim, action_dim, hidden_dims).to(self.device)
@@ -829,3 +827,16 @@ class PPOAgent(RLAgent):
             'avg_entropy': np.mean(self.loss_stats['entropy']) if self.loss_stats['entropy'] else 0.0,
             'avg_reward': np.mean(self.reward_history) if self.reward_history else 0.0
         }
+    
+    def copy_weights_from(self, other_agent):
+        """
+        Copy weights from another agent to this agent.
+        
+        Args:
+            other_agent: The agent to copy weights from
+        """
+        # Copy actor-critic network weights
+        self.actor_critic.load_state_dict(other_agent.actor_critic.state_dict())
+        
+        # Optionally, you can also copy optimizer state
+       # self.optimizer.load_state_dict(other_agent.optimizer.state_dict())
