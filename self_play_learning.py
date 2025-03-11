@@ -44,7 +44,7 @@ CONFIG_PRESETS = {
     'basic': {
         'num_players': 2,
         'num_dice': 3,
-        'self_play_episodes': 100000,
+        'self_play_episodes': 250000,
         'network_size': [256, 128, 64],
         'learning_rate': 0.0005,
         'win_rate_threshold': 0.9
@@ -53,7 +53,7 @@ CONFIG_PRESETS = {
     'standard': {
         'num_players': 2,
         'num_dice': 5,
-        'self_play_episodes': 250000,
+        'self_play_episodes': 500000,
         'network_size': [512, 256, 128, 64],
         'learning_rate': 0.0002,
         'win_rate_threshold': 0.9
@@ -62,7 +62,7 @@ CONFIG_PRESETS = {
     'advanced': {
         'num_players': 4,
         'num_dice': 5,
-        'self_play_episodes': 300000,
+        'self_play_episodes': 1500000,
         'network_size': [1024, 512, 256, 128],
         'learning_rate': 0.00015,
         'win_rate_threshold': 0.55
@@ -93,7 +93,7 @@ def train_self_play(
     custom_agent_config: Optional[Dict[str, Any]] = None,
     
     # Training control
-    checkpoint_frequency: int = 50000,
+    checkpoint_frequency: int = 5000,
     evaluation_frequency: int = 1000,
     enable_early_stopping: bool = True,
     win_rate_threshold: Optional[float] = None,
@@ -242,7 +242,7 @@ def train_self_play(
             'entropy_coef': 0.05,        # Higher initial entropy for more exploration
             'entropy_min': 0.01,         # Minimum entropy coefficient
             'entropy_decay_steps': _self_play_episodes // 3,  # Decay over 1/3 of training
-            'update_frequency': 2048,
+            'update_frequency': 128,
             'batch_size': 64,
             'ppo_epochs': 4,
             'max_grad_norm': 0.5
@@ -395,7 +395,7 @@ def train_self_play(
             num_dice=_num_dice,
             dice_faces=dice_faces,
             seed=seed + episode if seed else None,
-            rl_agent_as_opponent=opponent_agent
+            rl_agent_as_opponent=opponent_agent 
         )
         
         # Set action mappings for agents
@@ -453,13 +453,13 @@ def train_self_play(
                     num_dice=_num_dice,
                     dice_faces=dice_faces,
                     seed=seed + 10000 + episode if seed else None,
-                    rule_agent_types=[opponent_type]
+                    rule_agent_types=[opponent_type] * (_num_players - 1)
                 )
                 
                 primary_agent.set_action_mapping(eval_env.action_mapping)
                 
                 # Run evaluation
-                num_eval_episodes = 1000
+                num_eval_episodes = 250
                 eval_reward = 0
                 wins = 0
                 
@@ -569,6 +569,11 @@ def train_self_play(
     logger.info(f"Self-play training completed after {episode} episodes in "
                 f"{int(hours)}h {int(minutes)}m {seconds:.2f}s")
     
+    # If we found a best model, load it
+    if best_model_path and os.path.exists(best_model_path):
+        logger.info(f"Loading best model from {best_model_path}")
+        primary_agent.load(best_model_path)
+
     # Final comprehensive evaluation against all evaluation agents
     logger.info("\n=== Final Comprehensive Evaluation ===")
     
@@ -588,7 +593,7 @@ def train_self_play(
     
     # Create a progress bar for the final evaluation
     eval_progress = tqdm.tqdm(
-        total=len(evaluation_opponents) * 250,
+        total=len(evaluation_opponents) * 1000,
         desc="Final Evaluation",
         unit="episode",
         dynamic_ncols=True
@@ -600,13 +605,13 @@ def train_self_play(
             num_dice=_num_dice,
             dice_faces=dice_faces,
             seed=seed + 20000 if seed else None,
-            rule_agent_types=[opponent_type]
+            rule_agent_types=[opponent_type] * (_num_players - 1)
         )
         
         primary_agent.set_action_mapping(eval_env.action_mapping)
         
         # Run more episodes for final evaluation
-        num_eval_episodes = 250  # More episodes for better statistics
+        num_eval_episodes = 1000  # More episodes for better statistics
         eval_reward = 0
         wins = 0
         episode_lengths = []
@@ -676,11 +681,6 @@ def train_self_play(
         win_rate_threshold=_win_rate_threshold,
         save_path=os.path.join(visualization_dir, "final_dashboard.png")
     )
-    
-    # If we found a best model, load it
-    if best_model_path and os.path.exists(best_model_path):
-        logger.info(f"Loading best model from {best_model_path}")
-        primary_agent.load(best_model_path)
     
     # Save final model
     final_model_path = os.path.join(checkpoint_dir, "final_model")
@@ -1236,18 +1236,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Enhanced self-play training for Liar's Dice")
     parser.add_argument('--agent', type=str, default='ppo', choices=['dqn', 'ppo'],
                         help='Type of agent to train')
-    parser.add_argument('--preset', type=str, default='standard', choices=['basic', 'standard', 'advanced'],
+    parser.add_argument('--preset', type=str, default='advanced', choices=['basic', 'standard', 'advanced'],
                         help='Configuration preset to use')
-    parser.add_argument('--path', type=str, default='results/enhanced_self_play/ppo_5_2_people_lstm', help='Base path for results')
+    parser.add_argument('--path', type=str, default='results/enhanced_self_play/ppo_5_dice_4_people', help='Base path for results')
     parser.add_argument('--episodes', type=int, default=None, help='Number of self-play episodes')
-    parser.add_argument('--pool-size', type=int, default=15, help='Size of opponent pool')
+    parser.add_argument('--pool-size', type=int, default=20, help='Size of opponent pool')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--render', action='store_true', help='Enable rendering during training')
     parser.add_argument('--no-early-stopping', action='store_false', dest='early_stopping',
                         help='Disable early stopping')
     parser.add_argument('--no-adaptive', action='store_false', dest='adaptive',
                         help='Disable adaptive parameters')
-    parser.add_argument('--eval-freq', type=int, default=1000, 
+    parser.add_argument('--eval-freq', type=int, default=10000, 
                         help='Evaluation frequency (episodes)')
     parser.add_argument('--visualize-freq', type=int, default=10000,
                         help='Visualization frequency (episodes)')
